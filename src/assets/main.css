@@ -1,0 +1,13 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+    .btn-text {
+        @apply block px-0.5 bg-transparent border-b-2 border-transparent text-slate-600 outline-none font-medium hover:border-slate-900 hover:text-slate-900;
+    }
+
+    .btn-primary {
+        @apply flex items-center bg-slate-950 text-white rounded-lg px-6;
+    }
+}
