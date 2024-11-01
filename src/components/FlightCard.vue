@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import Flight from '@/models/flight.model';
+import type {FlightType} from "@/models/flight.model";
 
 const props = defineProps<{
-    flight: Flight,
+    flight: FlightType,
     belowAveragePrice?: boolean
 }>();
 

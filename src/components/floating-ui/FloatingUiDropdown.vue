@@ -4,7 +4,7 @@ import { computed, onMounted } from 'vue';
 
 const props = defineProps<{
     componentId: string,
-    dropdownItems: { name: string; value: string }[];
+    dropdownItems: ReadonlyArray<{ name: string; value: string }>;
 }>();
 
 const emit = defineEmits<{

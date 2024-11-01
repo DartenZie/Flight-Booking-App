@@ -14,9 +14,11 @@ export default {
             height: {
                 '160': '40rem',
                 '68': '17rem',
-            },
+            }
         },
     },
-    plugins: [],
+    plugins: [
+        require('@tailwindcss/forms'),
+    ],
 };
 

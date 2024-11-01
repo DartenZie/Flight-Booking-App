@@ -1,14 +1,14 @@
 import { reactive } from 'vue';
 
 const floatingUIState = reactive({
-    openComponentId: null,
+    openComponentId: '',
 
     open(id: string): void {
         this.openComponentId = id;
     },
 
     close(): void {
-        this.openComponentId = null;
+        this.openComponentId = '';
     },
 
     isOpen(id: string): boolean {

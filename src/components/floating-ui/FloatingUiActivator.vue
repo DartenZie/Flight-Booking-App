@@ -15,7 +15,7 @@ const isOpen = computed(() => floatingUIState.isOpen(props.componentId));
 const displayLabel = computed(() => props.label ?? 'Open');
 
 const toggleOpen = () => {
-    if (isOpen.value === props.componentId) {
+    if (isOpen.value) {
         floatingUIState.close();
     } else {
         floatingUIState.open(props.componentId);
@@ -23,7 +23,7 @@ const toggleOpen = () => {
 };
 
 const handleClickOutside = (event: MouseEvent): void => {
-    if (!event.target.closest('.floating-ui-activator')) {
+    if (!(event.target as HTMLElement)?.closest('.floating-ui-activator')) {
         floatingUIState.close();
     }
 };

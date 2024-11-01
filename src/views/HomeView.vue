@@ -12,8 +12,8 @@ import SearchDatePick from '@/components/SearchDatePick.vue';
 import HeaderNav from '@/components/HeaderNav.vue';
 import FlightCard from '@/components/FlightCard.vue';
 
-import Flight from '@/models/flight.model';
 import router from '@/router';
+import {Flight, type FlightType} from "@/models/flight.model";
 
 const flightTypeLabel = ref('');
 const classLabel = ref('');
@@ -32,7 +32,7 @@ const classesOptions: ReadonlyArray<{ name: string; value: string }> = [
 const fromLocation = ref({ name: 'Prague', location: 'PRG, Europe, CZ' });
 const toLocation = ref({ name: 'Copenhagen', location: 'CPH, Europe, DK' });
 
-const flights = ref<ReadonlyArray<Flight>>([
+const flights = ref<ReadonlyArray<FlightType>>([
     new Flight(
         { name: 'WizzAir', logo: 'wizzair.png' },
         { name: 'PRG', time: new Date() },
@@ -102,9 +102,9 @@ const returnFlights = ref<ReadonlyArray<Flight>>([
     ),
 ]);
 
-const outboundFlight = ref<Flight>(null);
+const outboundFlight = ref<FlightType | null>(null);
 
-const handleSelect = (flight: Flight): void => {
+const handleSelect = (flight: FlightType): void => {
     switch (flight.type) {
     case 'outbound':
         flight.type = 'selected';
@@ -141,7 +141,7 @@ const handleSelect = (flight: Flight): void => {
         >
             <h2 class="font-medium text-lg mb-4">
                 <font-awesome-icon :icon="faPlane" />
-                <span class="ms-3">Flight</span>
+                <span id="flightTest" class="ms-3">Flight</span>
             </h2>
 
             <div class="flex gap-10 mb-6">
@@ -232,8 +232,8 @@ const handleSelect = (flight: Flight): void => {
 
             <div class="flex flex-col gap-y-6">
                 <flight-card
-                    v-for="flight in flights"
-                    :key="flight"
+                    v-for="(flight, index) in flights"
+                    :key="index"
                     :flight="flight"
                     :below-average-price="flight.price < 100"
                     @select="handleSelect(flight)"
@@ -252,8 +252,8 @@ const handleSelect = (flight: Flight): void => {
 
             <div class="flex flex-col gap-y-6">
                 <flight-card
-                    v-for="flight in returnFlights"
-                    :key="flight"
+                    v-for="(flight, index) in returnFlights"
+                    :key="index"
                     :flight="flight"
                     :below-average-price="flight.price < 100"
                     @select="handleSelect(flight)"

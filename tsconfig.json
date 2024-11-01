@@ -1,5 +1,6 @@
 {
   "files": [],
+  "exclude": ["tailwind.config.js"],
   "references": [
     {
       "path": "./tsconfig.node.json"

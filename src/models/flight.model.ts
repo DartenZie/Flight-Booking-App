@@ -1,4 +1,4 @@
-export default class Flight {
+export class Flight {
     airline: { name: string; logo: string };
     departure: { name: string; time: Date };
     arrival: { name: string };
@@ -45,3 +45,7 @@ export default class Flight {
         return `${hours}:${minutes}`;
     }
 }
+
+export type FlightType = Pick<Flight, keyof Flight>;
+
+
