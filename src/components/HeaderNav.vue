@@ -26,8 +26,8 @@ onUnmounted(() => {
             </router-link>
 
             <div class="flex gap-x-8">
-                <button class="btn-text h-10 text-black hover:text-black">Register</button>
-                <button class="btn-primary h-10">Sign In</button>
+                <router-link to="/register" class="btn-text h-10 text-black hover:text-black">Register</router-link>
+                <router-link to="/login" class="btn-primary h-10">Sign In</router-link>
             </div>
         </div>
     </nav>
