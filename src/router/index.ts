@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router';
+import {loadLayoutMiddleware} from "@/router/middleware/loadLayoutMiddleware";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,16 +8,18 @@ const router = createRouter({
             path: '/',
             name: 'home',
             component: () => import('../views/HomeView.vue'),
+            meta: { layout: 'AppLayout'}
         },
         {
             path: '/book',
             name: 'book',
-            component: () => import('../views/BookView.vue')
+            component: () => import('../views/BookView.vue'),
+            meta: { layout: 'AppLayout'}
         },
         {
-            path: '/login',
-            name: 'login',
-            component: () => import('../views/Login.vue')
+            path: '/sign-in',
+            name: 'sign-in',
+            component: () => import('../views/SignIn.vue')
         },
         {
             path: '/forgot',
@@ -24,11 +27,13 @@ const router = createRouter({
             component: () => import('../views/Forgot.vue')
         },
         {
-            path: '/register',
-            name: 'register',
-            component: () => import('../views/Register.vue')
+            path: '/sign-up',
+            name: 'sign-up',
+            component: () => import('../views/SignUp.vue')
         }
     ]
 });
+
+router.beforeEach(loadLayoutMiddleware);
 
 export default router;

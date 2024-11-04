@@ -9,12 +9,12 @@ import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
         <div class="container mx-auto py-4 flex justify-between items-center">
             <router-link to="/" class="block">
                 <span class="text-xl">
-                    Fly<span class="font-semibold">High</span>
+                    Sky<span class="font-semibold">Trip</span>
                 </span>
             </router-link>
 
             <div class="flex gap-x-8">
-                <router-link to="/register" class="btn-text h-10">Register</router-link>
+                <router-link to="/sign-up" class="btn-text h-10">Register</router-link>
             </div>
         </div>
     </nav>
@@ -30,7 +30,7 @@ import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
                     </div>
 
                     <div class="flex justify-between items-center">
-                        <router-link class="btn-text h-8" to="/login">Remembered?</router-link>
+                        <router-link class="btn-text h-8" to="/sign-in">Remembered?</router-link>
 
                         <button class="btn-primary h-12" type="submit">
                             <span class="me-7">Submit</span>

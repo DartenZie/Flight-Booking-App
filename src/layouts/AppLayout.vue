@@ -31,4 +31,6 @@ onUnmounted(() => {
             </div>
         </div>
     </nav>
+
+    <slot />
 </template>

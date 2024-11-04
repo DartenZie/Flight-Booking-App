@@ -123,8 +123,6 @@ const handleSelect = (flight: FlightType): void => {
 </script>
 
 <template>
-    <header-nav />
-
     <div class="bg-hero bg-cover bg-center h-160">
         <div
             class="container mx-auto h-full flex flex-auto items-center justify-start"

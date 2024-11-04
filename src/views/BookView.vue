@@ -5,8 +5,6 @@ import { faArrowLeft, faShoePrints, faPlane, faChevronRight } from '@fortawesome
 </script>
 
 <template>
-    <header-nav />
-
     <div class="relative bg-copenhagen bg-cover bg-center h-160">
         <div class="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-green-100 via-green-50 to-transparent opacity-80"></div>
 
