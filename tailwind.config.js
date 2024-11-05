@@ -14,6 +14,15 @@ export default {
             height: {
                 '160': '40rem',
                 '68': '17rem',
+            },
+            borderWidth: {
+                '5': '5px'
+            },
+            gridTemplateColumns: {
+                'admin': '24rem minmax(0, 1fr)'
+            },
+            gridTemplateRows: {
+                'min': 'min-content',
             }
         },
     },
