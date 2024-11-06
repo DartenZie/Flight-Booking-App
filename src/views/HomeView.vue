@@ -9,7 +9,6 @@ import FloatingUiActivator from '@/components/floating-ui/FloatingUiActivator.vu
 import FloatingUiDropdown from '@/components/floating-ui/FloatingUiDropdown.vue';
 import SearchInput from '@/components/SearchInput.vue';
 import SearchDatePick from '@/components/SearchDatePick.vue';
-import HeaderNav from '@/components/HeaderNav.vue';
 import FlightCard from '@/components/FlightCard.vue';
 
 import router from '@/router';
@@ -116,7 +115,7 @@ const handleSelect = (flight: FlightType): void => {
         break;
     case 'oneWay':
     case 'return':
-        router.push('/book');
+        router.push('/book/passenger-information');
         break;
     }
 };

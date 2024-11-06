@@ -11,12 +11,6 @@ const router = createRouter({
             meta: { layout: 'AppLayout' }
         },
         {
-            path: '/book',
-            name: 'book',
-            component: () => import('../views/BookView.vue'),
-            meta: { layout: 'AppLayout' }
-        },
-        {
             path: '/sign-in',
             name: 'sign-in',
             component: () => import('../views/SignIn.vue'),
@@ -50,6 +44,23 @@ const router = createRouter({
                 }
             ],
             meta: { layout: 'AdminLayout' }
+        },
+        {
+            path: '/book',
+            name: 'book',
+            children: [
+                {
+                    path: 'passenger-information',
+                    name: 'passenger-information',
+                    component: () => import('../views/reservation/PassengerInformationView.vue')
+                },
+                {
+                    path: 'seat-reservation',
+                    name: 'seat-reservation',
+                    component: () => import('../views/reservation/SeatReservationView.vue')
+                }
+            ],
+            meta: { layout: 'AppLayout' }
         }
     ]
 });

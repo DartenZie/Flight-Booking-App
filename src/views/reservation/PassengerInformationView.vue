@@ -1,7 +1,12 @@
 <script setup lang="ts">
-import HeaderNav from '@/components/HeaderNav.vue';
+import router from '@/router';
+
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faArrowLeft, faShoePrints, faPlane, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+
+const submitForm = (): void => {
+    router.push('/book/seat-reservation');
+};
 </script>
 
 <template>
@@ -32,7 +37,7 @@ import { faArrowLeft, faShoePrints, faPlane, faChevronRight } from '@fortawesome
                     <div class="shrink-0">
                         <img
                             class="size-12 object-contain"
-                            src="@/static/companies/wizzair.png"
+                            src="../../static/companies/wizzair.png"
                             alt="Wizz Air Logo"
                         />
                     </div>
@@ -80,7 +85,7 @@ import { faArrowLeft, faShoePrints, faPlane, faChevronRight } from '@fortawesome
                     <div class="shrink-0">
                         <img
                             class="size-12 object-contain"
-                            src="@/static/companies/ryanair.png"
+                            src="../../static/companies/ryanair.png"
                             alt="RyanAir Logo"
                         />
                     </div>
@@ -138,7 +143,7 @@ import { faArrowLeft, faShoePrints, faPlane, faChevronRight } from '@fortawesome
     </div>
 
     <div class="container mt-24 mb-24 mx-auto">
-        <form>
+        <form @submit.prevent="submitForm()">
             <div class="space-y-12">
                 <div class="border-b border-gray-900/10 pb-12">
                     <div class="mt-10 grid grid-cols-1 gap-x-40 gap-y-8 sm:grid-cols-6">

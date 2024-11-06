@@ -15,11 +15,15 @@ export default {
                 '160': '40rem',
                 '68': '17rem',
             },
+            width: {
+                '144': '36rem'
+            },
             borderWidth: {
                 '5': '5px'
             },
             gridTemplateColumns: {
-                'admin': '24rem minmax(0, 1fr)'
+                'admin': '24rem minmax(0, 1fr)',
+                'seats': 'repeat(3, 2.5rem) 1rem repeat(4, 2.5rem) 1rem repeat(3, 2.5rem)',
             },
             gridTemplateRows: {
                 'min': 'min-content',
