@@ -29,6 +29,28 @@ const router = createRouter({
             meta: { layout: 'AuthLayout' }
         },
         {
+            path: '/profile',
+            name: 'profile',
+            children: [
+                {
+                    path: 'dashboard',
+                    name: 'profileDashboard',
+                    component: () => import('../views/profile/DashboardView.vue')
+                },
+                {
+                    path: 'reservations',
+                    name: 'reservations',
+                    component: () => import('../views/profile/ReservationsView.vue')
+                },
+                {
+                    path: 'settings',
+                    name: 'settings',
+                    component: () => import('../views/profile/ProfileSettingsView.vue')
+                },
+            ],
+            meta: { layout: 'ProfileLayout' }
+        },
+        {
             path: '/admin',
             name: 'admin',
             children: [

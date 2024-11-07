@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue';
+import {onMounted, ref} from 'vue';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faPlane } from '@fortawesome/free-solid-svg-icons';
@@ -119,6 +119,11 @@ const handleSelect = (flight: FlightType): void => {
         break;
     }
 };
+
+onMounted(() => {
+    flightTypeLabel.value = flightTypeOptions[0].value;
+    classLabel.value = classesOptions[0].value;
+});
 </script>
 
 <template>

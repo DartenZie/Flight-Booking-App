@@ -17,7 +17,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <nav :class="['fixed top-0 z-50 w-full transition-colors duration-200', isScrolled ? 'bg-white shadow-lg' : '']">
+    <nav :class="['fixed top-0 z-10 w-full transition-colors duration-200', isScrolled ? 'bg-white shadow-lg' : '']">
         <div class="container mx-auto py-4 flex justify-between items-center">
             <router-link to="/" class="block">
                 <span class="text-xl">

@@ -19,6 +19,7 @@ export default {
                 '144': '36rem'
             },
             borderWidth: {
+                '3': '3px',
                 '5': '5px'
             },
             gridTemplateColumns: {

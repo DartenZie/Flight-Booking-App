@@ -10,6 +10,7 @@ import {faTruckPlane} from "@fortawesome/free-solid-svg-icons";
     <div class="p-8 h-screen bg-[#B5C2CA]">
         <div class="grid grid-cols-admin gap-x-6 h-full">
             <div class="w-96 p-10 bg-[#F0F3F4] border-[#D6DDE1] border-5 rounded-3xl shadow-md">
+
                 <router-link to="/admin/dashboard" class="block mb-10">
                     <span class="text-xl">
                         Sky<span class="font-semibold">Trip</span>
@@ -45,6 +46,8 @@ import {faTruckPlane} from "@fortawesome/free-solid-svg-icons";
                         <div>Manage Airlines</div>
                     </div>
                 </router-link>
+
+
             </div>
 
             <div class="grid lg:grid-cols-12 grid-rows-min gap-6">

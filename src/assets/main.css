@@ -10,4 +10,28 @@
     .btn-primary {
         @apply flex items-center bg-slate-950 text-white rounded-lg px-6;
     }
+
+    .btn-danger {
+        @apply flex items-center bg-red-600 text-white rounded-lg px-6 hover:bg-red-500;
+    }
+
+    .btn-default {
+        @apply flex items-center bg-white text-black rounded-lg px-6 hover:bg-gray-50;
+    }
+
+    .btn-filter {
+        @apply flex items-center bg-white text-slate-950 rounded-lg px-6 hover:bg-gray-50;
+    }
+
+    .btn-filter.active {
+        @apply bg-slate-950 hover:bg-slate-950 text-white;
+    }
+
+    .admin-link {
+        @apply block mb-2 h-14 rounded-3xl text-slate-700 hover:text-slate-950;
+    }
+
+    .admin-link-active {
+        @apply bg-slate-950 text-gray-100 hover:text-white;
+    }
 }
