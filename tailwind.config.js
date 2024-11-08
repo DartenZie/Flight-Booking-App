@@ -5,8 +5,11 @@ export default {
     theme: {
         extend: {
             backgroundImage: {
-                'hero': "url('/src/assets/images/hero-background.jpg')",
-                'copenhagen': "url('/src/assets/images/cities/copenhagen-bg.jpg')"
+                'hero': 'url(\'/src/assets/images/hero-background.jpg\')',
+                'copenhagen': 'url(\'/src/assets/images/cities/copenhagen-bg.jpg\')',
+                'world': 'url(\'/src/assets/images/world_map.png\')',
+
+                'vertical-dashed': 'linear-gradient(rgb(148 163 184 / var(--tw-bg-opacity)) 66%, rgba(255,255,255,0) 0%)'
             },
             backgroundPosition: {
                 'top-96': 'center top -24rem',

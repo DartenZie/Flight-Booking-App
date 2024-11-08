@@ -7,16 +7,29 @@ import AdminCard from "@/components/admin/AdminCard.vue";
 import FloatingUiDropdown from "@/components/floating-ui/FloatingUiDropdown.vue";
 import ConfirmFlightCancelModal from "@/components/modals/ConfirmFlightCancelModal.vue";
 
-const confirmFlightCancel = createConfirmDialog(ConfirmFlightCancelModal, { msg: 'Hi'});
+import router from "@/router";
+import BoardingTicketModal from "@/components/modals/BoardingTicketModal.vue";
+
+const confirmFlightCancel = createConfirmDialog(ConfirmFlightCancelModal, {});
+const boardingTicket = createConfirmDialog(BoardingTicketModal, {});
 
 confirmFlightCancel.onConfirm(() => {
+    // Todo cancel flight
     console.log('Flight was canceled');
     confirmFlightCancel.close();
 });
 confirmFlightCancel.onCancel(confirmFlightCancel.close);
 
+boardingTicket.onCancel(boardingTicket.close);
+
 const handleSelect = (key: string, index: number) => {
     switch (key) {
+    case 'view':
+        boardingTicket.reveal();
+        break;
+    case 'change':
+        router.push('/profile/reservations/change');
+        break;
     case 'cancelFlight':
         confirmFlightCancel.reveal();
         break;
@@ -32,7 +45,7 @@ const handleSelect = (key: string, index: number) => {
             <font-awesome-icon :icon="faSearch" class="absolute bottom-1/2 translate-y-1/2 right-8" />
         </div>
 
-        <button class="btn-primary">Add Airport</button>
+        <router-link to="/" class="btn-primary">Book flight</router-link>
     </admin-card>
 
     <admin-card class="col-span-12">

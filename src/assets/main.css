@@ -15,6 +15,14 @@
         @apply flex items-center bg-red-600 text-white rounded-lg px-6 hover:bg-red-500;
     }
 
+    .btn-success {
+        @apply flex items-center bg-green-600 text-white rounded-lg px-6 hover:bg-green-500;
+    }
+
+    .btn-secondary {
+        @apply flex items-center bg-blue-600 text-white rounded-lg px-6 hover:bg-blue-500;
+    }
+
     .btn-default {
         @apply flex items-center bg-white text-black rounded-lg px-6 hover:bg-gray-50;
     }

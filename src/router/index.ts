@@ -31,6 +31,7 @@ const router = createRouter({
         {
             path: '/profile',
             name: 'profile',
+            redirect: '/profile/dashboard',
             children: [
                 {
                     path: 'dashboard',
@@ -40,7 +41,18 @@ const router = createRouter({
                 {
                     path: 'reservations',
                     name: 'reservations',
-                    component: () => import('../views/profile/ReservationsView.vue')
+                    children: [
+                        {
+                            path: '',
+                            name: 'reservations-list',
+                            component: () => import('../views/profile/ReservationsView.vue'),
+                        },
+                        {
+                            path: 'change',
+                            name: 'reservations-change',
+                            component: () => import('../views/profile/ReservationChangeView.vue')
+                        }
+                    ]
                 },
                 {
                     path: 'settings',
