@@ -4,31 +4,31 @@
 
 @layer components {
     .btn-text {
-        @apply flex items-center px-0.5 bg-transparent border-b-2 border-transparent text-slate-600 outline-none font-medium hover:border-slate-900 hover:text-slate-900;
+        @apply flex items-center px-0.5 bg-transparent border-b-2 border-transparent text-slate-600 outline-none font-medium hover:border-slate-900 hover:text-slate-900 text-nowrap;
     }
 
     .btn-primary {
-        @apply flex items-center bg-slate-950 text-white rounded-lg px-6;
+        @apply flex items-center bg-slate-950 text-white rounded-lg px-6 text-nowrap;
     }
 
     .btn-danger {
-        @apply flex items-center bg-red-600 text-white rounded-lg px-6 hover:bg-red-500;
+        @apply flex items-center bg-red-600 text-white rounded-lg px-6 hover:bg-red-500 text-nowrap;
     }
 
     .btn-success {
-        @apply flex items-center bg-green-600 text-white rounded-lg px-6 hover:bg-green-500;
+        @apply flex items-center bg-green-600 text-white rounded-lg px-6 hover:bg-green-500 text-nowrap;
     }
 
     .btn-secondary {
-        @apply flex items-center bg-blue-600 text-white rounded-lg px-6 hover:bg-blue-500;
+        @apply flex items-center bg-blue-600 text-white rounded-lg px-6 hover:bg-blue-500 text-nowrap;
     }
 
     .btn-default {
-        @apply flex items-center bg-white text-black rounded-lg px-6 hover:bg-gray-50;
+        @apply flex items-center bg-white text-black rounded-lg px-6 hover:bg-gray-50 text-nowrap;
     }
 
     .btn-filter {
-        @apply flex items-center bg-white text-slate-950 rounded-lg px-6 hover:bg-gray-50;
+        @apply flex items-center bg-white text-slate-950 rounded-lg px-6 hover:bg-gray-50 text-nowrap;
     }
 
     .btn-filter.active {
