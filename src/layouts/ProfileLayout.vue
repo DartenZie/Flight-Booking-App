@@ -8,7 +8,7 @@ import {faDashboard, faCalendar, faUserGear} from "@fortawesome/free-solid-svg-i
         <div class="grid grid-cols-admin gap-x-6 h-full ps-8">
             <div class="w-96 flex flex-col justify-between p-10 bg-[#F0F3F4] border-[#D6DDE1] border-5 rounded-3xl shadow-md my-8">
                 <div>
-                    <router-link to="/admin/dashboard" class="block mb-10">
+                    <router-link to="/profile/dashboard" class="block mb-10">
                         <span class="text-xl">
                             Sky<span class="font-semibold">Trip</span>
                         </span>

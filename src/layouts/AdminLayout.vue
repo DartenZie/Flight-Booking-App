@@ -19,28 +19,21 @@ import {faTruckPlane} from "@fortawesome/free-solid-svg-icons";
 
                 <hr class="mb-10" />
 
-                <router-link to="/admin/dashboard" active-class="bg-slate-950 text-[#fff] hover:text-[#fff]" class="block mb-2 h-14 rounded-3xl text-slate-700 hover:text-slate-950">
+                <router-link to="/admin/dashboard" active-class="admin-link-active" class="admin-link">
                     <div class="px-8 flex h-full items-center gap-x-4">
                         <font-awesome-icon :icon="faDashboard" class="w-4" />
                         <div>Dashboard</div>
                     </div>
                 </router-link>
 
-                <router-link to="/admin/manage-flights" active-class="bg-slate-950 text-[#fff] hover:text-[#fff]" class="block mb-2 h-14 rounded-3xl text-slate-700 hover:text-slate-950">
-                    <div class="px-8 flex h-full items-center gap-x-4">
-                        <font-awesome-icon :icon="faPlaneUp" class="w-4" />
-                        <div>Manage Flights</div>
-                    </div>
-                </router-link>
-
-                <router-link to="/admin/manage-airports" active-class="bg-slate-950 text-[#fff] hover:text-[#fff]" class="block mb-2 h-14 rounded-3xl text-slate-700 hover:text-slate-950">
+                <router-link to="/admin/manage-airports" active-class="admin-link-active" class="admin-link">
                     <div class="px-8 flex h-full items-center gap-x-4">
                         <font-awesome-icon :icon="faPlaneDeparture" class="w-4" />
                         <div>Manage Airports</div>
                     </div>
                 </router-link>
 
-                <router-link to="/admin/manage-airlines" active-class="bg-slate-950 text-[#fff] hover:text-[#fff]" class="block mb-2 h-14 rounded-3xl text-slate-700 hover:text-slate-950">
+                <router-link to="/admin/manage-airlines" active-class="admin-link-active" class="admin-link">
                     <div class="px-8 flex h-full items-center gap-x-4">
                         <font-awesome-icon :icon="faTruckPlane" class="w-4" />
                         <div>Manage Airlines</div>
