@@ -92,7 +92,7 @@ const handleSelect = (key: string) => {
                 <div>
                     <div class="text-sm mb-1">1h 20m flight from <span class="font-semibold">Letiště Václava Havla Praha</span> to <span class="font-semibold">Københavns Lufthavn, Kastrup</span></div>
                     <div class="flex gap-x-2 items-center">
-                        <img src="@/static/companies/ryanair.png" alt="RyanAir Logo" class="h-4 w-4" />
+                        <img src="../../static/companies/ryanair.png" alt="RyanAir Logo" class="h-4 w-4" />
                         <div class="text-xs text-gray-700 font-light">Ryanair &#183; Boeing 737-800 &#183; Economy</div>
                     </div>
                 </div>

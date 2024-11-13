@@ -15,7 +15,7 @@
                         <div class="space-y-4">
                             <div class="grid grid-cols-[4rem_1fr_6rem] items-center gap-x-6 px-6 py-3 border border-gray-200 rounded-xl cursor-pointer hover:outline hover:outline-gray-300 hover:outline-2">
                                 <div class="col-span-1">
-                                    <img class="max-h-full max-w-full" src="@/assets/images/luggages/luggage-small.svg" alt="Small luggage illustration">
+                                    <img class="max-h-full max-w-full" src="../../assets/images/luggages/luggage-small.svg" alt="Small luggage illustration">
                                 </div>
                                 <div class="col-span-1">
                                     <div class="text-xl font-medium">Small luggage</div>
@@ -31,7 +31,7 @@
 
                             <div class="grid grid-cols-[4rem_1fr_6rem] items-center gap-x-6 px-6 py-3 border border-gray-200 rounded-xl cursor-pointer hover:outline hover:outline-gray-300 hover:outline-2">
                                 <div class="col-span-1">
-                                    <img class="max-h-full max-w-full" src="@/assets/images/luggages/luggage-medium.svg" alt="Medium luggage illustration">
+                                    <img class="max-h-full max-w-full" src="../../assets/images/luggages/luggage-medium.svg" alt="Medium luggage illustration">
                                 </div>
                                 <div class="col-span-1">
                                     <div class="text-xl font-medium">Medium luggage</div>
@@ -47,7 +47,7 @@
 
                             <div class="grid grid-cols-[4rem_1fr_6rem] items-center gap-x-6 px-6 py-3 border border-gray-200 rounded-xl cursor-pointer hover:outline hover:outline-gray-300 hover:outline-2">
                                 <div class="col-span-1">
-                                    <img class="max-h-full max-w-full" src="@/assets/images/luggages/luggage-large.svg" alt="Large luggage illustration">
+                                    <img class="max-h-full max-w-full" src="../../assets/images/luggages/luggage-large.svg" alt="Large luggage illustration">
                                 </div>
                                 <div class="col-span-1">
                                     <div class="text-xl font-medium">Large luggage</div>

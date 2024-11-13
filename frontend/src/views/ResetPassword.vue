@@ -26,7 +26,7 @@ import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
                 </form>
             </div>
             <div class="lg:col-span-4 h-full content-center">
-                <img src="@/assets/illustrations/forgot_password_illustration.svg" alt="Forgot password illustration" class="w-full" />
+                <img src="../assets/illustrations/forgot_password_illustration.svg" alt="Forgot password illustration" class="w-full" />
             </div>
         </div>
     </div>

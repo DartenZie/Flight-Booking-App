@@ -23,7 +23,7 @@ import {faCircleArrowRight} from "@fortawesome/free-solid-svg-icons";
 
                 <div class="grid grid-cols-12 gap-x-3 w-full items-center">
                     <div class="col-span-2">
-                        <img class="w-10 h-10 object-contain" src="@/static/companies/wizzair.png" alt="Wizzair" />
+                        <img class="w-10 h-10 object-contain" src="../../static/companies/wizzair.png" alt="Wizzair" />
                     </div>
                     <div class="col-span-6">
                         <div class="flex gap-x-3 items-center -mb-1">
@@ -50,7 +50,7 @@ import {faCircleArrowRight} from "@fortawesome/free-solid-svg-icons";
 
                 <div class="grid grid-cols-12 gap-x-3 w-full items-center">
                     <div class="col-span-2">
-                        <img class="w-10 h-10 object-contain" src="@/static/companies/ryanair.png" alt="Ryanair" />
+                        <img class="w-10 h-10 object-contain" src="../../static/companies/ryanair.png" alt="Ryanair" />
                     </div>
                     <div class="col-span-6">
                         <div class="flex gap-x-3 items-center -mb-1">
@@ -83,7 +83,7 @@ import {faCircleArrowRight} from "@fortawesome/free-solid-svg-icons";
                 <div class="relative w-full bg-gray-200 rounded-full h-8 overflow-hidden">
                     <div class="bg-purple-400 h-8" style="width: 33%"></div>
 
-                    <img class="absolute top-0 h-full p-1 rounded-full" src="@/assets/images/space-elements/earth.svg" alt="Earth" />
+                    <img class="absolute top-0 h-full p-1 rounded-full" src="../../assets/images/space-elements/earth.svg" alt="Earth" />
 
                     <div class="absolute bottom-1/2 right-4 translate-y-1/2 text-sm">0,3x <span class="font-light">around Earth</span></div>
                 </div>
@@ -91,7 +91,7 @@ import {faCircleArrowRight} from "@fortawesome/free-solid-svg-icons";
                 <div class="relative w-full bg-gray-200 rounded-full h-8 overflow-hidden">
                     <div class="bg-purple-400 h-8" style="width: 3%"></div>
 
-                    <img class="absolute top-0 h-full p-1 rounded-full" src="@/assets/images/space-elements/moon.svg" alt="Moon" />
+                    <img class="absolute top-0 h-full p-1 rounded-full" src="../../assets/images/space-elements/moon.svg" alt="Moon" />
 
                     <div class="absolute bottom-1/2 right-4 translate-y-1/2 text-sm">0,03x <span class="font-light">to the Moon</span></div>
                 </div>
@@ -99,7 +99,7 @@ import {faCircleArrowRight} from "@fortawesome/free-solid-svg-icons";
                 <div class="relative w-full bg-gray-200 rounded-full h-8 overflow-hidden">
                     <div class="bg-purple-400 h-8" style="width: 0%"></div>
 
-                    <img class="absolute top-0 h-full p-1 rounded-full" src="@/assets/images/space-elements/mars.svg" alt="Mars" />
+                    <img class="absolute top-0 h-full p-1 rounded-full" src="../../assets/images/space-elements/mars.svg" alt="Mars" />
 
                     <div class="absolute bottom-1/2 right-4 translate-y-1/2 text-sm">0,00003x <span class="font-light">to Mars</span></div>
                 </div>

@@ -95,7 +95,7 @@ import {faPlaneDeparture} from "@fortawesome/free-solid-svg-icons";
                     </div>
                 </div>
                 <div class="row-span-1">
-                    <img src="@/assets/images/barcode.gif" alt="ABC-abc-1234" class="mt-3">
+                    <img src="../assets/images/barcode.gif" alt="ABC-abc-1234" class="mt-3">
                 </div>
             </div>
         </div>
