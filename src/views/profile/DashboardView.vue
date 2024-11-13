@@ -2,7 +2,7 @@
 import AdminCard from "@/components/admin/AdminCard.vue";
 import STPassportComponent from "@/components/admin/STPassportComponent.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faCircleArrowRight, faPassport} from "@fortawesome/free-solid-svg-icons";
+import {faCircleArrowRight} from "@fortawesome/free-solid-svg-icons";
 </script>
 
 <template>
@@ -10,10 +10,10 @@ import {faCircleArrowRight, faPassport} from "@fortawesome/free-solid-svg-icons"
         <h1 class="text-center text-2xl font-medium mb-3">Welcome back Emily!</h1>
         <p class="text-center text-lg font-light">You have currently <span class="text-blue-600 font-medium">2</span> scheduled flights.</p>
     </admin-card>
-    <admin-card :padding="false" class="col-span-4 h-64">
+    <admin-card :padding="false" class="col-span-4 h-64 overflow-hidden">
         <STPassportComponent />
     </admin-card>
-    <admin-card :padding="false" class="col-span-4 h-64">
+    <admin-card :padding="false" class="col-span-4 h-64 overflow-hidden">
         <div class="h-full py-3 px-6 grid grid-rows-[1fr_1px_1fr] items-center gap-y-3">
             <div>
                 <div class="flex justify-between items-center mb-2">
@@ -68,7 +68,7 @@ import {faCircleArrowRight, faPassport} from "@fortawesome/free-solid-svg-icons"
             </div>
         </div>
     </admin-card>
-    <admin-card :padding="false" class="col-span-4 h-64">
+    <admin-card :padding="false" class="col-span-4 h-64 overflow-hidden">
         <div class="h-full py-3 px-6">
             <div class="mb-4">
                 <div class="font-medium">Flight Distance</div>

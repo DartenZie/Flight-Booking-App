@@ -65,16 +65,46 @@ const router = createRouter({
         {
             path: '/admin',
             name: 'admin',
+            redirect: '/admin/dashboard',
             children: [
                 {
                     path: 'dashboard',
                     name: 'dashboard',
-                    component: () => import('../views/admin/DashboardView.vue')
+                    component: () => import('@/views/admin/DashboardView.vue')
                 },
+                {
+                    path: 'manage-flights',
+                    name: 'manage-flights',
+                    children: [
+                        {
+                            path: '',
+                            name: 'manage-flights-list',
+                            component: () => import('@/views/admin/ManageFlightsView.vue')
+                        },
+                        {
+                            path: 'schedule',
+                            name: 'manage-flights-schedule',
+                            component: () => import('@/views/admin/ScheduleFlightView.vue')
+                        }
+                    ]
+                }
+            ],
+            meta: { layout: 'AdminLayout' }
+        },
+        {
+            path: '/super-admin',
+            name: 'super-admin',
+            redirect: '/super-admin/manage-airports',
+            children: [
                 {
                     path: 'manage-airports',
                     name: 'manage-airports',
-                    component: () => import('../views/admin/ManageAirports.vue')
+                    component: () => import('@/views/super-admin/ManageAirports.vue')
+                },
+                {
+                    path: 'manage-airlines',
+                    name: 'manage-airlines',
+                    component: () => import('@/views/super-admin/ManageAirlinesView.vue')
                 }
             ],
             meta: { layout: 'AdminLayout' }

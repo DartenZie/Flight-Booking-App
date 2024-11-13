@@ -6,14 +6,17 @@ import {faClock, faLocationDot, faChevronDown, faSearch} from "@fortawesome/free
 import AdminCard from "@/components/admin/AdminCard.vue";
 import FloatingUiDropdown from "@/components/floating-ui/FloatingUiDropdown.vue";
 import ConfirmFlightCancelModal from "@/components/modals/ConfirmFlightCancelModal.vue";
+import ManageFlightPricesModal from "@/components/modals/ManageFlightPricesModal.vue";
 
-import router from "@/router";
-import BoardingTicketModal from "@/components/modals/BoardingTicketModal.vue";
-import OnlineCheckinModal from "@/components/modals/OnlineCheckinModal.vue";
-
+const manageFlightPricesCancel = createConfirmDialog(ManageFlightPricesModal, {});
 const confirmFlightCancel = createConfirmDialog(ConfirmFlightCancelModal, {});
-const boardingTicket = createConfirmDialog(BoardingTicketModal, {});
-const onlineCheckIn = createConfirmDialog(OnlineCheckinModal, {});
+
+manageFlightPricesCancel.onConfirm(() => {
+    // Todo change flight tickets
+    console.log('Flight ticket prices changed');
+    manageFlightPricesCancel.close();
+});
+manageFlightPricesCancel.onCancel(manageFlightPricesCancel.close);
 
 confirmFlightCancel.onConfirm(() => {
     // Todo cancel flight
@@ -22,25 +25,10 @@ confirmFlightCancel.onConfirm(() => {
 });
 confirmFlightCancel.onCancel(confirmFlightCancel.close);
 
-boardingTicket.onCancel(boardingTicket.close);
-
-onlineCheckIn.onConfirm(() => {
-    // Todo online checkin
-    console.log('Flight was checked in');
-    onlineCheckIn.close();
-});
-onlineCheckIn.onCancel(onlineCheckIn.close);
-
 const handleSelect = (key: string) => {
     switch (key) {
-    case 'view':
-        boardingTicket.reveal();
-        break;
-    case 'change':
-        router.push('/profile/reservations/change');
-        break;
-    case 'checkIn':
-        onlineCheckIn.reveal();
+    case 'manageTickets':
+        manageFlightPricesCancel.reveal();
         break;
     case 'cancelFlight':
         confirmFlightCancel.reveal();
@@ -57,11 +45,11 @@ const handleSelect = (key: string) => {
             <font-awesome-icon :icon="faSearch" class="absolute bottom-1/2 translate-y-1/2 right-8" />
         </div>
 
-        <router-link to="/" class="btn-primary">Book flight</router-link>
+        <router-link to="/admin/manage-flights/schedule" class="btn-primary">Schedule flight</router-link>
     </admin-card>
 
     <admin-card class="col-span-12">
-        <h2 class="text-2xl font-semibold mb-2">Bookings</h2>
+        <h2 class="text-2xl font-semibold mb-2">Scheduled flights</h2>
         <p class="text-md text-gray-700 mb-6">See your scheduled flights in the calendar view.</p>
 
         <div class="grid grid-cols-1 gap-y-2">
@@ -91,10 +79,7 @@ const handleSelect = (key: string) => {
 
                 <div>
                     <div class="text-sm mb-1">1h 20m flight from <span class="font-semibold">Letiště Václava Havla Praha</span> to <span class="font-semibold">Københavns Lufthavn, Kastrup</span></div>
-                    <div class="flex gap-x-2 items-center">
-                        <img src="@/static/companies/ryanair.png" alt="RyanAir Logo" class="h-4 w-4" />
-                        <div class="text-xs text-gray-700 font-light">Ryanair &#183; Boeing 737-800 &#183; Economy</div>
-                    </div>
+                    <div class="text-xs text-gray-700 font-light">Boeing 737-800 &#183; 213 Seats &#183; 47% full</div>
                 </div>
 
                 <button class="relative block ms-auto me-8 btn-primary h-12" v-floating-ui-trigger="{ componentId: `edit-flight-${index}` }">
@@ -102,9 +87,7 @@ const handleSelect = (key: string) => {
                     <font-awesome-icon :icon="faChevronDown" />
 
                     <floating-ui-dropdown :component-id="`edit-flight-${index}`" position="right" @select="(key) => handleSelect(key, index)" :dropdown-items="[
-                        { name: 'view', value: 'View boarding ticket' },
-                        { name: 'change', value: 'Flight change' },
-                        { name: 'checkIn', value: 'Online check-in' },
+                        { name: 'manageTickets', value: 'Manage ticket prices' },
                         { name: 'cancelFlight', value: 'Cancel flight' },
                     ]" />
                 </button>

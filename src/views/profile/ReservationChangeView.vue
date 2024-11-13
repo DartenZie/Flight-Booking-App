@@ -2,6 +2,18 @@
 import AdminCard from "@/components/admin/AdminCard.vue";
 import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+
+import AddLuggageModal from "@/components/modals/AddLuggageModal.vue";
+import {createConfirmDialog} from "vuejs-confirm-dialog";
+
+const addLuggageModal = createConfirmDialog(AddLuggageModal, {});
+
+addLuggageModal.onConfirm(() => {
+    // Todo add luggage
+    console.log('Luggage was added');
+    onlineCheckIn.close();
+});
+addLuggageModal.onCancel(addLuggageModal.close);
 </script>
 
 <template>
@@ -130,7 +142,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
                     <button class="h-10 btn-filter">Passenger 2</button>
                 </div>
 
-                <button class="btn-primary h-12">Add luggage</button>
+                <button class="btn-primary h-12" @click="addLuggageModal.reveal()">Add luggage</button>
             </div>
 
             <div>
