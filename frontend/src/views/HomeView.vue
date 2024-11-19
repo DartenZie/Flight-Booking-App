@@ -13,6 +13,7 @@ import FlightCard from '@/components/FlightCard.vue';
 
 import router from '@/router';
 import {Flight, type FlightType} from "@/models/flight.model";
+import {useAuthenticatedFetch} from "@/utils/my-fetch";
 
 const flightTypeLabel = ref('');
 const classLabel = ref('');
@@ -120,9 +121,12 @@ const handleSelect = (flight: FlightType): void => {
     }
 };
 
-onMounted(() => {
+onMounted(async () => {
     flightTypeLabel.value = flightTypeOptions[0].value;
     classLabel.value = classesOptions[0].value;
+
+    const { data } = await useAuthenticatedFetch('airport').get().json();
+    console.log(data.value);
 });
 </script>
 

@@ -1,7 +1,21 @@
 <script setup lang="ts">
-import FormControl from "@/components/FormControl.vue";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
+import FormControl from '@/components/FormControl.vue';
+import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
+import {faChevronRight} from '@fortawesome/free-solid-svg-icons';
+import {ref} from 'vue';
+import {useAuthStore} from '@/store/auth.store';
+import {useRouter} from 'vue-router';
+
+const auth = useAuthStore();
+const router = useRouter();
+
+const email = ref('');
+const password = ref('');
+
+async function handleSubmit(): void {
+    await auth.login(email.value, password.value);
+    await router.push('/profile/dashboard');
+}
 </script>
 
 <template>
@@ -10,13 +24,13 @@ import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
             <div class="lg:col-span-3 h-full content-center">
                 <h1 class="font-medium text-3xl mb-10">Welcome back!</h1>
 
-                <form>
+                <form @submit.prevent="handleSubmit()">
                     <div class="mb-6">
-                        <form-control id="login" label="E-mail" type="email" placeholder="johndoe@gmail.com" />
+                        <form-control id="login" v-model="email" label="E-mail" type="email" placeholder="johndoe@gmail.com" />
                     </div>
 
                     <div class="mb-8">
-                        <form-control id="password" label="Password" type="password" />
+                        <form-control id="password" v-model="password" label="Password" type="password" />
                     </div>
 
                     <div class="flex justify-between items-center">

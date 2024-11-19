@@ -1,6 +1,16 @@
 <script setup lang="ts">
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faDashboard, faCalendar, faUserGear} from "@fortawesome/free-solid-svg-icons";
+import {faDashboard, faCalendar, faUserGear, faRightFromBracket} from "@fortawesome/free-solid-svg-icons";
+import {useAuthStore} from "@/store/auth.store";
+import {useRouter} from "vue-router";
+
+const auth = useAuthStore();
+const router = useRouter();
+
+function handleLogout() {
+    auth.logout();
+    router.push('/sign-in');
+}
 </script>
 
 <template>
@@ -36,11 +46,18 @@ import {faDashboard, faCalendar, faUserGear} from "@fortawesome/free-solid-svg-i
                             <div>Profile Settings</div>
                         </div>
                     </router-link>
+
+                    <hr class="mb-10" />
+
+                    <button class="admin-link px-8 flex items-center gap-x-4" @click="handleLogout()">
+                        <font-awesome-icon :icon="faRightFromBracket" class="w-4" />
+                        <span>Logout</span>
+                    </button>
                 </div>
 
                 <div class="flex flex-col items-center">
                     <div class="bg-white h-20 w-20 rounded-full border-3 border-white mb-6">
-                        <img src="../static/profile/profile.jpg" alt="Profile" class="w-full h-full object-cover rounded-full" />
+                        <img src="@/assets/images/profile_female_placeholder.svg" alt="Profile" class="w-full h-full object-cover rounded-full" />
                     </div>
                     <div class="font-medium text-xl mb-1">Emily Jonson</div>
                     <div class="font-normal text-md text-gray-500">emily.jonson@gmail.com</div>

@@ -1,5 +1,5 @@
 import type {DirectiveBinding} from "vue";
-import floatingUIState from "@/store/floatingUIStore";
+import {useFloatingUiStore} from "../store/floating-ui.store";
 
 // Floating UI trigger element class
 const FLOATING_UI_TRIGGER_CLASS = 'floating-ui-trigger';
@@ -10,19 +10,21 @@ interface FloatingUITriggerDirectiveOptions {
 
 export default {
     mounted: (el: HTMLElement, binding: DirectiveBinding<FloatingUITriggerDirectiveOptions>): void => {
+        const floatingUIStore = useFloatingUiStore();
+
         const { componentId } = binding.value;
 
         const toggleOpen = (): void => {
-            if (floatingUIState.isOpen(componentId)) {
-                floatingUIState.close();
+            if (floatingUIStore.isOpen(componentId)) {
+                floatingUIStore.close();
             } else {
-                floatingUIState.open(componentId);
+                floatingUIStore.open(componentId);
             }
         };
 
         const handleClickOutside = (event: MouseEvent): void => {
             if (!(event.target as HTMLElement)?.closest(`.${FLOATING_UI_TRIGGER_CLASS}`)) {
-                floatingUIState.close();
+                floatingUIStore.close();
             }
         };
 

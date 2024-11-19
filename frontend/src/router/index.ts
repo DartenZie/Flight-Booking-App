@@ -1,5 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import {loadLayoutMiddleware} from "@/router/middleware/loadLayoutMiddleware";
+import {loadLayoutMiddleware} from '@/router/middleware/loadLayoutMiddleware';
+import {authGuard} from './guards/auth.guard';
+import {signGuard} from "./guards/sign.guard";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,19 +16,22 @@ const router = createRouter({
             path: '/sign-in',
             name: 'sign-in',
             component: () => import('../views/SignIn.vue'),
-            meta: { layout: 'AuthLayout' }
+            meta: { layout: 'AuthLayout' },
+            beforeEnter: signGuard
         },
         {
             path: '/reset-password',
             name: 'reset-password',
             component: () => import('../views/ResetPassword.vue'),
-            meta: { layout: 'AuthLayout' }
+            meta: { layout: 'AuthLayout' },
+            beforeEnter: signGuard
         },
         {
             path: '/sign-up',
             name: 'sign-up',
             component: () => import('../views/SignUp.vue'),
-            meta: { layout: 'AuthLayout' }
+            meta: { layout: 'AuthLayout' },
+            beforeEnter: signGuard
         },
         {
             path: '/profile',
@@ -60,7 +65,8 @@ const router = createRouter({
                     component: () => import('../views/profile/ProfileSettingsView.vue')
                 },
             ],
-            meta: { layout: 'ProfileLayout' }
+            meta: { layout: 'ProfileLayout' },
+            beforeEnter: authGuard
         },
         {
             path: '/admin',

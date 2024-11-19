@@ -30,7 +30,7 @@ class Airport extends Model {
                 OR city LIKE :query
                 OR country LIKE :query
                 OR iata LIKE :query
-            LIMIT :limit OFFSET :offset;
+            LIMIT :limit OFFSET :offset
         ");
 
         $searchQuery = '%' . $query . '%';

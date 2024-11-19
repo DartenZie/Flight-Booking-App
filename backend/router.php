@@ -5,6 +5,10 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
+// Set headers
+header("Access-Control-Allow-Origin: http://localhost:5174");
+header("Access-Control-Allow-Headers: Content-Type, Authorization");
+
 // Autoload controllers dynamically
 spl_autoload_register(function ($className) {
     $controllerFile = "controllers/" . $className . ".php";
@@ -45,6 +49,12 @@ if (!method_exists($controller, $methodName)) {
     http_response_code(404);
     echo "Method '{$methodName}' not found in controller '{$controllerName}'!";
     exit;
+}
+
+// If request method is OPTIONS and route exists, return 200.
+if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+    http_response_code(200);
+    exit();
 }
 
 // Call the controller method

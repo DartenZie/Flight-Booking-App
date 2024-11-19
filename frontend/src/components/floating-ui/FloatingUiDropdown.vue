@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import floatingUIState from '@/store/floatingUIStore';
-import { computed, onMounted } from 'vue';
+import { computed } from 'vue';
+import {useFloatingUiStore} from '@/store/floating-ui.store';
+
+const floatingUIStore = useFloatingUiStore();
 
 const props = defineProps<{
     componentId: string,
@@ -13,7 +15,7 @@ const emit = defineEmits<{
     (e: 'label', label: string): void,
 }>();
 
-const isOpen = computed(() => floatingUIState.isOpen(props.componentId));
+const isOpen = computed(() => floatingUIStore.isOpen(props.componentId));
 
 const selectElement = (id: string, label: string): void => {
     emit('select', id);

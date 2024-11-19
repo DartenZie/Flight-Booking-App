@@ -4,27 +4,29 @@ import { computed, onBeforeUnmount, onMounted } from 'vue';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faChevronDown } from '@fortawesome/free-solid-svg-icons';
 
-import floatingUIState from '@/store/floatingUIStore';
+import {useFloatingUiStore} from '@/store/floating-ui.store';
+
+const floatingUIStore = useFloatingUiStore();
 
 const props = defineProps<{
     label?: string;
     componentId: string;
 }>();
 
-const isOpen = computed(() => floatingUIState.isOpen(props.componentId));
+const isOpen = computed(() => floatingUIStore.isOpen(props.componentId));
 const displayLabel = computed(() => props.label ?? 'Open');
 
 const toggleOpen = () => {
     if (isOpen.value) {
-        floatingUIState.close();
+        floatingUIStore.close();
     } else {
-        floatingUIState.open(props.componentId);
+        floatingUIStore.open(props.componentId);
     }
 };
 
 const handleClickOutside = (event: MouseEvent): void => {
     if (!(event.target as HTMLElement)?.closest('.floating-ui-activator')) {
-        floatingUIState.close();
+        floatingUIStore.close();
     }
 };
 
