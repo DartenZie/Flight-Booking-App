@@ -8,6 +8,7 @@ error_reporting(E_ALL);
 // Set headers
 header("Access-Control-Allow-Origin: http://localhost:5174");
 header("Access-Control-Allow-Headers: Content-Type, Authorization");
+header("Access-Control-Allow-Credentials: true");
 
 // Autoload controllers dynamically
 spl_autoload_register(function ($className) {

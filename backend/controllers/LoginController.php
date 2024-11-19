@@ -57,7 +57,7 @@ class LoginController extends Controller {
         $payload = [
             "id" => $user['id'],
             "email" => $user['email'],
-            "exp" => time() + 20
+            "exp" => time() + 900
         ];
 
         $refresh_token_expiry = time() + 432000;
@@ -67,9 +67,16 @@ class LoginController extends Controller {
 
         $this->refreshTokenModel->create($refresh_token, $refresh_token_expiry);
 
+        setcookie("refreshToken", $refresh_token, [
+            "httponly" => true,
+            "secure" => true,
+            "samesite" => "Strict",
+            "path" => "/refresh",
+            "expires" => $refresh_token_expiry,
+        ]);
+
         $this->jsonResponse([
             "access_token" => $access_token,
-            "refresh_token" => $refresh_token
         ]);
     }
 

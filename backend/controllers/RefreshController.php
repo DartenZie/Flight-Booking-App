@@ -27,35 +27,34 @@ class RefreshController extends Controller {
     }
 
     private function refreshToken(): void {
-        $data = (array) json_decode(file_get_contents("php://input"), true);
-
-        if (!array_key_exists("token", $data)) {
-            $this->jsonResponse(['message' => 'missing token'], 400);
+        if (!isset($_COOKIE['refreshToken'])) {
+            $this->jsonResponse(['message' => 'invalid token'], 400);
         }
+        $token = $_COOKIE['refreshToken'];
 
         try {
-            $payload = $this->jwt->decode($data["token"]);
+            $payload = $this->jwt->decode($token);
         } catch (Exception) {
             $this->jsonResponse(['message' => 'invalid token catch'], 400);
         }
 
         $user_id = $payload['id'];
-        $refresh_token = $this->refreshTokenModel->getByToken($data['token']);
+        $refresh_token = $this->refreshTokenModel->getByToken($token);
 
         if (!$refresh_token) {
-            $this->jsonResponse(['message' => 'invalid token norefresh'], 400);
+            $this->jsonResponse(['message' => 'invalid token'], 400);
         }
 
         $user = $this->userModel->getUserById($user_id);
 
         if (!$user) {
-            $this->jsonResponse(['message' => 'invalid user nouser'], 400);
+            $this->jsonResponse(['message' => 'invalid user'], 400);
         }
 
         $payload = [
             "id" => $user['id'],
             "email" => $user['email'],
-            "exp" => time() + 20
+            "exp" => time() + 900
         ];
 
         $access_token = $this->jwt->encode($payload);
@@ -68,9 +67,16 @@ class RefreshController extends Controller {
 
         $this->refreshTokenModel->create($refresh_token, $refresh_token_expiry);
 
+        setcookie("refreshToken", $refresh_token, [
+            "httponly" => true,
+            "secure" => true,
+            "samesite" => "Strict",
+            "path" => "/refresh",
+            "expires" => $refresh_token_expiry,
+        ]);
+
         $this->jsonResponse([
-            "access_token" => $access_token,
-            "refresh_token" => $refresh_token
+            "access_token" => $access_token
         ]);
     }
 }
