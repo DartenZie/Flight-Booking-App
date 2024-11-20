@@ -6,16 +6,17 @@ const FLOATING_UI_TRIGGER_CLASS = 'floating-ui-trigger';
 
 interface FloatingUITriggerDirectiveOptions {
     componentId: string;
+    triggerEvent: string;
 }
 
 export default {
     mounted: (el: HTMLElement, binding: DirectiveBinding<FloatingUITriggerDirectiveOptions>): void => {
         const floatingUIStore = useFloatingUiStore();
 
-        const { componentId } = binding.value;
+        const { componentId, triggerEvent } = binding.value;
 
         const toggleOpen = (): void => {
-            if (floatingUIStore.isOpen(componentId)) {
+            if (floatingUIStore.isOpen(componentId) && triggerEvent !== 'input') {
                 floatingUIStore.close();
             } else {
                 floatingUIStore.open(componentId);
@@ -29,12 +30,12 @@ export default {
         };
 
         el.classList.add(FLOATING_UI_TRIGGER_CLASS);
-        el.addEventListener('click', toggleOpen);
+        el.addEventListener(triggerEvent ?? 'click', toggleOpen);
         document.addEventListener('click', handleClickOutside);
 
         // Clean up event listeners when element is unmounted
         el._floatingUICleanup = () => {
-            el.removeEventListener('click', toggleOpen);
+            el.removeEventListener(triggerEvent ?? 'click', toggleOpen);
             document.removeEventListener('click', handleClickOutside);
         };
     },

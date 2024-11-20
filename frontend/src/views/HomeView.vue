@@ -13,14 +13,14 @@ import FlightCard from '@/components/FlightCard.vue';
 
 import router from '@/router';
 import {Flight, type FlightType} from "@/models/flight.model";
-import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
 
+const flightTypeId = ref('roundTrip');
 const flightTypeLabel = ref('');
 const classLabel = ref('');
 
 const flightTypeOptions: ReadonlyArray<{ name: string; value: string }> = [
-    { name: 'oneWayTrip', value: 'One Way Trip' },
     { name: 'roundTrip', value: 'Round Trip' },
+    { name: 'oneWayTrip', value: 'One Way Trip' },
 ];
 
 const classesOptions: ReadonlyArray<{ name: string; value: string }> = [
@@ -124,9 +124,6 @@ const handleSelect = (flight: FlightType): void => {
 onMounted(async () => {
     flightTypeLabel.value = flightTypeOptions[0].value;
     classLabel.value = classesOptions[0].value;
-
-    const { data } = await useAuthenticatedFetch('http://localhost:8080/airport').get().json();
-    console.log(data.value);
 });
 </script>
 
@@ -159,6 +156,7 @@ onMounted(async () => {
                         component-id="flightSearch:flightType"
                         :dropdown-items="flightTypeOptions"
                         @label="l => (flightTypeLabel = l)"
+                        @select="id => (flightTypeId = id)"
                     />
                 </floating-ui-activator>
 
@@ -187,6 +185,7 @@ onMounted(async () => {
                         id="fromLocation"
                         label="From"
                         v-model="fromLocation"
+                        placeholder="Frankfurt"
                     />
                 </div>
                 <div class="w-[30%]">
@@ -194,10 +193,11 @@ onMounted(async () => {
                         id="toLocation"
                         label="To"
                         v-model="toLocation"
+                        placeholder="Denmark"
                     />
                 </div>
                 <div class="w-[40%]">
-                    <search-date-pick id="searchDate" />
+                    <search-date-pick id="searchDate" :type="flightTypeId" />
                 </div>
             </div>
 

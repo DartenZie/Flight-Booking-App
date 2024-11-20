@@ -38,7 +38,7 @@ abstract class Controller {
     /**
      * Authenticates the request using a JWT token.
      */
-    protected function authenticateJWTToken(): void {
+    protected function authenticateJWTToken(): array {
         if (!isset($_SERVER['HTTP_AUTHORIZATION']) || !preg_match("/^Bearer\s+(.*)$/", $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
             $this->errorResponse('incomplete_login_credentials', 400);
         }
@@ -50,5 +50,7 @@ abstract class Controller {
         } catch (Exception $e) {
             $this->errorResponse($e->getMessage());
         }
+
+        return $data;
     }
 }

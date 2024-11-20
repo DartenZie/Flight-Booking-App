@@ -1,14 +1,26 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
+import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
+import {useAuthStore} from "@/store/auth.store";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
+import {faUser} from '@fortawesome/free-solid-svg-icons';
 
 const isScrolled = ref(false);
+const user = ref(null);
+
+const auth = useAuthStore();
 
 const handleScroll = (): void => {
     isScrolled.value = window.scrollY > 20;
 };
 
-onMounted(() => {
+onMounted(async () => {
     window.addEventListener('scroll', handleScroll);
+
+    if (auth.isLoggedIn) {
+        const { data } = await useAuthenticatedFetch('http://localhost:8080/user').get().json();
+        user.value = data.value;
+    }
 });
 
 onUnmounted(() => {
@@ -17,7 +29,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-    <nav :class="['fixed top-0 z-10 w-full transition-colors duration-200', isScrolled ? 'bg-white shadow-lg' : '']">
+    <nav :class="['fixed top-0 z-20 w-full transition-colors duration-200', isScrolled ? 'bg-white shadow-lg' : '']">
         <div class="container mx-auto py-4 flex justify-between items-center">
             <router-link to="/" class="block">
                 <span class="text-xl">
@@ -25,7 +37,13 @@ onUnmounted(() => {
                 </span>
             </router-link>
 
-            <div class="flex gap-x-8">
+            <div v-if="user">
+                <router-link to="/profile/dashboard" class="btn-primary h-10 flex gap-x-4 items-center">
+                    <font-awesome-icon :icon="faUser" />
+                    {{ user.firstName + ' ' + user.lastName }}
+                </router-link>
+            </div>
+            <div v-else class="flex gap-x-8">
                 <router-link to="/sign-up" class="btn-text h-10 text-black hover:text-black">Register</router-link>
                 <router-link to="/sign-in" class="btn-primary h-10">Sign In</router-link>
             </div>

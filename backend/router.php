@@ -32,7 +32,7 @@ if (empty($route)) {
 } else {
     $routeParts = explode('/', $route);
     $controllerName = ucfirst($routeParts[0]) . "Controller";
-    $methodName = isset($routeParts[1]) ? $routeParts[1] : "index";
+    $methodName = $routeParts[1] ?? "index";
 }
 
 // Check if the controller class exists

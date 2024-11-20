@@ -36,8 +36,8 @@ class User extends Model {
     }
 
     public function getUserById(int $id): array | false {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE id = :id');
-        $stmt->bindParam(':id', $id);
+        $stmt = $this->db->prepare("SELECT id, email, firstName, lastName FROM users WHERE id = :id");
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
         return $stmt->fetch(PDO::FETCH_ASSOC);

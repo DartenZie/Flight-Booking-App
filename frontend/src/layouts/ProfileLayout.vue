@@ -3,6 +3,10 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faDashboard, faCalendar, faUserGear, faRightFromBracket} from "@fortawesome/free-solid-svg-icons";
 import {useAuthStore} from "@/store/auth.store";
 import {useRouter} from "vue-router";
+import {onMounted, ref} from "vue";
+import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
+
+const user = ref(null);
 
 const auth = useAuthStore();
 const router = useRouter();
@@ -11,6 +15,11 @@ function handleLogout() {
     auth.logout();
     router.push('/sign-in');
 }
+
+onMounted(async () => {
+    const { data } = await useAuthenticatedFetch('http://localhost:8080/user').get().json();
+    user.value = data.value;
+});
 </script>
 
 <template>
@@ -55,12 +64,12 @@ function handleLogout() {
                     </button>
                 </div>
 
-                <div class="flex flex-col items-center">
+                <div v-if="user" class="flex flex-col items-center">
                     <div class="bg-white h-20 w-20 rounded-full border-3 border-white mb-6">
                         <img src="@/assets/images/profile_female_placeholder.svg" alt="Profile" class="w-full h-full object-cover rounded-full" />
                     </div>
-                    <div class="font-medium text-xl mb-1">Emily Jonson</div>
-                    <div class="font-normal text-md text-gray-500">emily.jonson@gmail.com</div>
+                    <div class="font-medium text-xl mb-1">{{ user.firstName + ' ' + user.lastName }}</div>
+                    <div class="font-normal text-md text-gray-500">{{ user.email }}</div>
                 </div>
             </div>
 

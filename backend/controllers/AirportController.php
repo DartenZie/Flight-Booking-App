@@ -12,8 +12,6 @@ class AirportController extends Controller {
     }
 
     public function index(): void {
-        $this->authenticateJWTToken();
-
         if (isset($_GET['id'])) {
             $this->getAirport($_GET['id']);
         } else {
@@ -22,8 +20,6 @@ class AirportController extends Controller {
     }
 
     public function search(): void {
-        $this->authenticateJWTToken();
-
         $query = isset($_GET['q']) ? trim($_GET['q']) : '';
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = 20;

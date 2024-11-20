@@ -3,8 +3,12 @@
 @tailwind utilities;
 
 @layer components {
+    .btn {
+        @apply flex items-center px-0.5 text-nowrap;
+    }
+
     .btn-text {
-        @apply flex items-center px-0.5 bg-transparent border-b-2 border-transparent text-slate-600 outline-none font-medium hover:border-slate-900 hover:text-slate-900 text-nowrap;
+        @apply btn bg-transparent border-b-2 border-transparent text-slate-600 outline-none font-medium hover:border-slate-900 hover:text-slate-900;
     }
 
     .btn-primary {

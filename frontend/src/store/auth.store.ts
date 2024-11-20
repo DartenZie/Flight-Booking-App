@@ -53,18 +53,6 @@ export const useAuthStore = defineStore('auth', () => {
             return false;
         }
     }
-    async function refresh(): Promise<void> {
-        try {
-            const { data } = await useFetch<TokenResponse>(`${API_URL}/refresh`, {credentials: 'include'})
-                .post().json();
 
-            if (data.value?.access_token) {
-                accessToken.value = data.value.access_token;
-            }
-        } catch {
-            throw new Error('refresh_failed');
-        }
-    }
-
-    return { accessToken, isLoggedIn, login, logout, register, refresh };
+    return { accessToken, isLoggedIn, login, logout, register };
 });
