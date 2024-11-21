@@ -18,5 +18,9 @@ CREATE TABLE users (
     firstName VARCHAR(255),
     lastName VARCHAR(255),
     email VARCHAR(255),
-    password VARCHAR(255)
-)
+    password VARCHAR(255),
+    nationality VARCHAR(255),
+    dateOfBirth VARCHAR(255),
+    phone VARCHAR(255),
+    sex VARCHAR(255)
+);

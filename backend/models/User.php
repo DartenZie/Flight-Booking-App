@@ -36,7 +36,7 @@ class User extends Model {
     }
 
     public function getUserById(int $id): array | false {
-        $stmt = $this->db->prepare("SELECT id, email, firstName, lastName FROM users WHERE id = :id");
+        $stmt = $this->db->prepare("SELECT id, email, firstName, lastName, nationality, dateOfBirth, phone, sex FROM users WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 
@@ -54,6 +54,21 @@ class User extends Model {
         $stmt->bindParam(':lastName', $lastName);
         $stmt->bindParam(':email', $email);
         $stmt->bindParam(':password', $passwordHash);
+
+        $stmt->execute();
+    }
+
+    public function updateUser(array $user): void {
+        $stmt = $this->db->prepare("UPDATE users SET firstName = :firstName, lastName = :lastName, email = :email, nationality = :nationality, dateOfBirth = :dateOfBirth, phone = :phone, sex = :sex WHERE id = :id");
+
+        $stmt->bindParam(':id', $user['id']);
+        $stmt->bindParam(':firstName', $user['firstName']);
+        $stmt->bindParam(':lastName', $user['lastName']);
+        $stmt->bindParam(':email', $user['email']);
+        $stmt->bindParam(':nationality', $user['nationality']);
+        $stmt->bindParam(':dateOfBirth', $user['dateOfBirth']);
+        $stmt->bindParam(':phone', $user['phone']);
+        $stmt->bindParam(':sex', $user['sex']);
 
         $stmt->execute();
     }
