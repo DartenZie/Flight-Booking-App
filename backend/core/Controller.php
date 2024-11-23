@@ -1,5 +1,7 @@
 <?php
 
+use JetBrains\PhpStorm\NoReturn;
+
 require_once 'utils/Jwt.php';
 
 /**
@@ -22,14 +24,14 @@ abstract class Controller {
      * @param mixed $data The data to be encoded as JSON and sent in the response.
      * @param int $statusCode The HTTP status code for the response (default is 200).
      */
-    protected function jsonResponse(mixed $data, int $statusCode = 200): void {
+    #[NoReturn] protected function jsonResponse(mixed $data, int $statusCode = 200): void {
         header('Content-type: application/json');
         http_response_code($statusCode);
         echo json_encode($data);
         exit;
     }
 
-    protected function errorResponse(string $error, int $statusCode = 400): void {
+    #[NoReturn] protected function errorResponse(string $error, int $statusCode = 400): void {
         http_response_code($statusCode);
         echo $error;
         exit;
@@ -38,13 +40,15 @@ abstract class Controller {
     /**
      * Authenticates the request using a JWT token.
      */
-    protected function authenticateJWTToken(): array {
+    protected function authenticateJWTToken(string $requiredRole = 'user'): array {
         if (!isset($_SERVER['HTTP_AUTHORIZATION']) || !preg_match("/^Bearer\s+(.*)$/", $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
             $this->errorResponse('incomplete_login_credentials', 400);
         }
 
         try {
             $data = $this->jwt->decode($matches[1]);
+
+
         } catch (InvalidArgumentException) {
             $this->errorResponse('invalid_login_credentials', 401);
         } catch (Exception $e) {

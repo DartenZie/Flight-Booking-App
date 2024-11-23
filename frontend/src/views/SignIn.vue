@@ -2,18 +2,34 @@
 import FormControl from '@/components/FormControl.vue';
 import {FontAwesomeIcon} from '@fortawesome/vue-fontawesome';
 import {faChevronRight} from '@fortawesome/free-solid-svg-icons';
-import {ref} from 'vue';
+import {reactive} from 'vue';
 import {useAuthStore} from '@/store/auth.store';
 import {useRouter} from 'vue-router';
+import useVuelidate, {ValidationArgs} from "@vuelidate/core";
+import {required, email} from "@vuelidate/validators";
 
 const auth = useAuthStore();
 const router = useRouter();
 
-const email = ref('');
-const password = ref('');
+const state = reactive({
+    email: '',
+    password: '',
+});
+
+const rules: ValidationArgs = {
+    email: { required, email },
+    password: { required }
+};
+
+const v$ = useVuelidate(rules, state);
 
 async function handleSubmit(): void {
-    await auth.login(email.value, password.value);
+    const isFormCorrect = await this.v$.$validate();
+    if (!isFormCorrect) {
+        return;
+    }
+
+    await auth.login(state.email, state.password);
     await router.push('/profile/dashboard');
 }
 </script>
@@ -26,11 +42,14 @@ async function handleSubmit(): void {
 
                 <form @submit.prevent="handleSubmit()">
                     <div class="mb-6">
-                        <form-control id="login" v-model="email" label="E-mail" type="email" placeholder="johndoe@gmail.com" />
+                        <form-control id="login" v-model="state.email" label="E-mail" type="text" placeholder="johndoe@gmail.com" />
+                        <p v-if="v$.email.$errors.some(v => v.$validator === 'required')" class="text-sm/6 text-red-600">Email is required.</p>
+                        <p v-if="v$.email.$errors.some(v => v.$validator === 'email')" class="text-sm/6 text-red-600">Email is not valid.</p>
                     </div>
 
                     <div class="mb-8">
-                        <form-control id="password" v-model="password" label="Password" type="password" />
+                        <form-control id="password" v-model="state.password" label="Password" type="password" />
+                        <p v-if="v$.password.$error" class="text-sm/6 text-red-600">Password is required.</p>
                     </div>
 
                     <div class="flex justify-between items-center">

@@ -4,7 +4,6 @@ require_once 'core/Model.php';
 
 /**
  * The class extends the base `Model` class to provide database operations related to users.
- * It includes methods for checking user existence, retrieving user data by email, and creating new users.
  */
 class User extends Model {
     /**
@@ -28,7 +27,7 @@ class User extends Model {
      * @return array|false
      */
     public function getUserByEmail($email): array | false {
-        $stmt = $this->db->prepare('SELECT * FROM users WHERE email = :email');
+        $stmt = $this->db->prepare('SELECT users.*, roles.name as role_name FROM users JOIN roles ON users.role_id = roles.id WHERE users.email = :email');
         $stmt->bindParam(':email', $email);
         $stmt->execute();
 
@@ -45,8 +44,8 @@ class User extends Model {
 
     public function createUser($firstName, $lastName, $email, $password): void {
         $stmt = $this->db->prepare("
-            INSERT INTO users (firstName, lastName, email, password)
-                VALUES (:firstName, :lastName, :email, :password)
+            INSERT INTO users (firstName, lastName, email, password, role_id)
+                VALUES (:firstName, :lastName, :email, :password, 1)
         ");
 
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);

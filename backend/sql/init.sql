@@ -12,6 +12,13 @@ CREATE TABLE airports (
     timezone VARCHAR(255)
 );
 
+DROP TABLE IF EXISTS roles;
+CREATE TABLE roles (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(50) NOT NULL UNIQUE,
+    permission_level INT
+);
+
 DROP TABLE IF EXISTS users;
 CREATE TABLE users (
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -22,5 +29,7 @@ CREATE TABLE users (
     nationality VARCHAR(255),
     dateOfBirth VARCHAR(255),
     phone VARCHAR(255),
-    sex VARCHAR(255)
+    sex VARCHAR(255),
+    role_id INT,
+    FOREIGN KEY (role_id) REFERENCES roles(id)
 );
