@@ -88,7 +88,7 @@ class RequestUtils {
     public function generateAccessToken(array $user, int $expiry): string {
         return $this->jwt->encode([
             'sub' => $user['id'],
-            'perm_level' => $user['perm_level'],
+            'perm_level' => $user['permission_level'],
             'expiry' => $expiry
         ]);
     }

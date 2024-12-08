@@ -12,11 +12,11 @@ class UserController extends Controller {
     }
 
     public function index(): void {
-        $data = $this->authenticateJWTToken();
+        $this->authenticateJWTToken();
 
         switch ($_SERVER['REQUEST_METHOD']) {
-            case 'GET': $this->getUserById($data); break;
-            case 'PUT': $this->updateUser($data['id']); break;
+            case 'GET': $this->getUserById($this->userData); break;
+            case 'PUT': $this->updateUser($this->userData['id']); break;
             default:
                 http_response_code(405);
                 header('ALLOW: GET, PUT');

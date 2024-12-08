@@ -27,7 +27,7 @@ class User extends Model {
      * @return array|false
      */
     public function getUserByEmail($email): array | false {
-        $stmt = $this->db->prepare('SELECT users.*, roles.name as role_name FROM users JOIN roles ON users.role_id = roles.id WHERE users.email = :email');
+        $stmt = $this->db->prepare('SELECT users.*, roles.permission_level as permission_level FROM users JOIN roles ON users.role_id = roles.id WHERE users.email = :email');
         $stmt->bindParam(':email', $email);
         $stmt->execute();
 
@@ -35,7 +35,7 @@ class User extends Model {
     }
 
     public function getUserById(int $id): array | false {
-        $stmt = $this->db->prepare("SELECT id, email, firstName, lastName, nationality, dateOfBirth, phone, sex FROM users WHERE id = :id");
+        $stmt = $this->db->prepare("SELECT users.*, roles.permission_level as permission_level FROM users JOIN roles ON users.role_id = roles.id WHERE users.id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();
 

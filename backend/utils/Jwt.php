@@ -66,7 +66,7 @@ class Jwt {
 
         $payload = json_decode($this->base64UrlDecode($matches["payload"]), true);
 
-        if ($payload['exp'] < time()) {
+        if ($payload['expiry'] < time()) {
             // TODO token expired exception
             throw new Exception("token_expired");
         }

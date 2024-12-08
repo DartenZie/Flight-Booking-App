@@ -48,7 +48,7 @@ class RefreshController extends Controller {
             $this->jsonResponse(['message' => $e->getMessage()], 400);
         }
 
-        $user_id = $payload['id'] ?? null;
+        $user_id = $payload['sub'] ?? null;
         if (!$user_id || !$this->refreshTokenModel->getByToken($token)) {
             $this->jsonResponse(['message' => 'Invalid token'], 400);
         }
