@@ -10,13 +10,11 @@ require_once 'core/Controller.php';
  */
 class RefreshController extends Controller {
     private RequestUtils $requestUtils;
-    private User $userModel;
     private RefreshToken $refreshTokenModel;
 
     public function __construct() {
         parent::__construct();
         $this->requestUtils = new RequestUtils(SECRET_KEY);
-        $this->userModel = new User();
         $this->refreshTokenModel = new RefreshToken(SECRET_KEY);
     }
 
@@ -53,7 +51,7 @@ class RefreshController extends Controller {
             $this->jsonResponse(['message' => 'Invalid token'], 400);
         }
 
-        $user = $this->userModel->getUserById($user_id);
+        $user = $this->user->getUserById($user_id);
         if (!$user) {
             $this->jsonResponse(['message' => 'Invalid user'], 400);
         }

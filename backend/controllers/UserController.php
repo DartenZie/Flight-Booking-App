@@ -4,11 +4,9 @@ require_once 'models/User.php';
 require_once 'core/Controller.php';
 
 class UserController extends Controller {
-    private User $user;
 
     public function __construct() {
         parent::__construct();
-        $this->user = new User();
     }
 
     public function index(): void {

@@ -10,13 +10,11 @@ require_once 'core/Controller.php';
  */
 class LoginController extends Controller {
     private RequestUtils $requestUtils;
-    private User $userModel;
     private RefreshToken $refreshTokenModel;
 
     public function __construct() {
         parent::__construct();
         $this->requestUtils = new RequestUtils(SECRET_KEY);
-        $this->userModel = new User();
         $this->refreshTokenModel = new RefreshToken(SECRET_KEY);
     }
 
@@ -41,7 +39,7 @@ class LoginController extends Controller {
      * @param array $data Associative array containing 'email' and 'password' keys.
      */
     private function loginUser(array $data): void {
-        $user = $this->userModel->getUserByEmail($data['email']);
+        $user = $this->user->getUserByEmail($data['email']);
         if (!$user || !password_verify($data['password'], $user['password'])) {
             $this->jsonResponse(['message' => 'Invalid login credentials.'], 401);
         }

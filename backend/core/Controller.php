@@ -20,7 +20,7 @@ abstract class Controller {
     /**
      * @var User Instance of the User model used to fetch user info from db.
      */
-    private User $user;
+    protected User $user;
     /**
      * @var array Instance of the array that includes information about the current user.
      */

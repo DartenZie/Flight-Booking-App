@@ -4,11 +4,9 @@ require_once 'models/User.php';
 require_once 'core/Controller.php';
 
 class RegisterController extends Controller {
-    private User $userModel;
 
     public function __construct() {
         parent::__construct();
-        $this->userModel = new User();
     }
 
     public function index(): void {
@@ -34,14 +32,14 @@ class RegisterController extends Controller {
             return;
         }
 
-        if ($this->userModel->userExists($email)) {
+        if ($this->user->userExists($email)) {
             $this->jsonResponse(['message' => 'Email already exists.'], 400);
             return;
         }
 
         // TODO validations
 
-        $this->userModel->createUser($firstName, $lastName, $email, $password);
+        $this->user->createUser($firstName, $lastName, $email, $password);
         $this->jsonResponse(['error' => false]);
     }
 }
