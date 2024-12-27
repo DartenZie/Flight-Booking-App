@@ -76,7 +76,7 @@ export const useAuthStore = defineStore('auth', () => {
         }
 
         try {
-            const { data } = await useAuthenticatedFetch('http://localhost:8080/user').get().json();
+            const { data } = await useAuthenticatedFetch(`${API_URL}/user`).get().json();
 
             cachedUser.value = {
                 id: data.value.id,

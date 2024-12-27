@@ -13,6 +13,7 @@ class Flight extends Model {
                 flights.price AS price,
                 flights.departure_time AS departure_time,
                 flights.arrival_time AS arrival_time,
+                flights.cancelled AS cancelled,
                 flights.plane_id AS plane_id,
                 flights.departure_airport_id as departure_airport_id,
                 flights.arrival_airport_id as arrival_airport_id
@@ -112,8 +113,8 @@ class Flight extends Model {
 
     public function createFlight(array $flight): void {
         $stmt = $this->db->prepare("
-            INSERT INTO flights (price, departure_time, arrival_time, plane_id, departure_airport_id, arrival_airport_id)
-                VALUES (:price, :departure_time, :arrival_time, :plane_id, :departure_airport_id, :arrival_airport_id);
+            INSERT INTO flights (price, departure_time, arrival_time, plane_id, departure_airport_id, arrival_airport_id, cancelled)
+                VALUES (:price, :departure_time, :arrival_time, :plane_id, :departure_airport_id, :arrival_airport_id, false);
         ");
 
         $stmt->bindParam(':price', $flight['price']);
@@ -122,6 +123,25 @@ class Flight extends Model {
         $stmt->bindParam(':plane_id', $flight['plane_id'], PDO::PARAM_INT);
         $stmt->bindParam(':departure_airport_id', $flight['departure_airport_id'], PDO::PARAM_INT);
         $stmt->bindParam(':arrival_airport_id', $flight['arrival_airport_id'], PDO::PARAM_INT);
+        $stmt->execute();
+    }
+
+    public function updateFlight(array $flight): void {
+        $stmt = $this->db->prepare("
+            UPDATE flights SET price = :price, departure_time = :departure_time, arrival_time = :arrival_time,
+                               plane_id = :plane_id, departure_airport_id = :departure_airport_id,
+                               arrival_airport_id = :arrival_airport_id, cancelled = :cancelled
+                WHERE id = :id;
+        ");
+
+        $stmt->bindParam(':id', $flight['id'], PDO::PARAM_INT);
+        $stmt->bindParam(':price', $flight['price']);
+        $stmt->bindParam(':departure_time', $flight['departure_time']);
+        $stmt->bindParam(':arrival_time', $flight['arrival_time']);
+        $stmt->bindParam(':plane_id', $flight['plane_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':departure_airport_id', $flight['departure_airport_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':arrival_airport_id', $flight['arrival_airport_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':cancelled', $flight['cancelled'], PDO::PARAM_BOOL);
         $stmt->execute();
     }
 }

@@ -53,6 +53,7 @@ DROP TABLE IF EXISTS flights;
 CREATE TABLE flights (
     id INT AUTO_INCREMENT PRIMARY KEY,
     price VARCHAR(255),
+    cancelled BOOL,
     departure_time DATETIME,
     arrival_time DATETIME,
     plane_id INT,

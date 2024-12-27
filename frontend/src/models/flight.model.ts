@@ -24,6 +24,7 @@ export interface FlightResponse {
     plane: FlightPlaneResponse;
     departureAirport: FlightAirportResponse;
     arrivalAirport: FlightAirportResponse;
+    cancelled: boolean;
 }
 
 export interface FlightsResponse {
@@ -42,6 +43,11 @@ export interface CreateFlightRequest {
     arrivalAirportId: number;
 }
 
+export interface UpdateFlightRequest extends Partial<CreateFlightRequest> {
+    id: number;
+    cancelled?: boolean;
+}
+
 export class Flight {
     id: number;
     prices: Map<string, number>;
@@ -50,6 +56,7 @@ export class Flight {
     plane: Plane;
     departureAirport: FlightAirportResponse;
     arrivalAirport: FlightAirportResponse;
+    cancelled: boolean;
 
     constructor(id: number) {
         this.id = id;
@@ -63,6 +70,7 @@ export class Flight {
         flight.plane = Plane.parsePlane(flightResponse.plane);
         flight.departureAirport = flightResponse.departureAirport;
         flight.arrivalAirport = flightResponse.arrivalAirport;
+        flight.cancelled = flightResponse.cancelled;
         return flight;
     }
 

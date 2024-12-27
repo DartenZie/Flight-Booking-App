@@ -27,9 +27,10 @@ class FlightController extends Controller {
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'GET': $this->getFlight(); break;
             case 'POST': $this->postFlight(); break;
+            case 'PUT': $this->putFlight(); break;
             default:
                 http_response_code(405);
-                header('ALLOW: GET, POST');
+                header('ALLOW: GET, POST, PUT');
                 exit();
         }
     }
@@ -69,6 +70,36 @@ class FlightController extends Controller {
         ]);
     }
 
+    private function putFlight(): void {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        $id = $data['id'];
+        if (empty($id)) {
+            $this->jsonResponse(['message' => 'Field `flightId` is required.'], 400);
+            return;
+        }
+
+        $flight = $this->flightModel->getFlightById($id);
+        if (empty($flight)) {
+            $this->jsonResponse(['message' => 'Flight not found.'], 404);
+            return;
+        }
+
+        $updateData = [
+            'id' => $id,
+            'price' => $data['price'] ?? $flight['price'],
+            'departure_time' => $data['departureTime'] ?? $flight['departure_time'],
+            'arrival_time' => $data['arrivalTime'] ?? $flight['arrival_time'],
+            'plane_id' => $data['planeId'] ?? $flight['plane_id'],
+            'departure_airport_id' => $data['departureAirportId'] ?? $flight['departure_airport_id'],
+            'arrival_airport_id' => $data['arrivalAirportId'] ?? $flight['arrival_airport_id'],
+            'cancelled' => $data['cancelled'] ?? $flight['cancelled']
+        ];
+
+        $this->flightModel->updateFlight($updateData);
+        $this->jsonResponse($updateData);
+    }
+
     private function getFlightById(int $id): void {
         $flight = $this->flightModel->getFlightById($id);
         if ($flight) {
@@ -91,6 +122,7 @@ class FlightController extends Controller {
             'price' => $flight['price'],
             'departureTime' => $flight['departure_time'],
             'arrivalTime' => $flight['arrival_time'],
+            'cancelled' => (bool)$flight['cancelled'],
             'plane' => $this->getPlaneById($flight['plane_id']),
             'departureAirport' => $this->airportModel->getAirportById($flight['departure_airport_id']),
             'arrivalAirport' => $this->airportModel->getAirportById($flight['arrival_airport_id'])
@@ -104,7 +136,7 @@ class FlightController extends Controller {
         ]);
     }
 
-    private function getPlaneById(int $id) {
+    private function getPlaneById(int $id): array {
         $plane = $this->planeModel->getPlaneById($id);
 
         return [

@@ -3,6 +3,8 @@ import {loadLayoutMiddleware} from '@/router/middleware/loadLayoutMiddleware';
 import {authGuard, createPermissionGuard} from './guards/auth.guard';
 import {signGuard} from "./guards/sign.guard";
 import ErrorView from "../views/ErrorView.vue";
+import {useFetch} from "@vueuse/core";
+import {airlineExistsGuard} from "./guards/airline-exists.guard";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -70,9 +72,11 @@ const router = createRouter({
             beforeEnter: authGuard
         },
         {
-            path: '/admin',
+            path: '/airline/:airlineId',
             name: 'admin',
-            redirect: '/admin/dashboard',
+            redirect: (to) => {
+                return `/airline/${to.params.airlineId}/dashboard`;
+            },
             children: [
                 {
                     path: 'dashboard',
@@ -94,10 +98,31 @@ const router = createRouter({
                             component: () => import('@/views/admin/ScheduleFlightView.vue')
                         }
                     ]
+                },
+                {
+                    path: 'manage-planes',
+                    name: 'manage-planes',
+                    children: [
+                        {
+                            path: '',
+                            name: 'manage-planes-list',
+                            component: () => import('@/views/admin/ManagePlanesView.vue')
+                        },
+                        {
+                            path: 'create',
+                            name: 'manage-planes-create',
+                            component: () => import('@/views/admin/CreatePlaneView.vue')
+                        }
+                    ]
+                },
+                {
+                    path: 'preferences',
+                    name: 'airline-preferences',
+                    component: () => import('@/views/admin/AirlinePreferencesView.vue')
                 }
             ],
-            meta: { layout: 'AdminLayout' },
-            beforeEnter: createPermissionGuard(2)
+            meta: { layout: 'ManageAirlineLayout' },
+            beforeEnter: [createPermissionGuard(2), airlineExistsGuard]
         },
         {
             path: '/super-admin',
@@ -115,7 +140,7 @@ const router = createRouter({
                     component: () => import('@/views/super-admin/ManageAirlinesView.vue')
                 }
             ],
-            meta: { layout: 'AdminLayout' }
+            meta: { layout: 'ManageAirlineLayout' }
         },
         {
             path: '/book',
@@ -137,8 +162,13 @@ const router = createRouter({
         {
             path: '/403',
             name: '403',
-            component: ErrorView,
+            component: ErrorView
         },
+        {
+            path: '/404',
+            name: '404',
+            component: ErrorView
+        }
     ]
 });
 

@@ -48,9 +48,15 @@ export class Plane {
     calculateTotalSeats(): number {
         let total = 0;
         for (const cabin of this.seatingConfiguration.cabins) {
-            const seatsPerRow = cabin.isles.reduce((total, isle) => total + isle.seats.length, 0);
-            total += seatsPerRow * cabin.rows;
+            total += this.calculateSeatsPerCabin(cabin);
         }
+        return total;
+    }
+
+    calculateSeatsPerCabin(cabin: CabinModel): number {
+        let total = 0;
+        const seatsPerRow = cabin.isles.reduce((total, isle) => total + isle.seats.length, 0);
+        total += seatsPerRow * cabin.rows;
         return total;
     }
 

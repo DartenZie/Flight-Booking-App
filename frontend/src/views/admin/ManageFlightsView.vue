@@ -8,10 +8,15 @@ import FloatingUiDropdown from "@/components/floating-ui/FloatingUiDropdown.vue"
 import ConfirmFlightCancelModal from "@/components/modals/ConfirmFlightCancelModal.vue";
 import ManageFlightPricesModal from "@/components/modals/ManageFlightPricesModal.vue";
 import {onMounted, ref} from "vue";
-import {Flight, FlightsResponse} from "@/models/flight.model";
+import {Flight, FlightResponse, FlightsResponse, UpdateFlightRequest} from "@/models/flight.model";
 import {useFetch} from "@vueuse/core";
+import {useRouter} from "vue-router";
 
-const manageFlightPricesCancel = createConfirmDialog(ManageFlightPricesModal, {});
+const router = useRouter();
+
+const airlineId = router.currentRoute.value.params.airlineId;
+
+const manageFlightPricesDialog = createConfirmDialog(ManageFlightPricesModal, {});
 const confirmFlightCancel = createConfirmDialog(ConfirmFlightCancelModal, {});
 
 const flights = ref<ReadonlyArray<Flight>>(null);
@@ -51,33 +56,75 @@ const month = (flight: Flight) => {
 };
 
 onMounted(async () => {
-    const { data } = await useFetch<FlightsResponse>('http://localhost:8080/flight?airline_id=1').get().json();
+    const { data } = await useFetch<FlightsResponse>(`http://localhost:8080/flight?airline_id=${airlineId}`).get().json();
     flights.value = data.value.flights.map((flight) => Flight.parseFlight(flight));
 });
 
-manageFlightPricesCancel.onConfirm(() => {
-    // Todo change flight tickets
-    console.log('Flight ticket prices changed');
-    manageFlightPricesCancel.close();
-});
-manageFlightPricesCancel.onCancel(manageFlightPricesCancel.close);
+manageFlightPricesDialog.onConfirm(async ({ flight }) => {
+    const priceStrings = [];
+    for (const priceKey of flight.prices.keys()) {
+        priceStrings.push(`[${priceKey} ${flight.prices.get(priceKey)}]`);
+    }
 
-confirmFlightCancel.onConfirm(() => {
-    // Todo cancel flight
-    console.log('Flight was canceled');
+    const body: UpdateFlightRequest = {
+        id: flight.id,
+        price: priceStrings.join(' ')
+    };
+    const response = await useFetch<FlightResponse>('http://localhost:8080/flight').put(body).json();
+    if (response.statusCode.value !== 200) {
+        confirmFlightCancel.close();
+        return;
+    }
+
+    const { data } = await useFetch<FlightsResponse>(`http://localhost:8080/flight?airline_id=${airlineId}`).get().json();
+    flights.value = data.value.flights.map((flight) => Flight.parseFlight(flight));
+
+    manageFlightPricesDialog.close();
+});
+manageFlightPricesDialog.onCancel(manageFlightPricesDialog.close);
+
+confirmFlightCancel.onConfirm(async ({ flightId }) => {
+    const body: UpdateFlightRequest = {
+        id: flightId,
+        cancelled: true
+    };
+    const response = await useFetch<FlightResponse>('http://localhost:8080/flight').put(body).json();
+    if (response.statusCode.value !== 200) {
+        confirmFlightCancel.close();
+        return;
+    }
+
+    const { data } = await useFetch<FlightsResponse>(`http://localhost:8080/flight?airline_id=${airlineId}`).get().json();
+    flights.value = data.value.flights.map((flight) => Flight.parseFlight(flight));
+
     confirmFlightCancel.close();
 });
 confirmFlightCancel.onCancel(confirmFlightCancel.close);
 
-const handleSelect = (key: string) => {
+const handleSelect = (key: string, flightId: number) => {
     switch (key) {
     case 'manageTickets':
-        manageFlightPricesCancel.reveal();
+        manageFlightPricesDialog.reveal({ flight: flights.value.find((flight) => flight.id === flightId) });
         break;
     case 'cancelFlight':
-        confirmFlightCancel.reveal();
+        confirmFlightCancel.reveal({ flightId: flightId });
         break;
     }
+};
+
+const reinstateFlight = async (flightId: number): Promise<void> => {
+    const body: UpdateFlightRequest = {
+        id: flightId,
+        cancelled: false
+    };
+    const response = await useFetch<FlightResponse>('http://localhost:8080/flight').put(body).json();
+    if (response.statusCode.value !== 200) {
+        confirmFlightCancel.close();
+        return;
+    }
+
+    const { data } = await useFetch<FlightsResponse>(`http://localhost:8080/flight?airline_id=${airlineId}`).get().json();
+    flights.value = data.value.flights.map((flight) => Flight.parseFlight(flight));
 };
 </script>
 
@@ -89,7 +136,7 @@ const handleSelect = (key: string) => {
             <font-awesome-icon :icon="faSearch" class="absolute bottom-1/2 translate-y-1/2 right-8" />
         </div>
 
-        <router-link to="/admin/manage-flights/schedule" class="btn-primary">Schedule flight</router-link>
+        <router-link :to="`/airline/${airlineId}/manage-flights/schedule`" class="btn-primary">Schedule flight</router-link>
     </admin-card>
 
     <admin-card class="col-span-12">
@@ -97,17 +144,14 @@ const handleSelect = (key: string) => {
         <p class="text-md text-gray-700 mb-6">See your scheduled flights in the calendar view.</p>
 
         <div class="grid grid-cols-1 gap-y-2">
-
-            <div class="bg-gray-100 h-14 mb-4 w-min flex gap-x-2 items-center px-2 rounded-lg">
-                <button class="h-10 btn-filter active">Upcoming</button>
-                <button class="h-10 btn-filter">Past</button>
-                <button class="h-10 btn-filter">Cancelled</button>
-            </div>
-
-            <div v-for="flight of flights" :key="flight.id" class="border border-gray-200 rounded-2xl h-20 flex items-center gap-x-10">
-                <div class="text-center w-20 text-gray-700 border-e border-gray-200">
+            <div v-for="flight of flights" :key="flight.id"
+                 :class="['border border-gray-200 rounded-2xl h-20 flex items-center gap-x-10', flight.cancelled ? 'bg-red-100' : '']">
+                <div v-if="!flight.cancelled" class="text-center w-20 text-gray-700 border-e border-gray-200">
                     <div class="text-lg font-normal">{{ month(flight) }}</div>
                     <div class="text-2xl font-bold">{{ flight.departureTime.getDate() }}</div>
+                </div>
+                <div v-else class="text-end w-20 text-red-700">
+                    <div class="text-sm font-normal">Cancelled</div>
                 </div>
 
                 <div>
@@ -126,7 +170,7 @@ const handleSelect = (key: string) => {
                     <div class="text-xs text-gray-700 font-light">{{ flight.plane.name }} &#183; {{ flight.plane.calculateTotalSeats() }} Seats &#183; 47% full</div>
                 </div>
 
-                <button class="relative block ms-auto me-8 btn-primary h-12" v-floating-ui-trigger="{ componentId: `edit-flight-${flight.id}` }">
+                <button v-if="!flight.cancelled" class="relative block ms-auto me-8 btn-primary h-12" v-floating-ui-trigger="{ componentId: `edit-flight-${flight.id}` }">
                     <span class="me-7">Edit</span>
                     <font-awesome-icon :icon="faChevronDown" />
 
@@ -135,6 +179,17 @@ const handleSelect = (key: string) => {
                         { name: 'cancelFlight', value: 'Cancel flight' },
                     ]" />
                 </button>
+                <button v-else class="relative block ms-auto me-8 btn-primary h-12" @click="reinstateFlight(flight.id)">
+                    <span>Reinstate</span>
+                </button>
+            </div>
+
+            <div v-if="flights && flights.length <= 0" class="mt-20 w-full relative flex justify-center">
+                <div class="max-w-xl">
+                    <img class="mb-10" src="../../assets/illustrations/empty_illustration.svg" alt="Empty illustration" />
+                    <h4 class="text-xl text-center">No Flights Found</h4>
+                    <p class="text-sm text-gray-700 text-center">There are currently no flights available matching the criteria.</p>
+                </div>
             </div>
         </div>
     </admin-card>

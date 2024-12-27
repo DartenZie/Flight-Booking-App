@@ -36,4 +36,29 @@ class Airline extends Model {
         $stmt->bindParam(':name', $airline['name']);
         $stmt->execute();
     }
+
+    /**
+     * Updates an airline record in the database.
+     *
+     * @param int $id The ID of the airline to update.
+     * @param array $fields An associative array of fields to update with their new values.
+     * @return bool True if the update was successful, false otherwise.
+     */
+    public function updateAirline(int $id, array $fields): bool {
+        $setClauses = [];
+        foreach ($fields as $field => $value) {
+            $setClauses[] = "`$field` = :$field";
+        }
+        $setClauses = implode(', ', $setClauses);
+
+        $sql = "UPDATE airlines SET $setClauses WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+
+        foreach ($fields as $field => $value) {
+            $stmt->bindValue(":$field", $value);
+        }
+        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+
+        return $stmt->execute();
+    }
 }

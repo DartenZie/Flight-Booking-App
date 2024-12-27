@@ -428,6 +428,11 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.24.0.tgz#0574d7e87b44ee8511d08cc7f914bcb802b70818"
   integrity sha512-fbMkAF7fufku0N2dE5TBXcNlg0pt0cJue4xBRE2Qc5Vqikxr4VCgKj/ht6SMdFcOacVA9rqF70APJ8RN/4vMJw==
 
+"@swc/helpers@^0.2.13":
+  version "0.2.14"
+  resolved "https://registry.yarnpkg.com/@swc/helpers/-/helpers-0.2.14.tgz#20288c3627442339dd3d743c944f7043ee3590f0"
+  integrity sha512-wpCQMhf5p5GhNg2MmGKXzUNwxe7zRiCsmqYsamez2beP7mKPCSiu+BjZcdN95yYSzO857kr0VfQewmGpS77nqA==
+
 "@tailwindcss/forms@^0.5.9":
   version "0.5.9"
   resolved "https://registry.yarnpkg.com/@tailwindcss/forms/-/forms-0.5.9.tgz#b495c12575d6eae5865b2cbd9876b26d89f16f61"
@@ -440,10 +445,24 @@
   resolved "https://registry.yarnpkg.com/@tsconfig/node20/-/node20-20.1.4.tgz#3457d42eddf12d3bde3976186ab0cd22b85df928"
   integrity sha512-sqgsT69YFeLWf5NtJ4Xq/xAF8p4ZQHlmGW74Nu2tD4+g5fAsposc4ZfaaPixVu4y01BEiDCWLRDCvDM5JOsRxg==
 
+"@types/dropzone@^5.7.9":
+  version "5.7.9"
+  resolved "https://registry.yarnpkg.com/@types/dropzone/-/dropzone-5.7.9.tgz#0a1211a1b54734bbbaf05074cb90d62ab0cdc65f"
+  integrity sha512-c6IlUz+DeQ4gANzJKn8fdP5rO6UyDNOyWLjfPbDRUHCNsXaAVKQOpuOv6LWEyvaK7pLqmoIpvSIlvBgGsk1vGw==
+  dependencies:
+    "@types/jquery" "*"
+
 "@types/estree@1.0.6", "@types/estree@^1.0.6":
   version "1.0.6"
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-1.0.6.tgz#628effeeae2064a1b4e79f78e81d87b7e5fc7b50"
   integrity sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==
+
+"@types/jquery@*":
+  version "3.5.32"
+  resolved "https://registry.yarnpkg.com/@types/jquery/-/jquery-3.5.32.tgz#3eb0da20611b92c7c49ebed6163b52a4fdc57def"
+  integrity sha512-b9Xbf4CkMqS02YH8zACqN1xzdxc3cO735Qe5AbSUFmyOiaWAbcpqh9Wna+Uk0vgACvoQHpWDg2rGdHkYPLmCiQ==
+  dependencies:
+    "@types/sizzle" "*"
 
 "@types/json-schema@^7.0.15":
   version "7.0.15"
@@ -470,6 +489,11 @@
   integrity sha512-j2VlPv1NnwPJbaCNv69FO/1z4lId0QmGvpT41YxitRtWlg96g/j8qcv2RKsLKe2F6OJgyXhupN1Xo17b2m139Q==
   dependencies:
     undici-types "~6.19.2"
+
+"@types/sizzle@*":
+  version "2.3.9"
+  resolved "https://registry.yarnpkg.com/@types/sizzle/-/sizzle-2.3.9.tgz#d4597dbd4618264c414d7429363e3f50acb66ea2"
+  integrity sha512-xzLEyKB50yqCUPUJkIsrVvoWNfFUbIZI+RspLWt8u+tIW/BetMBZtgV2LY/2o+tYH8dRvQ+eoPf3NdhQCcLE2w==
 
 "@types/vuelidate@^0.7.22":
   version "0.7.22"
@@ -1048,6 +1072,14 @@ dlv@^1.1.3:
   resolved "https://registry.yarnpkg.com/dlv/-/dlv-1.1.3.tgz#5c198a8a11453596e751494d49874bc7732f2e79"
   integrity sha512-+HlytyjlPKnIG8XuRG8WvmBP8xs8P71y+SKKS6ZXWoEgLuePxtDoUEiH7WkdePWrQ5JBpE6aoVqfZfJUQkjXwA==
 
+dropzone@^6.0.0-beta.2:
+  version "6.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/dropzone/-/dropzone-6.0.0-beta.2.tgz#098be8fa84bdc08674cf0b74f4c889e2679083d6"
+  integrity sha512-k44yLuFFhRk53M8zP71FaaNzJYIzr99SKmpbO/oZKNslDjNXQsBTdfLs+iONd0U0L94zzlFzRnFdqbLcs7h9fQ==
+  dependencies:
+    "@swc/helpers" "^0.2.13"
+    just-extend "^5.0.0"
+
 eastasianwidth@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/eastasianwidth/-/eastasianwidth-0.2.0.tgz#696ce2ec0aa0e6ea93a397ffcf24aa7840c827cb"
@@ -1555,6 +1587,11 @@ jsonwebtoken@^9.0.2:
     lodash.once "^4.0.0"
     ms "^2.1.1"
     semver "^7.5.4"
+
+just-extend@^5.0.0:
+  version "5.1.1"
+  resolved "https://registry.yarnpkg.com/just-extend/-/just-extend-5.1.1.tgz#4f33b1fc719964f816df55acc905776694b713ab"
+  integrity sha512-b+z6yF1d4EOyDgylzQo5IminlUmzSeqR1hs/bzjBNjuGras4FXq/6TrzjxfN0j+TmI0ltJzTNlqXUMCniciwKQ==
 
 jwa@^1.4.1:
   version "1.4.1"

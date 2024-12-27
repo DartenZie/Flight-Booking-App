@@ -9,7 +9,7 @@ const seatingModel = ref<SeatingModel>({
     cabins: [
         {
             id: 1,
-            className: 'Business class',
+            className: 'business',
             rows: 6,
             isles: [
                 {
@@ -51,7 +51,7 @@ const seatingModel = ref<SeatingModel>({
         },
         {
             id: 0,
-            className: 'Economy class',
+            className: 'economy',
             rows: 12,
             moreLegRoom: [6, 7],
             isles: [
@@ -332,7 +332,7 @@ const seatingModel = ref<SeatingModel>({
                                         <div class="flex gap-x-8 px-14">
                                             <div v-for="isle in cabin.isles" :key="isle.id" class="flex gap-x-2">
                                                 <div v-for="seat in isle.seats" :key="seat.id">
-                                                    <div :class="['w-10 h-10 rounded flex items-center justify-center cursor-pointer', cabin.class === 'business' ? 'bg-yellow-400 hover:bg-yellow-500' : '', cabin.class === 'economy' ? 'bg-blue-400 hover:bg-blue-500' : '']">
+                                                    <div :class="['w-10 h-10 rounded flex items-center justify-center cursor-pointer', cabin.className === 'business' ? 'bg-yellow-400 hover:bg-yellow-500' : '', cabin.className === 'economy' ? 'bg-blue-400 hover:bg-blue-500' : '']">
                                                         <font-awesome-icon v-if="cabin.moreLegRoom?.includes(index)" :icon="faUpRightAndDownLeftFromCenter" class="text-white" />
                                                     </div>
                                                 </div>

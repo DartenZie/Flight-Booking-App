@@ -12,6 +12,8 @@ import {useRouter} from "vue-router";
 
 const router = useRouter();
 
+const airlineId = router.currentRoute.value.params.airlineId;
+
 const planes = ref<Plane[]>(null);
 
 const selectedPlane = ref<Plane>(null);
@@ -23,7 +25,7 @@ const arrivalTime = ref<string>('');
 const prices = ref<Map<string, number>>(new Map<string, number>());
 
 onMounted(async () => {
-    const { data } = await useAuthenticatedFetch<PlanesResponse>('http://localhost:8080/plane?airline_id=1').get().json();
+    const { data } = await useAuthenticatedFetch<PlanesResponse>(`http://localhost:8080/plane?airline_id=${airlineId}`).get().json();
     planes.value = data.value.planes.map((plane) => Plane.parsePlane(plane));
 });
 
