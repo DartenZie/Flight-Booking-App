@@ -1,7 +1,8 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import {loadLayoutMiddleware} from '@/router/middleware/loadLayoutMiddleware';
-import {authGuard} from './guards/auth.guard';
+import {authGuard, createPermissionGuard} from './guards/auth.guard';
 import {signGuard} from "./guards/sign.guard";
+import ErrorView from "../views/ErrorView.vue";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -95,7 +96,8 @@ const router = createRouter({
                     ]
                 }
             ],
-            meta: { layout: 'AdminLayout' }
+            meta: { layout: 'AdminLayout' },
+            beforeEnter: createPermissionGuard(2)
         },
         {
             path: '/super-admin',
@@ -131,7 +133,12 @@ const router = createRouter({
                 }
             ],
             meta: { layout: 'AppLayout' }
-        }
+        },
+        {
+            path: '/403',
+            name: '403',
+            component: ErrorView,
+        },
     ]
 });
 

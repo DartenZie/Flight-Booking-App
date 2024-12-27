@@ -12,7 +12,7 @@ import SearchDatePick from '@/components/SearchDatePick.vue';
 import FlightCard from '@/components/FlightCard.vue';
 
 import router from '@/router';
-import {Flight, type FlightType} from "@/models/flight.model";
+import {FlightResult, type FlightResultType} from "@/models/flight.model";
 
 const flightTypeId = ref('roundTrip');
 const flightTypeLabel = ref('');
@@ -32,8 +32,8 @@ const classesOptions: ReadonlyArray<{ name: string; value: string }> = [
 const fromLocation = ref({ name: 'Prague', location: 'PRG, Europe, CZ' });
 const toLocation = ref({ name: 'Copenhagen', location: 'CPH, Europe, DK' });
 
-const flights = ref<ReadonlyArray<FlightType>>([
-    new Flight(
+const flights = ref<ReadonlyArray<FlightResultType>>([
+    new FlightResult(
         { name: 'WizzAir', logo: 'wizzair.png' },
         { name: 'PRG', time: new Date() },
         { name: 'CPH' },
@@ -41,7 +41,7 @@ const flights = ref<ReadonlyArray<FlightType>>([
         99,
         'outbound',
     ),
-    new Flight(
+    new FlightResult(
         { name: 'RyanAir', logo: 'ryanair.png' },
         { name: 'PRG', time: new Date(Date.now() + 3600000 * 0.8) },
         { name: 'CPH' },
@@ -49,7 +49,7 @@ const flights = ref<ReadonlyArray<FlightType>>([
         79,
         'outbound',
     ),
-    new Flight(
+    new FlightResult(
         { name: 'Norwegian', logo: 'norwegian.png' },
         { name: 'PRG', time: new Date(Date.now() + 3600000 * 1.3) },
         { name: 'CPH' },
@@ -57,7 +57,7 @@ const flights = ref<ReadonlyArray<FlightType>>([
         159,
         'outbound',
     ),
-    new Flight(
+    new FlightResult(
         { name: 'Lufthansa', logo: 'lufthansa.png' },
         { name: 'PRG', time: new Date(Date.now() + 3600000 * 2.5) },
         { name: 'CPH' },
@@ -67,8 +67,8 @@ const flights = ref<ReadonlyArray<FlightType>>([
     ),
 ]);
 
-const returnFlights = ref<ReadonlyArray<Flight>>([
-    new Flight(
+const returnFlights = ref<ReadonlyArray<FlightResult>>([
+    new FlightResult(
         { name: 'WizzAir', logo: 'wizzair.png' },
         { name: 'CPH', time: new Date(Date.now() - 3600000 * 7.8) },
         { name: 'PRG' },
@@ -76,7 +76,7 @@ const returnFlights = ref<ReadonlyArray<Flight>>([
         99,
         'return',
     ),
-    new Flight(
+    new FlightResult(
         { name: 'RyanAir', logo: 'ryanair.png' },
         { name: 'CPH', time: new Date(Date.now() - 3600000 * 5.3) },
         { name: 'PRG' },
@@ -84,7 +84,7 @@ const returnFlights = ref<ReadonlyArray<Flight>>([
         79,
         'return',
     ),
-    new Flight(
+    new FlightResult(
         { name: 'Norwegian', logo: 'norwegian.png' },
         { name: 'CPH', time: new Date(Date.now() - 3600000 * 3.1) },
         { name: 'PRG' },
@@ -92,7 +92,7 @@ const returnFlights = ref<ReadonlyArray<Flight>>([
         159,
         'return',
     ),
-    new Flight(
+    new FlightResult(
         { name: 'Lufthansa', logo: 'lufthansa.png' },
         { name: 'CPH', time: new Date(Date.now() - 3600000 * 1.5) },
         { name: 'PRG' },
@@ -102,9 +102,9 @@ const returnFlights = ref<ReadonlyArray<Flight>>([
     ),
 ]);
 
-const outboundFlight = ref<FlightType | null>(null);
+const outboundFlight = ref<FlightResultType | null>(null);
 
-const handleSelect = (flight: FlightType): void => {
+const handleSelect = (flight: FlightResultType): void => {
     switch (flight.type) {
     case 'outbound':
         flight.type = 'selected';

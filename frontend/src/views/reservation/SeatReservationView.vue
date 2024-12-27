@@ -3,13 +3,12 @@ import {ref} from "vue";
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faArrowLeft, faShoePrints, faPlane, faChevronRight, faUpRightAndDownLeftFromCenter, faUser, faTimes } from '@fortawesome/free-solid-svg-icons';
-import type {SeatingModel} from "@/types/seating.model";
+import {SeatingModel} from "@/models/plane.model";
 
 const seatingModel = ref<SeatingModel>({
     cabins: [
         {
             id: 1,
-            class: 'business',
             className: 'Business class',
             rows: 6,
             isles: [
@@ -52,7 +51,6 @@ const seatingModel = ref<SeatingModel>({
         },
         {
             id: 0,
-            class: 'economy',
             className: 'Economy class',
             rows: 12,
             moreLegRoom: [6, 7],

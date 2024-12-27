@@ -33,3 +33,32 @@ CREATE TABLE users (
     role_id INT,
     FOREIGN KEY (role_id) REFERENCES roles(id)
 );
+
+DROP TABLE IF EXISTS airlines;
+CREATE TABLE airlines (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255)
+);
+
+DROP TABLE IF EXISTS planes;
+CREATE TABLE planes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255),
+    configuration VARCHAR(255),
+    airline_id INT,
+    FOREIGN KEY (airline_id) REFERENCES airlines(id)
+);
+
+DROP TABLE IF EXISTS flights;
+CREATE TABLE flights (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    price VARCHAR(255),
+    departure_time DATETIME,
+    arrival_time DATETIME,
+    plane_id INT,
+    departure_airport_id INT,
+    arrival_airport_id INT,
+    FOREIGN KEY (plane_id) REFERENCES planes(id),
+    FOREIGN KEY (departure_airport_id) REFERENCES airports(id),
+    FOREIGN KEY (arrival_airport_id) REFERENCES airports(id)
+);

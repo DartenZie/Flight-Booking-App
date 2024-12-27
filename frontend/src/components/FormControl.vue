@@ -20,5 +20,5 @@ const inputType = computed(() => props.type || 'text');
 <template>
     <label :for="id" class="block text-sm font-medium mb-2">{{ label }}</label>
     <input :type="inputType" v-model="model" :id="id" :placeholder="placeholder" @focus.prevent="emit('focus')" @blur.prevent="emit('blur')"
-           class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" />
+           class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" />
 </template>

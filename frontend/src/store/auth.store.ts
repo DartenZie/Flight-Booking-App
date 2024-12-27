@@ -1,8 +1,17 @@
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 import {defineStore} from 'pinia';
 import {useFetch, useStorage} from '@vueuse/core';
+import {useAuthenticatedFetch} from "../utils/authenticated-fetch";
 
 const API_URL = 'http://localhost:8080';
+
+interface User {
+    id: number;
+    email: string;
+    firstName: string;
+    lastName: string;
+    permissionLevel: number;
+}
 
 interface RegisterModel {
     firstName: string;
@@ -22,6 +31,9 @@ interface RegisterResponse {
 export const useAuthStore = defineStore('auth', () => {
     // Access token used to authorize requests
     const accessToken = useStorage('access_token', '', localStorage);
+
+    // Cache for user data
+    const cachedUser = ref<User>(null);
 
     // Flag if user is logged in
     const isLoggedIn = computed(() => !!accessToken.value);
@@ -54,5 +66,32 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    return { accessToken, isLoggedIn, login, logout, register };
+    async function user(): Promise<User | null> {
+        if (!isLoggedIn.value) {
+            return null;
+        }
+
+        if (cachedUser.value) {
+            return cachedUser.value;
+        }
+
+        try {
+            const { data } = await useAuthenticatedFetch('http://localhost:8080/user').get().json();
+
+            cachedUser.value = {
+                id: data.value.id,
+                email: data.value.email,
+                firstName: data.value.firstName,
+                lastName: data.value.lastName,
+                permissionLevel: data.value.permission_level
+            };
+
+            return cachedUser.value;
+        } catch (error) {
+            console.error('Failed to fetch user data:', error);
+            return null;
+        }
+    }
+
+    return { accessToken, isLoggedIn, login, logout, register, user };
 });

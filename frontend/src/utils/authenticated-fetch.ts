@@ -26,6 +26,9 @@ export function useAuthenticatedFetch<T>(url: string, options: UseFetchOptions =
         const response = await fetch(`${BASE_URL}/refresh`, {
             method: 'POST',
             credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            }
         });
 
         if (!response.ok) {
@@ -46,7 +49,7 @@ export function useAuthenticatedFetch<T>(url: string, options: UseFetchOptions =
 
             if (!response.ok) {
                 const data = await response.text();
-                if (data === 'token_expired') {
+                if (data === 'token_expired' || data === 'incomplete_login_credentials') {
                     // If the token is expired, refresh it and retry the request
                     // Refresh token is stored in HTTP-only cookie
                     await refreshAccessToken();

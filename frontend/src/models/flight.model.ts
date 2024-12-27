@@ -1,4 +1,91 @@
+import {Plane} from "./plane.model";
+
+export interface FlightPlaneResponse {
+    id: number;
+    name: string;
+    configuration: string;
+    airline: string;
+}
+
+export interface FlightAirportResponse {
+    id: number;
+    name: string;
+    city: string;
+    country: string;
+    iata: string;
+    timezone: string;
+}
+
+export interface FlightResponse {
+    id: number;
+    price: string;
+    departureTime: Date;
+    arrivalTime: Date;
+    plane: FlightPlaneResponse;
+    departureAirport: FlightAirportResponse;
+    arrivalAirport: FlightAirportResponse;
+}
+
+export interface FlightsResponse {
+    flights: FlightResponse[];
+    total: number;
+    page: number;
+    totalPages: number;
+}
+
+export interface CreateFlightRequest {
+    price: string;
+    departureTime: string;
+    arrivalTime: string;
+    planeId: number;
+    departureAirportId: number;
+    arrivalAirportId: number;
+}
+
 export class Flight {
+    id: number;
+    prices: Map<string, number>;
+    departureTime: Date;
+    arrivalTime: Date;
+    plane: Plane;
+    departureAirport: FlightAirportResponse;
+    arrivalAirport: FlightAirportResponse;
+
+    constructor(id: number) {
+        this.id = id;
+    }
+
+    static parseFlight(flightResponse: FlightResponse): Flight {
+        const flight = new Flight(flightResponse.id);
+        flight.prices = this.parseFlightPrices(flightResponse.price);
+        flight.departureTime = new Date(flightResponse.departureTime);
+        flight.arrivalTime = new Date(flightResponse.arrivalTime);
+        flight.plane = Plane.parsePlane(flightResponse.plane);
+        flight.departureAirport = flightResponse.departureAirport;
+        flight.arrivalAirport = flightResponse.arrivalAirport;
+        return flight;
+    }
+
+    private static parseFlightPrices(pricesString: string): Map<string, number> {
+        const flightPrices: { className: string, price: number }[] = [];
+        const regex = /\[(.*?) (.*?)]/g;
+
+        let match;
+        while ((match = regex.exec(pricesString)) !== null) {
+            const className = match[1];
+            const price = parseFloat(match[2]);
+
+            if (!isNaN(price)) {
+                flightPrices.push({ className, price });
+            }
+        }
+
+        return new Map(flightPrices.map(fp => [fp.className, fp.price]));
+    }
+}
+
+
+export class FlightResult {
     airline: { name: string; logo: string };
     departure: { name: string; time: Date };
     arrival: { name: string };
@@ -46,6 +133,6 @@ export class Flight {
     }
 }
 
-export type FlightType = Pick<Flight, keyof Flight>;
+export type FlightResultType = Pick<FlightResult, keyof FlightResult>;
 
 

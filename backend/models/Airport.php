@@ -3,7 +3,7 @@
 require_once 'core/Model.php';
 
 class Airport extends Model {
-    public function getAllAirports($limit, $offset) {
+    public function getAllAirports($limit, $offset): bool|array {
         $stmt = $this->db->prepare("SELECT * FROM airports LIMIT :limit OFFSET :offset");
         $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
         $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
@@ -23,7 +23,7 @@ class Airport extends Model {
         return $stmt->fetch();
     }
 
-    public function searchAirports($query, $limit, $offset) {
+    public function searchAirports($query, $limit, $offset): bool|array {
         $stmt = $this->db->prepare("
             SELECT * FROM airports
             WHERE name LIKE :query

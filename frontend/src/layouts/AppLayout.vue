@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';
-import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
 import {useAuthStore} from "@/store/auth.store";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faUser} from '@fortawesome/free-solid-svg-icons';
@@ -16,11 +15,7 @@ const handleScroll = (): void => {
 
 onMounted(async () => {
     window.addEventListener('scroll', handleScroll);
-
-    if (auth.isLoggedIn) {
-        const { data } = await useAuthenticatedFetch('http://localhost:8080/user').get().json();
-        user.value = data.value;
-    }
+    user.value = await auth.user();
 });
 
 onUnmounted(() => {
