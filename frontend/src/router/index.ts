@@ -3,7 +3,6 @@ import {loadLayoutMiddleware} from '@/router/middleware/loadLayoutMiddleware';
 import {authGuard, createPermissionGuard} from './guards/auth.guard';
 import {signGuard} from "./guards/sign.guard";
 import ErrorView from "../views/ErrorView.vue";
-import {useFetch} from "@vueuse/core";
 import {airlineExistsGuard} from "./guards/airline-exists.guard";
 
 const router = createRouter({
@@ -67,6 +66,12 @@ const router = createRouter({
                     name: 'settings',
                     component: () => import('../views/profile/ProfileSettingsView.vue')
                 },
+                {
+                    path: 'manage-airlines',
+                    name: 'manage-airlines',
+                    component: () => import('../views/profile/ManageAirlinesView.vue'),
+                    beforeEnter: createPermissionGuard(2)
+                }
             ],
             meta: { layout: 'ProfileLayout' },
             beforeEnter: authGuard
@@ -133,11 +138,6 @@ const router = createRouter({
                     path: 'manage-airports',
                     name: 'manage-airports',
                     component: () => import('@/views/super-admin/ManageAirports.vue')
-                },
-                {
-                    path: 'manage-airlines',
-                    name: 'manage-airlines',
-                    component: () => import('@/views/super-admin/ManageAirlinesView.vue')
                 }
             ],
             meta: { layout: 'ManageAirlineLayout' }

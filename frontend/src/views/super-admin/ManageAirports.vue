@@ -6,15 +6,6 @@ import AdminCard from "@/components/admin/AdminCard.vue";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faSearch} from "@fortawesome/free-solid-svg-icons";
 
-interface AirportModel {
-    name: string;
-    nativeName: string;
-    iata: string;
-    city: string;
-    country: string;
-    countryFlagCode: string;
-}
-
 const airportsRef = ref([]);
 </script>
 

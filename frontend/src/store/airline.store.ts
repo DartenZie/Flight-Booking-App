@@ -1,42 +1,55 @@
 import {defineStore} from "pinia";
-import {ref} from "vue";
+import {ref, watch} from "vue";
 import {useRouter} from "vue-router";
 import {useAuthenticatedFetch} from "../utils/authenticated-fetch";
 
-const API_URL = 'http://localhost:8080';
+const API_URL = process.env.VITE_API_URL;
 
 export interface Airline {
     id: number;
     name: string;
+    logoUrl: string;
 }
 
 export const useAirlineStore = defineStore('airline', () => {
     const router = useRouter();
-    const airlineId = router.currentRoute.value.params.airlineId;
 
-    const cachedAirline = ref<Airline>(null);
-    const cachedAirlineId = ref<number>(0);
+    const currentRoute = router.currentRoute;
+    const airline = ref<Airline>(null);
 
-    async function airline(): Promise<Airline> {
-        if (cachedAirline.value && cachedAirline.value.id !== airlineId) {
-            return cachedAirline.value;
+    async function fetchAirline(): Promise<void> {
+        const airlineId = Number(currentRoute.value.params?.airlineId) || 0;
+
+        if (airlineId <= 0) {
+            airline.value = null;
+            return;
         }
 
         try {
             const { data } = await useAuthenticatedFetch(`${API_URL}/airline?id=${airlineId}`).get().json();
-
-            cachedAirline.value = {
-                id: data.value.id,
-                name: data.value.name
+            airline.value = {
+                id: airlineId,
+                name: data.value.name,
+                logoUrl: `${API_URL}/airline/logo?airlineId=${airlineId}&cacheBuster=${Date.now()}`
             };
-            cachedAirlineId.value = data.value.id;
-
-            return cachedAirline.value;
         } catch (error) {
-            console.error('Failed to fetch airline: ', error);
-            return null;
+            console.error('Failed to fetch airline:', error);
         }
     }
 
-    return { airline };
+    watch(
+        () => currentRoute.value.params?.airlineId,
+        () => {
+            // noinspection JSIgnoredPromiseFromCall
+            fetchAirline();
+        },
+        { immediate: true },
+    );
+
+    function invalidateCache(): void {
+        // noinspection JSIgnoredPromiseFromCall
+        fetchAirline();
+    }
+
+    return { airline, invalidateCache };
 });

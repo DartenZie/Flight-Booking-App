@@ -22,6 +22,7 @@ class AirlineController extends Controller {
         switch ($_SERVER['REQUEST_METHOD']) {
             case 'GET': $this->getAirline(); break;
             case 'POST': $this->postAirline(); break;
+            case 'PUT': $this->updateAirline(); break;
             default:
                 http_response_code(405);
                 header('ALLOW: GET, POST');
@@ -38,7 +39,7 @@ class AirlineController extends Controller {
                 break;
             default:
                 http_response_code(405);
-                header('ALLOW: GET, POST');
+                header('ALLOW: GET, POST, PUT');
                 exit();
         }
     }
@@ -53,6 +54,10 @@ class AirlineController extends Controller {
 
     private function postAirline(): void {
         $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!isset($data)) {
+            $this->jsonResponse(['message' => 'Empty body provided.'], 400);
+        }
 
         $name = $data['name'];
 
@@ -72,6 +77,11 @@ class AirlineController extends Controller {
         $airlines = $this->airlineModel->getAllAirlines($limit, $offset);
         $totalAirlines = $this->airlineModel->getAirlineCount();
 
+        $airlines = array_map(fn($airline) => [
+            'id' => $airline['id'],
+            'name' => $airline['name'],
+        ], $airlines);
+
         $this->jsonResponse([
             'airlines' => $airlines,
             'total' => $totalAirlines,
@@ -86,6 +96,44 @@ class AirlineController extends Controller {
             $this->jsonResponse($airline);
         } else {
             $this->jsonResponse(['message' => 'Airline not found'], 404);
+        }
+    }
+
+    /**
+     * Updates the details of a specific airline.
+     */
+    private function updateAirline(): void {
+        $data = json_decode(file_get_contents('php://input'), true);
+
+        if (!isset($data)) {
+            $this->jsonResponse(['message' => 'Empty body provided.'], 400);
+        }
+
+        if (empty($data['id']) || !is_numeric($data['id'])) {
+            $this->jsonResponse(['message' => 'Invalid or missing airline ID.'], 400);
+        }
+
+        $airlineId = $data['id'];
+        $airline = $this->airlineModel->getAirlineById($airlineId);
+
+        if (!$airline) {
+            $this->jsonResponse(['message' => 'Airline not found.'], 401);
+        }
+
+        $fieldsToUpdate = [];
+        if (!empty($data['name'])) {
+            $fieldsToUpdate['name'] = $data['name'];
+        }
+
+        if (empty($fieldsToUpdate)) {
+            $this->jsonResponse(['message' => 'No valid fields provided to update.'], 400);
+        }
+
+        try {
+            $this->airlineModel->updateAirline($airlineId, $fieldsToUpdate);
+            $this->jsonResponse(['message' => 'Airline updated successfully.']);
+        } catch (Exception $e) {
+            $this->jsonResponse(['message' => 'Failed to update airline.', 'error' => $e->getMessage()], 500);
         }
     }
 

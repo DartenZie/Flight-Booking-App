@@ -2,20 +2,30 @@
 
 import AdminCard from "@/components/admin/AdminCard.vue";
 import {useAirlineStore} from "@/store/airline.store";
-import {onMounted, ref} from "vue";
+import {ref} from "vue";
 import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import LogoDropzone from "@/components/LogoDropzone.vue";
+import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
 
 const airlineStore = useAirlineStore();
 
-const airlineName = ref<string>('');
-
-onMounted(async () => {
-    airlineName.value = (await airlineStore.airline()).name;
-});
+const airlineName = ref<string>(airlineStore.airline.name);
 
 const handleSubmit = async () => {
+    if (airlineName.value === "" || airlineName.value === airlineStore.airline.name) {
+        return;
+    }
+
+    const body = {
+        id: airlineStore.airline.id,
+        name: airlineName.value
+    };
+
+    const response = await useAuthenticatedFetch('http://localhost:8080/airline').put(body).json();
+    if (response.statusCode.value === 200) {
+        airlineStore.invalidateCache();
+    }
 };
 </script>
 

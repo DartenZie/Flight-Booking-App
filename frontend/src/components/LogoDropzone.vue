@@ -5,10 +5,12 @@ import {useRouter} from "vue-router";
 // @ts-expect-error
 import Dropzone from "dropzone";
 import {useAuthStore} from "@/store/auth.store";
+import {useAirlineStore} from "@/store/airline.store";
 
 const router = useRouter();
 
 const auth = useAuthStore();
+const airlineStore = useAirlineStore();
 
 const airlineId = router.currentRoute.value.params.airlineId;
 
@@ -33,6 +35,7 @@ onMounted(() => {
 
         dropzone.on('success', (file, response) => {
             uploadStatus.value = `Upload successful: ${response.path}`;
+            airlineStore.invalidateCache();
         });
 
         dropzone.on('error', (file, errorMessage) => {

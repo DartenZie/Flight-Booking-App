@@ -5,7 +5,7 @@ import {useAuthenticatedFetch} from "../utils/authenticated-fetch";
 
 const API_URL = 'http://localhost:8080';
 
-interface User {
+export interface User {
     id: number;
     email: string;
     firstName: string;
