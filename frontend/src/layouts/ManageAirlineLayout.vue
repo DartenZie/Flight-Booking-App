@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faDashboard, faPlane, faPlaneDeparture, faCog, faArrowLeft} from "@fortawesome/free-solid-svg-icons";
+import {faPlane, faPlaneDeparture, faCog, faArrowLeft} from "@fortawesome/free-solid-svg-icons";
 import {useAirlineStore} from "@/store/airline.store";
 
 const airlineStore = useAirlineStore();
@@ -17,7 +17,7 @@ const handleImageError = (event: Event) => {
             <div class="w-96 flex flex-col justify-between p-10 bg-[#F0F3F4] border-[#D6DDE1] border-5 rounded-3xl shadow-md my-8">
 
                 <div>
-                    <router-link :to="`/airline/${airlineStore.airline.id}/dashboard`" class="block mb-10">
+                    <router-link :to="`/airline/${airlineStore.airline.id}`" class="block mb-10">
                         <span class="text-xl">
                             Sky<span class="font-semibold">Trip</span>
                         </span>
@@ -25,14 +25,7 @@ const handleImageError = (event: Event) => {
 
                     <hr class="mb-10" />
 
-                    <router-link :to="`/airline/${airlineStore.airline.id}/dashboard`" active-class="admin-link-active" class="admin-link">
-                        <div class="px-8 flex h-full items-center gap-x-4">
-                            <font-awesome-icon :icon="faDashboard" class="w-4" />
-                            <div>Dashboard</div>
-                        </div>
-                    </router-link>
-
-                    <router-link :to="`/airline/${airlineStore.airlineId}/manage-planes`" active-class="admin-link-active" class="admin-link">
+                    <router-link :to="`/airline/${airlineStore.airline.id}/manage-planes`" active-class="admin-link-active" class="admin-link">
                         <div class="px-8 flex h-full items-center gap-x-4">
                             <font-awesome-icon :icon="faPlane" class="w-4" />
                             <div>Manage Planes</div>

@@ -21,6 +21,21 @@ class User extends Model {
         return $count > 0;
     }
 
+    public function getAllUsers($limit, $offset): bool|array {
+        $stmt = $this->db->prepare('SELECT users.*, roles.name as role_name FROM users JOIN roles ON users.role_id = roles.id LIMIT :limit OFFSET :offset');
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->bindParam(':offset', $offset, PDO::PARAM_INT);
+        $stmt->execute();
+
+        return $stmt->fetchAll();
+    }
+
+    public function getUsersCount(): int {
+        $stmt = $this->db->prepare('SELECT COUNT(*) as count FROM users');
+        $stmt->execute();
+        return $stmt->fetch()['count'];
+    }
+
     /**
      * Retrieves a user's details by their email address
      * @param $email

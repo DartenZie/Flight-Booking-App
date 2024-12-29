@@ -57,4 +57,11 @@ class Plane extends Model {
         $stmt->bindParam(':airline_id', $plane['airline_id']);
         $stmt->execute();
     }
+
+    public function deletePlane(int $id): void {
+        $sql = "DELETE FROM planes WHERE id = :id";
+        $stmt = $this->db->prepare($sql);
+        $stmt->bindParam(':id', $id, PDO::PARAM_INT);
+        $stmt->execute();
+    }
 }

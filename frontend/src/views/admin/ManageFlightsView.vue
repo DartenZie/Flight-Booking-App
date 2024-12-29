@@ -129,13 +129,7 @@ const reinstateFlight = async (flightId: number): Promise<void> => {
 </script>
 
 <template>
-    <admin-card class="col-span-12 h-28 flex justify-between">
-        <div class="w-full max-w-lg h-14 relative">
-            <input placeholder="Search"
-                   class="bg-[#F0F3F4] w-full h-full rounded-[1.5rem] border-none focus:ring-0 ps-8 pe-14" />
-            <font-awesome-icon :icon="faSearch" class="absolute bottom-1/2 translate-y-1/2 right-8" />
-        </div>
-
+    <admin-card class="col-span-12 h-28 flex justify-end">
         <router-link :to="`/airline/${airlineId}/manage-flights/schedule`" class="btn-primary">Schedule flight</router-link>
     </admin-card>
 

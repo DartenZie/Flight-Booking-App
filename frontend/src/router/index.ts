@@ -71,6 +71,12 @@ const router = createRouter({
                     name: 'manage-airlines',
                     component: () => import('../views/profile/ManageAirlinesView.vue'),
                     beforeEnter: createPermissionGuard(2)
+                },
+                {
+                    path: 'manage-users',
+                    name: 'manage-users',
+                    component: () => import('../views/profile/ManageUsersView.vue'),
+                    beforeEnter: createPermissionGuard(3)
                 }
             ],
             meta: { layout: 'ProfileLayout' },
@@ -80,13 +86,24 @@ const router = createRouter({
             path: '/airline/:airlineId',
             name: 'admin',
             redirect: (to) => {
-                return `/airline/${to.params.airlineId}/dashboard`;
+                return `/airline/${to.params.airlineId}/manage-planes`;
             },
             children: [
                 {
-                    path: 'dashboard',
-                    name: 'dashboard',
-                    component: () => import('@/views/admin/DashboardView.vue')
+                    path: 'manage-planes',
+                    name: 'manage-planes',
+                    children: [
+                        {
+                            path: '',
+                            name: 'manage-planes-list',
+                            component: () => import('@/views/admin/ManagePlanesView.vue')
+                        },
+                        {
+                            path: 'create',
+                            name: 'manage-planes-create',
+                            component: () => import('@/views/admin/CreatePlaneView.vue')
+                        }
+                    ]
                 },
                 {
                     path: 'manage-flights',
@@ -101,22 +118,6 @@ const router = createRouter({
                             path: 'schedule',
                             name: 'manage-flights-schedule',
                             component: () => import('@/views/admin/ScheduleFlightView.vue')
-                        }
-                    ]
-                },
-                {
-                    path: 'manage-planes',
-                    name: 'manage-planes',
-                    children: [
-                        {
-                            path: '',
-                            name: 'manage-planes-list',
-                            component: () => import('@/views/admin/ManagePlanesView.vue')
-                        },
-                        {
-                            path: 'create',
-                            name: 'manage-planes-create',
-                            component: () => import('@/views/admin/CreatePlaneView.vue')
                         }
                     ]
                 },

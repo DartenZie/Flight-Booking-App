@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import AdminCard from "@/components/admin/AdminCard.vue";
-import {faChevronDown, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faSearch} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {onMounted, ref} from "vue";
 import {Plane, PlanesResponse} from "@/models/plane.model";
 import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
-import FloatingUiDropdown from "@/components/floating-ui/FloatingUiDropdown.vue";
 import {useRouter} from "vue-router";
+
+const API_URL = process.env.VITE_API_URL;
 
 const router = useRouter();
 
@@ -15,30 +16,25 @@ const airlineId = router.currentRoute.value.params.airlineId;
 const planes = ref<ReadonlyArray<Plane>>(Plane);
 
 onMounted(async () => {
-    const { data } = await useAuthenticatedFetch<PlanesResponse>(`http://localhost:8080/plane?airline_id=${airlineId}`).get().json();
-    planes.value = data.value.planes.map((plane) => Plane.parsePlane(plane));
+    await fetchPlanes();
 });
 
-const handleSelect = (key: string, planeId: number) => {
-    switch (key) {
-    case 'manageSeatingConfiguration':
-        // manageFlightPricesDialog.reveal({ flight: flights.value.find((flight) => flight.id === flightId) });
-        break;
-    case 'removePlane':
-        // confirmFlightCancel.reveal({ flightId: flightId });
-        break;
+const removePlane = async (planeId: number) => {
+    const response = await useAuthenticatedFetch(`${API_URL}/plane`).delete({ id: planeId }).json();
+
+    if (response.statusCode.value === 200) {
+        await fetchPlanes();
     }
+};
+
+const fetchPlanes = async () => {
+    const { data } = await useAuthenticatedFetch<PlanesResponse>(`${API_URL}/plane?airline_id=${airlineId}`).get().json();
+    planes.value = data.value.planes.map((plane) => Plane.parsePlane(plane));
 };
 </script>
 
 <template>
-    <admin-card class="col-span-12 h-28 flex justify-between">
-        <div class="w-full max-w-lg h-14 relative">
-            <input placeholder="Search"
-                   class="bg-[#F0F3F4] w-full h-full rounded-[1.5rem] border-none focus:ring-0 ps-8 pe-14" />
-            <font-awesome-icon :icon="faSearch" class="absolute bottom-1/2 translate-y-1/2 right-8" />
-        </div>
-
+    <admin-card class="col-span-12 h-28 flex justify-end">
         <router-link :to="`/airline/${airlineId}/manage-planes/create`" class="btn-primary">Register plane</router-link>
     </admin-card>
 
@@ -57,14 +53,8 @@ const handleSelect = (key: string, planeId: number) => {
                     </span>
                 </div>
 
-                <button class="relative block ms-auto me-8 btn-primary h-12" v-floating-ui-trigger="{ componentId: `edit-plane-${plane.id}` }">
-                    <span class="me-7">Edit</span>
-                    <font-awesome-icon :icon="faChevronDown" />
-
-                    <floating-ui-dropdown :component-id="`edit-plane-${plane.id}`" position="right" @select="(key) => handleSelect(key, plane.id)" :dropdown-items="[
-                        { name: 'manageSeatingConfiguration', value: 'Manage seating configuration' },
-                        { name: 'removePlane', value: 'Remove plane' }
-                    ]" />
+                <button class="relative block ms-auto me-8 btn-primary h-12" @click="removePlane(plane.id)">
+                    <span>Remove</span>
                 </button>
             </div>
         </div>

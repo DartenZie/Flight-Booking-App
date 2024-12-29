@@ -66,7 +66,7 @@ export class Plane {
         return plane;
     }
 
-    private static parsePlaneSeatingConfiguration(input: string): SeatingModel {
+    static parsePlaneSeatingConfiguration(input: string): SeatingModel {
         const SEAT_LETTERS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         let currentCabinId = 0;
         let currentSeatId = 0;
@@ -117,7 +117,7 @@ export class Plane {
         };
     }
 
-    private static validateSeatingConfig(config: string): boolean {
+    static validateSeatingConfig(config: string): boolean {
         const regex = /^\[\w+\s+\d+\s+(?:\d+x)*\d+](?:\s+\[\w+\s+\d+\s+(?:\d+x)*\d+])*$/;
         return regex.test(config);
     }
