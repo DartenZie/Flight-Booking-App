@@ -1,11 +1,66 @@
 <script setup lang="ts">
+import {computed, onMounted, reactive} from "vue";
 import router from '@/router';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faArrowLeft, faShoePrints, faPlane, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import { faArrowLeft, faPlane, faChevronRight } from '@fortawesome/free-solid-svg-icons';
+import FormControl from "@/components/FormControl.vue";
+import NationalityFormSelect from "@/components/NationalityFormSelect.vue";
+import {useAuthStore} from "@/store/auth.store";
+import {useReservationStore} from "@/store/reservation.store";
+import {Flight, FlightResult} from "../../models/flight.model";
+import useVuelidate, {ValidationArgs} from "@vuelidate/core";
+import {email, helpers, required, sameAs} from "@vuelidate/validators";
+import ReservationFlightCard from "@/components/ReservationFlightCard.vue";
 
-const submitForm = (): void => {
-    router.push('/book/seat-reservation');
+const API_URL = process.env.VITE_API_URL;
+
+const authStore = useAuthStore();
+const reservationStore = useReservationStore();
+
+const state = reactive({
+    firstName: '',
+    lastName: '',
+    nationality: '',
+    dateOfBirth: '',
+    sex: '',
+    email: '',
+    confirmEmail: '',
+    phone: ''
+});
+
+const rules: ValidationArgs = {
+    firstName: { required },
+    lastName: { required },
+    nationality: { required },
+    dateOfBirth: { required, date: helpers.regex(/^\d{4}-(0[1-9]|[12]\d|3[01])-(0[1-9]|1[0-2])$/) },
+    sex: { required },
+    email: { required, email },
+    confirmEmail: { sameAs: sameAs(computed(() => state.confirmEmail )) },
+    phone: { required }
+};
+
+const v$ = useVuelidate(rules, state);
+
+onMounted(async () => {
+    const user = await authStore.user();
+    state.firstName = user.firstName;
+    state.lastName = user.lastName;
+    state.nationality = user.nationality;
+    state.dateOfBirth = user.dateOfBirth;
+    state.sex = user.sex;
+    state.email = user.email;
+    state.confirmEmail = user.email;
+    state.phone = user.phone;
+});
+
+async function handleSubmit(): void {
+    const isFormCorrect = await this.v$.$validate();
+    if (!isFormCorrect) {
+        return;
+    }
+
+    await router.push('/book/seat-reservation');
 };
 </script>
 
@@ -18,7 +73,7 @@ const submitForm = (): void => {
         >
             <p class="font-thin text-5xl leading-snug text-slate-950 z-10">
                 Let's book your flight<br />
-                to <span class="font-medium">Copenhagen</span>!
+                to <span class="font-medium">{{ reservationStore.departureFlight.arrivalAirport.city }}</span>!
             </p>
         </div>
     </div>
@@ -32,102 +87,8 @@ const submitForm = (): void => {
                 <span class="ms-3">Flight information</span>
             </h2>
 
-            <div class="flex gap-x-4 mb-12">
-                <div class="w-1/3 flex gap-x-4 items-center">
-                    <div class="shrink-0">
-                        <img
-                            class="size-12 object-contain"
-                            src="../../static/companies/wizzair.png"
-                            alt="Wizz Air Logo"
-                        />
-                    </div>
-                    <div class="text-xl font-medium text-black">
-                        Wizz Air
-                    </div>
-                </div>
-
-                <div class="w-1/3 flex gap-x-8 items-center ms-10">
-                    <div class="w-12 flex flex-col items-end">
-                        <div class="text-lg font-medium text-slate-950">12:10</div>
-                        <div class="text-sm font-light text-slate-600">
-                            PRG
-                        </div>
-                    </div>
-                    <div class="border-b-2 border-dashed border-slate-950 w-28"></div>
-                    <div class="w-16">
-                        <div class="text-lg font-medium text-slate-950">13:30</div>
-                        <div class="text-sm font-light text-slate-600">
-                            CPH
-                        </div>
-                    </div>
-                    <div class="text-lg font-normal text-slate-800">1h 20m</div>
-                </div>
-
-                <div class="w-1/3 flex items-center justify-end">
-                    <div class="me-24">
-                        <div class="text-right">
-                            <font-awesome-icon :icon="faShoePrints" class="text-xs me-3" />
-                            <span class="font-thin">Leg room: </span>
-                            <span class="font-medium">74 cm</span>
-                        </div>
-                        <div class="text-right font-thin text-xs">
-                            WizzAir &#183;  Airbus A321 Neo &#183; 5W3487
-                        </div>
-                    </div>
-                    <div class="flex gap-x-1.5 items-center">
-                        <div class="font-medium text-xl text-slate-950">39</div>
-                        <div class="font-light text-sm text-slate-700">EUR</div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-x-4">
-                <div class="w-1/3 flex gap-x-4 items-center">
-                    <div class="shrink-0">
-                        <img
-                            class="size-12 object-contain"
-                            src="../../static/companies/ryanair.png"
-                            alt="RyanAir Logo"
-                        />
-                    </div>
-                    <div class="text-xl font-medium text-black">
-                        RyanAir
-                    </div>
-                </div>
-
-                <div class="w-1/3 flex gap-x-8 items-center ms-10">
-                    <div class="w-12 flex flex-col items-end">
-                        <div class="text-lg font-medium text-slate-950">06:40</div>
-                        <div class="text-sm font-light text-slate-600">
-                            CPH
-                        </div>
-                    </div>
-                    <div class="border-b-2 border-dashed border-slate-950 w-28"></div>
-                    <div class="w-16">
-                        <div class="text-lg font-medium text-slate-950">08:00</div>
-                        <div class="text-sm font-light text-slate-600">
-                            PRH
-                        </div>
-                    </div>
-                    <div class="text-lg font-normal text-slate-800">1h 20m</div>
-                </div>
-
-                <div class="w-1/3 flex items-center justify-end">
-                    <div class="me-24">
-                        <div class="text-right">
-                            <font-awesome-icon :icon="faShoePrints" class="text-xs me-3" />
-                            <span class="font-thin">Leg room: </span>
-                            <span class="font-medium">76 cm</span>
-                        </div>
-                        <div class="text-right font-thin text-xs">
-                            RyanAir &#183;  Boeing 737 &#183; FR 7951
-                        </div>
-                    </div>
-                    <div class="flex gap-x-1.5 items-center">
-                        <div class="font-medium text-xl text-slate-950">49</div>
-                        <div class="font-light text-sm text-slate-700">EUR</div>
-                    </div>
-                </div>
-            </div>
+            <reservation-flight-card v-if="reservationStore.departureFlightId > 0" :flight="reservationStore.departureFlight" />
+            <reservation-flight-card v-if="reservationStore.returnFlightId > 0" :flight="reservationStore.returnFlight" />
 
             <router-link
                 class="btn-primary absolute bottom-0 right-10 h-16 w-56 translate-y-1/2 text-left"
@@ -143,55 +104,56 @@ const submitForm = (): void => {
     </div>
 
     <div class="container mt-24 mb-24 mx-auto">
-        <form @submit.prevent="submitForm()">
+        <form @submit.prevent="handleSubmit()">
             <div class="space-y-12">
                 <div class="border-b border-gray-900/10 pb-12">
                     <div class="mt-10 grid grid-cols-1 gap-x-40 gap-y-8 sm:grid-cols-6">
                         <div class="sm:col-span-2">
-                            <h2 class="text-base/7 font-semibold text-gray-900">Passengers</h2>
-                            <p class="mt-1 text-sm/6 text-gray-600">Please ensure that passengers' names are identical to the way they are written in their passports.</p>
+                            <h2 class="text-base/7 font-semibold text-gray-900">Passenger</h2>
+                            <p class="mt-1 text-sm/6 text-gray-600">Please ensure that passengers' information is identical to the way they are written in their passport.</p>
                         </div>
                         <div class="sm:col-span-4">
-                            <h3 class="text-sm font-medium text-gray-700 mb-6">Passenger 1</h3>
+                            <div class="mb-6">
+                                <div class="flex gap-x-6">
+                                    <div class="flex">
+                                        <input id="gender-group-1" type="radio" name="gender-group" v-model="state.sex" value="male"
+                                               class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                                        <label for="gender-group-1" class="text-sm text-gray-900 ms-2">Male</label>
+                                    </div>
 
-                            <div class="flex gap-x-6 mb-6">
-                                <div class="flex">
-                                    <input type="radio" name="gender-group" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="gender-group-1">
-                                    <label for="gender-group-1" class="text-sm text-gray-900 ms-2">Male</label>
+                                    <div class="flex">
+                                        <input id="gender-group-2" type="radio" name="gender-group" v-model="state.sex" value="female"
+                                               class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                                        <label for="gender-group-2" class="text-sm text-gray-900 ms-2">Female</label>
+                                    </div>
                                 </div>
-
-                                <div class="flex">
-                                    <input type="radio" name="gender-group" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="gender-group-2">
-                                    <label for="gender-group-2" class="text-sm text-gray-900 ms-2">Female</label>
-                                </div>
+                                <p v-if="v$.sex.$error" class="text-sm/6 text-red-600">Sex is required.</p>
                             </div>
 
-                            <div class="flex gap-x-10 mb-6">
-                                <div class="w-1/2">
-                                    <label for="firstName" class="block text-sm font-medium mb-2">First Name</label>
-                                    <input type="text" id="firstName" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="John">
+                            <div class="mb-6">
+                                <div class="flex gap-x-10">
+                                    <div class="w-1/2">
+                                        <form-control id="firstName" v-model="state.firstName" label="First Name" type="text"
+                                                      placeholder="John" />
+                                    </div>
+                                    <div class="w-1/2">
+                                        <form-control id="lastName" v-model="state.lastName" label="Last Name" type="text"
+                                                      placeholder="Doe" />
+                                    </div>
                                 </div>
-                                <div class="w-1/2">
-                                    <label for="lastName" class="block text-sm font-medium mb-2">Last Name</label>
-                                    <input type="text" id="lastName" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Doe">
-                                </div>
+                                <p v-if="v$.firstName.$error || v$.lastName.$error" class="text-sm/6 text-red-600">Full name is required.</p>
                             </div>
 
                             <div class="flex gap-x-10">
                                 <div class="w-1/2">
-                                    <label for="nationality" class="block text-sm font-medium mb-2">Nationality</label>
-                                    <select id="nationality" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                                        <option selected value="" disabled>Select nationality</option>
-                                        <option value="cz">Czech Republic</option>
-                                        <option value="—————" disabled>—————</option>
-                                        <option value="ge">German</option>
-                                        <option value="nor">Norwegian</option>
-                                        <option value="fr">French</option>
-                                    </select>
+                                    <nationality-form-select v-model="state.nationality" />
+                                    <p v-if="v$.nationality.$error" class="text-sm/6 text-red-600">Nationality is required.</p>
                                 </div>
                                 <div class="w-1/2">
-                                    <label for="lastName" class="block text-sm font-medium mb-2">Date of Birth</label>
-                                    <input type="text" id="lastName" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="YYYY-MM-DD">
+                                    <form-control id="dateOfBirth" v-model="state.dateOfBirth" label="Date of Birth" type="text"
+                                                  placeholder="YYYY-DD-MM" />
+                                    <p v-if="v$.dateOfBirth.$errors.some(v => v.$validator === 'required')" class="text-sm/6 text-red-600">Date of birth is required.</p>
+                                    <p v-if="v$.dateOfBirth.$errors.some(v => v.$validator === 'date')" class="text-sm/6 text-red-600">Date of birth is not in YYYY-DD-MM format.</p>
                                 </div>
                             </div>
                         </div>
@@ -207,32 +169,22 @@ const submitForm = (): void => {
                         <div class="sm:col-span-4">
                             <div class="flex gap-x-10 mb-6">
                                 <div class="w-1/2">
-                                    <label for="firstName" class="block text-sm font-medium mb-2">Email</label>
-                                    <input type="email" id="email" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="johndoe@gmail.com">
+                                    <form-control id="email" v-model="state.email" label="Email" type="email"
+                                                  placeholder="johndoe@gmail.com" />
+                                    <p v-if="v$.email.$errors.some(v => v.$validator === 'required')" class="text-sm/6 text-red-600">Email is required.</p>
+                                    <p v-if="v$.email.$errors.some(v => v.$validator === 'email')" class="text-sm/6 text-red-600">Email is not valid.</p>
                                 </div>
                                 <div class="w-1/2">
-                                    <label for="lastName" class="block text-sm font-medium mb-2">Confirm Email</label>
-                                    <input type="email" id="confirmEmail" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="johndoe@gmail.com">
+                                    <form-control id="confirmEmail" v-model="state.confirmEmail" label="Confirm Email" type="email"
+                                                  placeholder="johndoe@gmail.com" />
+                                    <p v-if="v$.confirmEmail.$error" class="text-sm/6 text-red-600">Emails are not the same.</p>
                                 </div>
                             </div>
 
                             <div class="w-1/2 pe-5">
-                                <label for="lastName" class="block text-sm font-medium mb-2">Telephone</label>
-
-                                <div class="flex gap-x-2">
-                                    <div class="w-1/6">
-                                        <select id="phonePrefix" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                                            <option value="cz">Czech Republic (+420)</option>
-                                            <option value="—————" disabled>—————</option>
-                                            <option value="ge">German (+49)</option>
-                                            <option value="nor">Norwegian (+47)</option>
-                                            <option value="fr">French (+33)</option>
-                                        </select>
-                                    </div>
-                                    <div class="w-5/6">
-                                        <input type="text" id="phoneNumber" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="777888999">
-                                    </div>
-                                </div>
+                                <form-control id="phone" v-model="state.phone" label="Phone number" type="text"
+                                              placeholder="+420774847807" />
+                                <p v-if="v$.phone.$error" class="text-sm/6 text-red-600">Phone is required.</p>
                             </div>
                         </div>
                     </div>

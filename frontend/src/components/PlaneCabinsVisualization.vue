@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import {faUpRightAndDownLeftFromCenter} from "@fortawesome/free-solid-svg-icons";
-import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {SeatingModel} from "@/models/plane.model";
 
 defineProps<{
@@ -24,9 +22,19 @@ defineProps<{
                 <div class="flex gap-x-8 px-14">
                     <div v-for="isle in cabin.isles" :key="isle.id" class="flex gap-x-2">
                         <div v-for="seat in isle.seats" :key="seat.id">
-                            <div :class="['w-10 h-10 rounded flex items-center justify-center cursor-pointer', cabin.className.toLowerCase().includes('business') ? 'bg-yellow-400 hover:bg-yellow-500' : '', cabin.className.toLowerCase().includes('economy') ? 'bg-blue-400 hover:bg-blue-500' : '']">
-                                <font-awesome-icon v-if="cabin.moreLegRoom?.includes(index)" :icon="faUpRightAndDownLeftFromCenter" class="text-white" />
-                            </div>
+                            <div v-if="seatingModel.takenSeats.includes(80932)"
+                                 class="seat bg-gray-400"></div>
+                            <div v-else-if="cabin.className.toLowerCase().includes('business')"
+                                 class="seat bg-yellow-400 hover:bg-yellow-500"></div>
+                            <div v-else-if="cabin.className.toLowerCase().includes('economy')"
+                                 class="seat bg-blue-400 hover:bg-blue-500"></div>
+                            <!--                            <div :class="[-->
+                            <!--                                'w-10 h-10 rounded flex items-center justify-center cursor-pointer',-->
+                            <!--                                cabin.className.toLowerCase().includes('business') ? 'bg-yellow-400 hover:bg-yellow-500' : '',-->
+                            <!--                                cabin.className.toLowerCase().includes('economy') ? 'bg-blue-400 hover:bg-blue-500' : '',-->
+                            <!--                            ]">-->
+                            <!--                                <font-awesome-icon v-if="cabin.moreLegRoom?.includes(index)" :icon="faUpRightAndDownLeftFromCenter" class="text-white" />-->
+                            <!--                            </div>-->
                         </div>
                     </div>
                 </div>

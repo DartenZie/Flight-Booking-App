@@ -4,7 +4,7 @@ import {computed} from "vue";
 const props = defineProps<{
     id: string,
     label: string,
-    type?: 'text' | 'email' | 'password',
+    type?: 'text' | 'email' | 'password' | 'date',
     placeholder?: string
 }>();
 const model = defineModel();

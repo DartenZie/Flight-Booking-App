@@ -2,10 +2,9 @@
 import {onMounted, ref} from 'vue';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faPlane } from '@fortawesome/free-solid-svg-icons';
+import {faChevronDown, faPlane} from '@fortawesome/free-solid-svg-icons';
 import { faArrowRight } from '@fortawesome/free-solid-svg-icons';
 
-import FloatingUiActivator from '@/components/floating-ui/FloatingUiActivator.vue';
 import FloatingUiDropdown from '@/components/floating-ui/FloatingUiDropdown.vue';
 import SearchInput from '@/components/SearchInput.vue';
 import SearchDatePick from '@/components/SearchDatePick.vue';
@@ -13,93 +12,28 @@ import FlightCard from '@/components/FlightCard.vue';
 
 import router from '@/router';
 import {FlightResult, type FlightResultType} from "@/models/flight.model";
+import {useFetch} from "@vueuse/core";
+import {useReservationStore} from "@/store/reservation.store";
+
+const API_URL = process.env.VITE_API_URL;
+
+const reservationStore = useReservationStore();
 
 const flightTypeId = ref('roundTrip');
 const flightTypeLabel = ref('');
-const classLabel = ref('');
 
 const flightTypeOptions: ReadonlyArray<{ name: string; value: string }> = [
     { name: 'roundTrip', value: 'Round Trip' },
     { name: 'oneWayTrip', value: 'One Way Trip' },
 ];
 
-const classesOptions: ReadonlyArray<{ name: string; value: string }> = [
-    { name: 'economyClass', value: 'Economy Class' },
-    { name: 'businessClass', value: 'Business Class' },
-    { name: 'firstClass', value: 'First Class' },
-];
-
-const fromLocation = ref({ name: 'Prague', location: 'PRG, Europe, CZ' });
-const toLocation = ref({ name: 'Copenhagen', location: 'CPH, Europe, DK' });
+const fromLocation = ref({});
+const toLocation = ref({});
 
 const flights = ref<ReadonlyArray<FlightResultType>>([
-    new FlightResult(
-        { name: 'WizzAir', logo: 'wizzair.png' },
-        { name: 'PRG', time: new Date() },
-        { name: 'CPH' },
-        80,
-        99,
-        'outbound',
-    ),
-    new FlightResult(
-        { name: 'RyanAir', logo: 'ryanair.png' },
-        { name: 'PRG', time: new Date(Date.now() + 3600000 * 0.8) },
-        { name: 'CPH' },
-        80,
-        79,
-        'outbound',
-    ),
-    new FlightResult(
-        { name: 'Norwegian', logo: 'norwegian.png' },
-        { name: 'PRG', time: new Date(Date.now() + 3600000 * 1.3) },
-        { name: 'CPH' },
-        80,
-        159,
-        'outbound',
-    ),
-    new FlightResult(
-        { name: 'Lufthansa', logo: 'lufthansa.png' },
-        { name: 'PRG', time: new Date(Date.now() + 3600000 * 2.5) },
-        { name: 'CPH' },
-        80,
-        399,
-        'outbound',
-    ),
 ]);
 
 const returnFlights = ref<ReadonlyArray<FlightResult>>([
-    new FlightResult(
-        { name: 'WizzAir', logo: 'wizzair.png' },
-        { name: 'CPH', time: new Date(Date.now() - 3600000 * 7.8) },
-        { name: 'PRG' },
-        80,
-        99,
-        'return',
-    ),
-    new FlightResult(
-        { name: 'RyanAir', logo: 'ryanair.png' },
-        { name: 'CPH', time: new Date(Date.now() - 3600000 * 5.3) },
-        { name: 'PRG' },
-        80,
-        79,
-        'return',
-    ),
-    new FlightResult(
-        { name: 'Norwegian', logo: 'norwegian.png' },
-        { name: 'CPH', time: new Date(Date.now() - 3600000 * 3.1) },
-        { name: 'PRG' },
-        80,
-        159,
-        'return',
-    ),
-    new FlightResult(
-        { name: 'Lufthansa', logo: 'lufthansa.png' },
-        { name: 'CPH', time: new Date(Date.now() - 3600000 * 1.5) },
-        { name: 'PRG' },
-        80,
-        399,
-        'return',
-    ),
 ]);
 
 const outboundFlight = ref<FlightResultType | null>(null);
@@ -115,15 +49,40 @@ const handleSelect = (flight: FlightResultType): void => {
         outboundFlight.value = null;
         break;
     case 'oneWay':
+        reservationStore.departureFlightId = flight.id;
+        router.push('/book/passenger-information');
+        break;
     case 'return':
         router.push('/book/passenger-information');
         break;
     }
 };
 
+const handleSearch = async () => {
+    if (!fromLocation.value?.id || !toLocation.value?.id) {
+        return;
+    }
+
+    const body = {
+        departureAirportId: fromLocation.value?.id,
+        arrivalAirportId: toLocation.value?.id,
+        departureDate: '2024-12-30',
+        type: 'oneway'
+    };
+    const { data } = await useFetch(`${API_URL}/flight/search`).post(body).json();
+
+    flights.value = data.value.flights.map((flight) => new FlightResult(
+        flight.id,
+        { name: flight.plane.airlineName, logo: `${API_URL}/airline/logo?airlineId=${flight.plane.airlineId}` },
+        { name: flight.departureAirport.iata, time: new Date(flight.departureTime) },
+        { name: flight.arrivalAirport.iata, time: new Date(flight.arrivalTime) },
+        flight.price,
+        'oneWay'
+    ));
+};
+
 onMounted(async () => {
     flightTypeLabel.value = flightTypeOptions[0].value;
-    classLabel.value = classesOptions[0].value;
 });
 </script>
 
@@ -148,35 +107,22 @@ onMounted(async () => {
             </h2>
 
             <div class="flex gap-10 mb-6">
-                <floating-ui-activator
-                    component-id="flightSearch:flightType"
-                    :label="flightTypeLabel"
-                >
+                <div class="relative inline-block text-left">
+                    <div class="floating-ui-activator">
+                        <a v-floating-ui-trigger="{ componentId: 'flightSearch:flightType' }"
+                           class="text-sm font-medium cursor-pointer select-none">
+                            <span class="me-3">{{ flightTypeLabel }}</span>
+                            <font-awesome-icon :icon="faChevronDown" />
+                        </a>
+                    </div>
+
                     <floating-ui-dropdown
                         component-id="flightSearch:flightType"
                         :dropdown-items="flightTypeOptions"
                         @label="l => (flightTypeLabel = l)"
                         @select="id => (flightTypeId = id)"
                     />
-                </floating-ui-activator>
-
-                <floating-ui-activator
-                    component-id="flightSearch:passengers"
-                    label="2 Passengers"
-                >
-                    <!-- TODO passenger select -->
-                </floating-ui-activator>
-
-                <floating-ui-activator
-                    component-id="flightSearch:class"
-                    :label="classLabel"
-                >
-                    <floating-ui-dropdown
-                        component-id="flightSearch:class"
-                        :dropdown-items="classesOptions"
-                        @label="l => (classLabel = l)"
-                    />
-                </floating-ui-activator>
+                </div>
             </div>
 
             <div class="h-20 w-full flex gap-x-6">
@@ -203,6 +149,7 @@ onMounted(async () => {
 
             <button
                 class="btn-primary absolute bottom-0 right-10 h-16 w-56 translate-y-1/2 text-left"
+                @click="handleSearch"
             >
                 <span>Search Flights</span>
                 <font-awesome-icon
@@ -241,7 +188,6 @@ onMounted(async () => {
                     v-for="(flight, index) in flights"
                     :key="index"
                     :flight="flight"
-                    :below-average-price="flight.price < 100"
                     @select="handleSelect(flight)"
                 />
             </div>

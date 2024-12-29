@@ -1,106 +1,11 @@
 <script setup lang="ts">
-import {ref} from "vue";
-
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
-import { faArrowLeft, faShoePrints, faPlane, faChevronRight, faUpRightAndDownLeftFromCenter, faUser, faTimes } from '@fortawesome/free-solid-svg-icons';
-import {SeatingModel} from "@/models/plane.model";
-import PlaneCabinsVisualization from "@/components/admin/PlaneCabinsVisualization.vue";
+import { faArrowLeft, faPlane, faChevronRight, faUpRightAndDownLeftFromCenter, faUser, faTimes } from '@fortawesome/free-solid-svg-icons';
+import PlaneCabinsVisualization from "@/components/PlaneCabinsVisualization.vue";
+import ReservationFlightCard from "@/components/ReservationFlightCard.vue";
+import {useReservationStore} from "@/store/reservation.store";
 
-const seatingModel = ref<SeatingModel>({
-    cabins: [
-        {
-            id: 1,
-            className: 'business',
-            rows: 6,
-            isles: [
-                {
-                    id: 0,
-                    seats: [
-                        {
-                            id: 0,
-                            colCode: 'A',
-                            legRoom: 74
-                        }
-                    ]
-                },
-                {
-                    id: 1,
-                    seats: [
-                        {
-                            id: 1,
-                            colCode: 'B',
-                            legRoom: 74
-                        },
-                        {
-                            id: 2,
-                            colCode: 'C',
-                            legRoom: 74
-                        },
-                    ]
-                },
-                {
-                    id: 2,
-                    seats: [
-                        {
-                            id: 3,
-                            colCode: 'D',
-                            legRoom: 74
-                        },
-                    ]
-                },
-            ]
-        },
-        {
-            id: 0,
-            className: 'economy',
-            rows: 12,
-            moreLegRoom: [6, 7],
-            isles: [
-                {
-                    id: 0,
-                    seats: [
-                        {
-                            id: 5,
-                            colCode: 'A',
-                            legRoom: 74
-                        },
-                        {
-                            id: 6,
-                            colCode: 'B',
-                            legRoom: 74
-                        },
-                        {
-                            id: 7,
-                            colCode: 'C',
-                            legRoom: 74
-                        },
-                    ]
-                },
-                {
-                    id: 1,
-                    seats: [
-                        {
-                            id: 8,
-                            colCode: 'D',
-                            legRoom: 74
-                        },
-                        {
-                            id: 9,
-                            colCode: 'E',
-                            legRoom: 74
-                        },
-                        {
-                            id: 10,
-                            colCode: 'F',
-                            legRoom: 74
-                        },
-                    ]
-                },
-            ]
-        },
-    ],
-    takenSeats: [2, 3, 4, 5, 8, 9, 11, 17, 28, 34]
-});
+const reservationStore = useReservationStore();
 </script>
 
 <template>
@@ -110,9 +15,9 @@ const seatingModel = ref<SeatingModel>({
         <div
             class="container mx-auto h-full flex flex-auto items-center justify-start"
         >
-            <p class="font-thin text-5xl leading-snug text-slate-950 z-10">
+            <p v-if="reservationStore.departureFlight" class="font-thin text-5xl leading-snug text-slate-950 z-10">
                 Let's book your flight<br />
-                to <span class="font-medium">Copenhagen</span>!
+                to <span class="font-medium">{{ reservationStore.departureFlight.arrivalAirport.city }}</span>!
             </p>
         </div>
     </div>
@@ -126,102 +31,8 @@ const seatingModel = ref<SeatingModel>({
                 <span class="ms-3">Flight information</span>
             </h2>
 
-            <div class="flex gap-x-4 mb-12">
-                <div class="w-1/3 flex gap-x-4 items-center">
-                    <div class="shrink-0">
-                        <img
-                            class="size-12 object-contain"
-                            src="../../static/companies/wizzair.png"
-                            alt="Wizz Air Logo"
-                        />
-                    </div>
-                    <div class="text-xl font-medium text-black">
-                        Wizz Air
-                    </div>
-                </div>
-
-                <div class="w-1/3 flex gap-x-8 items-center ms-10">
-                    <div class="w-12 flex flex-col items-end">
-                        <div class="text-lg font-medium text-slate-950">12:10</div>
-                        <div class="text-sm font-light text-slate-600">
-                            PRG
-                        </div>
-                    </div>
-                    <div class="border-b-2 border-dashed border-slate-950 w-28"></div>
-                    <div class="w-16">
-                        <div class="text-lg font-medium text-slate-950">13:30</div>
-                        <div class="text-sm font-light text-slate-600">
-                            CPH
-                        </div>
-                    </div>
-                    <div class="text-lg font-normal text-slate-800">1h 20m</div>
-                </div>
-
-                <div class="w-1/3 flex items-center justify-end">
-                    <div class="me-24">
-                        <div class="text-right">
-                            <font-awesome-icon :icon="faShoePrints" class="text-xs me-3" />
-                            <span class="font-thin">Leg room: </span>
-                            <span class="font-medium">74 cm</span>
-                        </div>
-                        <div class="text-right font-thin text-xs">
-                            WizzAir &#183;  Airbus A321 Neo &#183; 5W3487
-                        </div>
-                    </div>
-                    <div class="flex gap-x-1.5 items-center">
-                        <div class="font-medium text-xl text-slate-950">39</div>
-                        <div class="font-light text-sm text-slate-700">EUR</div>
-                    </div>
-                </div>
-            </div>
-            <div class="flex gap-x-4">
-                <div class="w-1/3 flex gap-x-4 items-center">
-                    <div class="shrink-0">
-                        <img
-                            class="size-12 object-contain"
-                            src="../../static/companies/ryanair.png"
-                            alt="RyanAir Logo"
-                        />
-                    </div>
-                    <div class="text-xl font-medium text-black">
-                        RyanAir
-                    </div>
-                </div>
-
-                <div class="w-1/3 flex gap-x-8 items-center ms-10">
-                    <div class="w-12 flex flex-col items-end">
-                        <div class="text-lg font-medium text-slate-950">06:40</div>
-                        <div class="text-sm font-light text-slate-600">
-                            CPH
-                        </div>
-                    </div>
-                    <div class="border-b-2 border-dashed border-slate-950 w-28"></div>
-                    <div class="w-16">
-                        <div class="text-lg font-medium text-slate-950">08:00</div>
-                        <div class="text-sm font-light text-slate-600">
-                            PRH
-                        </div>
-                    </div>
-                    <div class="text-lg font-normal text-slate-800">1h 20m</div>
-                </div>
-
-                <div class="w-1/3 flex items-center justify-end">
-                    <div class="me-24">
-                        <div class="text-right">
-                            <font-awesome-icon :icon="faShoePrints" class="text-xs me-3" />
-                            <span class="font-thin">Leg room: </span>
-                            <span class="font-medium">76 cm</span>
-                        </div>
-                        <div class="text-right font-thin text-xs">
-                            RyanAir &#183;  Boeing 737 &#183; FR 7951
-                        </div>
-                    </div>
-                    <div class="flex gap-x-1.5 items-center">
-                        <div class="font-medium text-xl text-slate-950">49</div>
-                        <div class="font-light text-sm text-slate-700">EUR</div>
-                    </div>
-                </div>
-            </div>
+            <reservation-flight-card v-if="reservationStore.departureFlight" :flight="reservationStore.departureFlight" />
+            <reservation-flight-card v-if="reservationStore.returnFlight" :flight="reservationStore.returnFlight" />
 
             <router-link
                 class="btn-primary absolute bottom-0 right-10 h-16 w-56 translate-y-1/2 text-left"
@@ -318,7 +129,7 @@ const seatingModel = ref<SeatingModel>({
                                 </div>
                             </div>
 
-                            <plane-cabins-visualization :seating-model="seatingModel" />
+                            <plane-cabins-visualization v-if="reservationStore.departureFlight" :seating-model="reservationStore.departureFlight.plane.seatingConfiguration" />
                         </div>
                     </div>
                 </div>

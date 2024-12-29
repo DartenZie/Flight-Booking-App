@@ -10,6 +10,10 @@ export interface User {
     email: string;
     firstName: string;
     lastName: string;
+    nationality: string;
+    sex: string;
+    dateOfBirth: string;
+    phone: string;
     permissionLevel: number;
 }
 
@@ -83,6 +87,10 @@ export const useAuthStore = defineStore('auth', () => {
                 email: data.value.email,
                 firstName: data.value.firstName,
                 lastName: data.value.lastName,
+                nationality: data.value.nationality,
+                sex: data.value.sex,
+                dateOfBirth: data.value.dateOfBirth,
+                phone: data.value.phone,
                 permissionLevel: data.value.permission_level
             };
 

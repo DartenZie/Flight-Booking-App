@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AdminCard from "@/components/admin/AdminCard.vue";
-import PlaneCabinsVisualization from "@/components/admin/PlaneCabinsVisualization.vue";
+import PlaneCabinsVisualization from "@/components/PlaneCabinsVisualization.vue";
 import {computed, ref} from "vue";
 import {Plane, SeatingModel} from "@/models/plane.model";
 import FormControl from "@/components/FormControl.vue";

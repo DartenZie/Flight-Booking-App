@@ -11,6 +11,13 @@ header("Access-Control-Allow-Headers: Content-Type, Authorization, X-Requested-W
 header("Access-Control-Allow-Credentials: true");
 header("Access-Control-Allow-Methods: GET, POST, OPTIONS, PUT, DELETE");
 
+// Set error handler
+set_exception_handler(function ($exception) {
+    http_response_code(500);
+    header('Content-Type: application/json');
+    echo json_encode($this->jsonResponse(['error' => 'An unexpected error occurred.']));
+});
+
 // Autoload controllers dynamically
 spl_autoload_register(function ($className) {
     $controllerFile = "controllers/" . $className . ".php";

@@ -144,4 +144,19 @@ class Flight extends Model {
         $stmt->bindParam(':cancelled', $flight['cancelled'], PDO::PARAM_BOOL);
         $stmt->execute();
     }
+
+    public function searchFlights(int $departureAirportId, int $arrivalAirportId, string $date): array {
+        $sql = 'SELECT * FROM flights WHERE
+                departure_airport_id = :departureAirportId
+                AND arrival_airport_id = :arrivalAirportId
+                AND DATE(departure_time) = :date';
+
+        $stmt = $this->db->prepare($sql);
+        $stmt->execute([
+            ':departureAirportId' => $departureAirportId,
+            ':arrivalAirportId' => $arrivalAirportId,
+            ':date' => $date
+        ]);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
 }

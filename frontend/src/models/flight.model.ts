@@ -1,10 +1,12 @@
 import {Plane} from "./plane.model";
+import {Airline} from "../store/airline.store";
 
 export interface FlightPlaneResponse {
     id: number;
     name: string;
     configuration: string;
-    airline: string;
+    airlineName: string;
+    airlineId: number;
 }
 
 export interface FlightAirportResponse {
@@ -74,7 +76,7 @@ export class Flight {
         return flight;
     }
 
-    private static parseFlightPrices(pricesString: string): Map<string, number> {
+    static parseFlightPrices(pricesString: string): Map<string, number> {
         const flightPrices: { className: string, price: number }[] = [];
         const regex = /\[(.*?) (.*?)]/g;
 
@@ -94,47 +96,49 @@ export class Flight {
 
 
 export class FlightResult {
+    id: number;
     airline: { name: string; logo: string };
     departure: { name: string; time: Date };
-    arrival: { name: string };
-    duration: number; // Duration in minutes
-    price: number;
+    arrival: { name: string; time: Date };
+    price: string;
     type: 'oneWay' | 'outbound' | 'return' | 'selected';
 
     constructor(
+        id: number,
         airline: { name: string; logo: string },
         departure: { name: string; time: Date },
-        arrival: { name: string },
-        duration: number,
-        price: number,
+        arrival: { name: string; time: Date },
+        price: string,
         type: 'oneWay' | 'outbound' | 'return' | 'selected' = 'oneWay'
     ) {
+        this.id = id;
         this.airline = airline;
         this.departure = departure;
         this.arrival = arrival;
-        this.duration = duration;
         this.price = price;
         this.type = type;
     }
 
     getDepartureTime(): string {
-        return this.formatTime(this.departure.time);
+        return FlightResult.formatTime(this.departure.time);
     }
 
     getArrivalTime(): string {
-        const arrivalTime = new Date(
-            this.departure.time.getTime() + this.duration * 60000
-        );
-        return this.formatTime(arrivalTime);
+        return FlightResult.formatTime(this.arrival.time);
     }
 
     getFormattedDuration(): string {
-        const hours = Math.floor(this.duration / 60);
-        const minutes = this.duration % 60;
+        const duration = (this.arrival.time.valueOf() - this.departure.time.valueOf()) / 60_000;
+        return FlightResult.formatDuration(duration);
+    }
+
+    static formatDuration(duration: number): string {
+        const hours = Math.floor(duration / 60);
+        const minutes = duration % 60;
         return `${hours}h ${minutes}m`;
     }
 
-    private formatTime(date: Date): string {
+    static formatTime(date: Date): string {
         const hours = date.getHours().toString().padStart(2, '0');
         const minutes = date.getMinutes().toString().padStart(2, '0');
         return `${hours}:${minutes}`;

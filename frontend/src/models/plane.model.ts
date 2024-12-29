@@ -26,6 +26,8 @@ export interface PlaneResponse {
     id: number;
     name: string;
     configuration: string;
+    airlineName: string;
+    airlineId: number;
 }
 
 export interface PlanesResponse {
@@ -39,6 +41,8 @@ export class Plane {
     id: number;
     name: string;
     seatingConfiguration: SeatingModel;
+    airline: string;
+    airlineId: number;
 
     constructor(id: number, name: string) {
         this.id = id;
@@ -62,6 +66,8 @@ export class Plane {
 
     static parsePlane(planeResponse: PlaneResponse): Plane {
         const plane = new Plane(planeResponse.id, planeResponse.name);
+        plane.airline = planeResponse.airlineName;
+        plane.airlineId = planeResponse.airlineId;
         plane.seatingConfiguration = this.parsePlaneSeatingConfiguration(planeResponse.configuration);
         return plane;
     }
@@ -113,7 +119,7 @@ export class Plane {
 
         return {
             cabins,
-            takenSeats: []
+            takenSeats: [2, 3, 4, 5, 8, 9, 11, 17, 28, 34]
         };
     }
 

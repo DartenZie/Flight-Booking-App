@@ -46,4 +46,8 @@
     .admin-link-active {
         @apply bg-slate-950 text-gray-100 hover:text-white;
     }
+
+    .seat {
+        @apply w-10 h-10 rounded flex items-center justify-center cursor-pointer;
+    }
 }

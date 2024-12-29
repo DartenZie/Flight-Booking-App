@@ -1,5 +1,6 @@
 <?php
 
+
 /// Configuration File
 ///
 /// This file defines configuration constants and database connection function for the application.

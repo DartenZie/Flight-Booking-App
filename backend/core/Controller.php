@@ -33,6 +33,30 @@ abstract class Controller {
     }
 
     /**
+     * @throws ValidationException
+     */
+    protected function parseRequestBody(): array {
+        $data = json_decode(file_get_contents('php://input'), true);
+        if (!is_array($data)) {
+            throw new ValidationException('Invalid JSON payload.', 400);
+        }
+        return $data;
+    }
+
+    protected function handleRequest(array $handlers): void {
+        $method = $_SERVER['REQUEST_METHOD'];
+        if (array_key_exists($method, $handlers)) {
+            try {
+                $handlers[$method]();
+            } catch (ValidationException $e) {
+                $this->jsonResponse(['error' => $e->getMessage()], $e->getCode());
+            }
+        } else {
+            $this->sendMethodNotAllowedResponse(array_keys($handlers));
+        }
+    }
+
+    /**
      * Sends a JSON response with a specified HTTP status code and exits the script.
      *
      * @param mixed $data The data to be encoded as JSON and sent in the response.
@@ -75,5 +99,10 @@ abstract class Controller {
         } catch (Exception $e) {
             $this->errorResponse($e->getMessage());
         }
+    }
+
+    private function sendMethodNotAllowedResponse(array $allowedMethods): void {
+        header('Allow: ' . implode(', ', $allowedMethods));
+        $this->jsonResponse(['error' => 'Method not allowed.'], 405);
     }
 }

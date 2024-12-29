@@ -4,6 +4,7 @@ import {authGuard, createPermissionGuard} from './guards/auth.guard';
 import {signGuard} from "./guards/sign.guard";
 import ErrorView from "../views/ErrorView.vue";
 import {airlineExistsGuard} from "./guards/airline-exists.guard";
+import {passengerInformationGuard} from "./guards/passenger-information.guard";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -150,7 +151,8 @@ const router = createRouter({
                 {
                     path: 'passenger-information',
                     name: 'passenger-information',
-                    component: () => import('../views/reservation/PassengerInformationView.vue')
+                    component: () => import('../views/reservation/PassengerInformationView.vue'),
+                    beforeEnter: passengerInformationGuard
                 },
                 {
                     path: 'seat-reservation',

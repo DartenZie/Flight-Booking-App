@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { computed } from 'vue';
 
-import type {FlightResultType} from "@/models/flight.model";
+import {Flight, FlightResultType} from "@/models/flight.model";
 
 const props = defineProps<{
     flight: FlightResultType,
@@ -15,6 +15,16 @@ defineEmits<{
 const departureTime = computed(() => props.flight.getDepartureTime() ?? '');
 const arrivalTime = computed(() => props.flight.getArrivalTime() ?? '');
 const duration = computed(() => props.flight.getFormattedDuration()) ?? '';
+
+const lowestPrice = computed(() => {
+    const priceMap = Flight.parseFlightPrices(props.flight.price);
+    return Math.min(...priceMap.values());
+});
+
+const handleImageError = (event: Event) => {
+    const target = event.target as HTMLElement;
+    target.src = '/logo-placeholder.jpg';
+};
 </script>
 
 <template>
@@ -25,8 +35,9 @@ const duration = computed(() => props.flight.getFormattedDuration()) ?? '';
             <div class="shrink-0">
                 <img
                     class="size-12 object-contain"
-                    :src="'/src/static/companies/' + flight.airline.logo"
-                    alt="RyanAir Logo"
+                    :src="flight.airline.logo"
+                    :alt="`${flight.airline.name} Logo`"
+                    @error="handleImageError"
                 />
             </div>
             <div class="text-xl font-medium text-black">
@@ -52,7 +63,7 @@ const duration = computed(() => props.flight.getFormattedDuration()) ?? '';
         <div class="w-1/4 flex justify-end items-center gap-x-8">
             <div class="flex gap-x-1.5 items-center">
                 <div :class="['font-medium text-xl', belowAveragePrice ? 'text-green-600' : 'text-slate-950']">
-                    {{ flight.price }}
+                    {{ lowestPrice }}
                 </div>
                 <div :class="['font-light text-sm', belowAveragePrice ? 'text-green-800' : 'text-slate-700']">EUR</div>
             </div>
