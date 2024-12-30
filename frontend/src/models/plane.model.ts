@@ -1,6 +1,6 @@
 export interface SeatingModel {
     cabins: CabinModel[];
-    takenSeats: number[];
+    takenSeats: string[];
 }
 
 export interface CabinModel {
@@ -81,7 +81,7 @@ export class Plane {
         const cabins: CabinModel[] = [];
 
         // Regular expression to match cabin configurations
-        const cabinRegex = /\[(\w+)\s+(\d+)\s+([\dx]+)\]/g;
+        const cabinRegex = /\[(\w+)\s+(\d+)\s+([\dx]+)]/g;
         let match;
 
         while ((match = cabinRegex.exec(input)) !== null) {
@@ -119,7 +119,7 @@ export class Plane {
 
         return {
             cabins,
-            takenSeats: [2, 3, 4, 5, 8, 9, 11, 17, 28, 34]
+            takenSeats: []
         };
     }
 

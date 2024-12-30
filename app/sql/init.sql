@@ -71,3 +71,14 @@ CREATE TABLE flights (
     FOREIGN KEY (departure_airport_id) REFERENCES airports(id),
     FOREIGN KEY (arrival_airport_id) REFERENCES airports(id)
 );
+
+DROP TABLE IF EXISTS reservations;
+CREATE TABLE reservations (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    seat VARCHAR(255),
+    class VARCHAR(255),
+    flight_id INT,
+    user_id INT,
+    FOREIGN KEY (flight_id) REFERENCES flights(id),
+    FOREIGN KEY (user_id) REFERENCES users(id)
+);

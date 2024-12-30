@@ -66,7 +66,7 @@ const handleSearch = async () => {
     const body = {
         departureAirportId: fromLocation.value?.id,
         arrivalAirportId: toLocation.value?.id,
-        departureDate: '2024-12-30',
+        departureDate: '2024-12-31',
         type: 'oneway'
     };
     const { data } = await useFetch(`${API_URL}/flight/search`).post(body).json();

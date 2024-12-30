@@ -7,6 +7,7 @@ use App\Exceptions\ValidationException;
 use App\models\Airport;
 use App\models\Flight;
 use App\models\Plane;
+use App\models\Reservation;
 use App\utils\InputValidator;
 
 /**
@@ -26,6 +27,10 @@ class FlightController extends Controller {
      * @var Airport Instance for the Airport model for data operations.
      */
     private Airport $airportModel;
+    /**
+     * @var Reservation Instance for the Reservation model for data operations.
+     */
+    private Reservation $reservationModel;
 
     /**
      * Initializes controller and its dependencies.
@@ -35,6 +40,7 @@ class FlightController extends Controller {
         $this->flightModel = new Flight($this->db);
         $this->planeModel = new Plane($this->db);
         $this->airportModel = new Airport($this->db);
+        $this->reservationModel = new Reservation($this->db);
     }
 
     /**
@@ -66,6 +72,16 @@ class FlightController extends Controller {
     public function airline(): void {
         $this->handleRequest([
             'GET' => fn() => $this->getFlightsByAirline()
+        ]);
+    }
+
+    /**
+     * Endpoint for fetching taken seats by flight.
+     * Handles GET requests to fetch taken seats belonging to a specific flight.
+     */
+    public function seats(): void {
+        $this->handleRequest([
+            'GET' => fn() => $this->getSeatsByFlight()
         ]);
     }
 
@@ -184,6 +200,22 @@ class FlightController extends Controller {
             'page' => $page,
             'totalPages' => ceil($totalFlights / $limit)
         ]);
+    }
+
+    /**
+     * Fetches taken seats by flight.
+     *
+     * @throws ValidationException If validation or sanitization fails.
+     */
+    private function getSeatsByFlight(): void {
+        InputValidator::required($_GET, ['id']);
+
+        $flightId = InputValidator::sanitizeInt($_GET['id']);
+        $reservations = $this->reservationModel->getAllReservationsByFlight($flightId);
+
+        $seats = array_map(fn ($reservation) => $reservation['seat'], $reservations);
+
+        $this->jsonResponse(['takenSeats' => $seats]);
     }
 
     /**

@@ -103,5 +103,5 @@ export const useAuthStore = defineStore('auth', () => {
         fetchUser();
     }
 
-    return { accessToken, isLoggedIn, user, login, logout, register, invalidateCache};
+    return { accessToken, isLoggedIn, user, fetchUser, login, logout, register, invalidateCache};
 });

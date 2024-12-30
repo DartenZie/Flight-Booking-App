@@ -36,8 +36,8 @@ class Airline extends Model {
 
     public function createAirline(array $airline): void {
         $stmt = $this->db->prepare("
-            INSERT INTO airlines (name)
-                VALUES (:name)
+            INSERT INTO airlines (name, logo_path)
+                VALUES (:name, '')
         ");
 
         $stmt->bindParam(':name', $airline['name']);

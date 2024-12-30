@@ -180,7 +180,7 @@ const reinstateFlight = async (flightId: number): Promise<void> => {
                 </button>
             </div>
 
-            <div v-if="flights && flights.length <= 0" class="mt-20 w-full relative flex justify-center">
+            <div v-if="!flights || flights.length <= 0" class="mt-20 w-full relative flex justify-center">
                 <div class="max-w-xl">
                     <img class="mb-10" src="../../assets/illustrations/empty_illustration.svg" alt="Empty illustration" />
                     <h4 class="text-xl text-center">No Flights Found</h4>

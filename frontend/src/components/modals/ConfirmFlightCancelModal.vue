@@ -3,7 +3,7 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faTriangleExclamation} from "@fortawesome/free-solid-svg-icons";
 
 defineProps<{
-    flightId: number;
+    id: number;
 }>();
 </script>
 
@@ -28,7 +28,7 @@ defineProps<{
                         </div>
                     </div>
                     <div class="bg-gray-100 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-x-4">
-                        <button type="button" class="btn-danger h-10" @click="$emit('confirm', { flightId })">Confirm</button>
+                        <button type="button" class="btn-danger h-10" @click="$emit('confirm', { id })">Confirm</button>
                         <button type="button" class="btn-default h-10" @click="$emit('cancel')">Cancel</button>
                     </div>
                 </div>
