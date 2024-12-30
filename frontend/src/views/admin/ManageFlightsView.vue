@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import {createConfirmDialog} from "vuejs-confirm-dialog";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faClock, faLocationDot, faChevronDown, faSearch} from "@fortawesome/free-solid-svg-icons";
+import {faClock, faLocationDot, faChevronDown} from "@fortawesome/free-solid-svg-icons";
 
 import AdminCard from "@/components/admin/AdminCard.vue";
 import FloatingUiDropdown from "@/components/floating-ui/FloatingUiDropdown.vue";
@@ -11,6 +11,8 @@ import {onMounted, ref} from "vue";
 import {Flight, FlightResponse, FlightsResponse, UpdateFlightRequest} from "@/models/flight.model";
 import {useFetch} from "@vueuse/core";
 import {useRouter} from "vue-router";
+
+const API_URL = process.env.VITE_API_URL;
 
 const router = useRouter();
 
@@ -56,7 +58,7 @@ const month = (flight: Flight) => {
 };
 
 onMounted(async () => {
-    const { data } = await useFetch<FlightsResponse>(`http://localhost:8080/flight?airline_id=${airlineId}`).get().json();
+    const { data } = await useFetch<FlightsResponse>(`${API_URL}/flight/airline?id=${airlineId}`).get().json();
     flights.value = data.value.flights.map((flight) => Flight.parseFlight(flight));
 });
 
@@ -70,13 +72,13 @@ manageFlightPricesDialog.onConfirm(async ({ flight }) => {
         id: flight.id,
         price: priceStrings.join(' ')
     };
-    const response = await useFetch<FlightResponse>('http://localhost:8080/flight').put(body).json();
+    const response = await useFetch<FlightResponse>(`${API_URL}/flight`).put(body).json();
     if (response.statusCode.value !== 200) {
         confirmFlightCancel.close();
         return;
     }
 
-    const { data } = await useFetch<FlightsResponse>(`http://localhost:8080/flight?airline_id=${airlineId}`).get().json();
+    const { data } = await useFetch<FlightsResponse>(`${API_URL}/flight/airline?id=${airlineId}`).get().json();
     flights.value = data.value.flights.map((flight) => Flight.parseFlight(flight));
 
     manageFlightPricesDialog.close();
@@ -88,13 +90,13 @@ confirmFlightCancel.onConfirm(async ({ flightId }) => {
         id: flightId,
         cancelled: true
     };
-    const response = await useFetch<FlightResponse>('http://localhost:8080/flight').put(body).json();
+    const response = await useFetch<FlightResponse>(`${API_URL}/flight`).put(body).json();
     if (response.statusCode.value !== 200) {
         confirmFlightCancel.close();
         return;
     }
 
-    const { data } = await useFetch<FlightsResponse>(`http://localhost:8080/flight?airline_id=${airlineId}`).get().json();
+    const { data } = await useFetch<FlightsResponse>(`${API_URL}/flight/airline?id=${airlineId}`).get().json();
     flights.value = data.value.flights.map((flight) => Flight.parseFlight(flight));
 
     confirmFlightCancel.close();
@@ -117,13 +119,13 @@ const reinstateFlight = async (flightId: number): Promise<void> => {
         id: flightId,
         cancelled: false
     };
-    const response = await useFetch<FlightResponse>('http://localhost:8080/flight').put(body).json();
+    const response = await useFetch<FlightResponse>(`${API_URL}/flight`).put(body).json();
     if (response.statusCode.value !== 200) {
         confirmFlightCancel.close();
         return;
     }
 
-    const { data } = await useFetch<FlightsResponse>(`http://localhost:8080/flight?airline_id=${airlineId}`).get().json();
+    const { data } = await useFetch<FlightsResponse>(`${API_URL}/flight/airline/?id=${airlineId}`).get().json();
     flights.value = data.value.flights.map((flight) => Flight.parseFlight(flight));
 };
 </script>

@@ -5,19 +5,17 @@ import {UserResponse, UsersResponse} from "@/models/user.model";
 import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
 import {createConfirmDialog} from "vuejs-confirm-dialog";
 import ChangeUserRoleModal from "@/components/modals/ChangeUserRoleModal.vue";
-import {useAuthStore, User} from "@/store/auth.store";
+import {useAuthStore} from "@/store/auth.store";
 
 const API_URL = process.env.VITE_API_URL;
 
 const changeUserDialog = createConfirmDialog(ChangeUserRoleModal, {});
 
 const authStore = useAuthStore();
-const currentUser = ref<User>(null);
 
 const users = ref<UsersResponse>(null);
 
 onMounted(async () => {
-    currentUser.value = await authStore.user();
     await loadUsers();
 });
 
@@ -70,7 +68,7 @@ changeUserDialog.onCancel(changeUserDialog.close);
                         <div>{{ { 'user': 'User', 'flightManager': 'Flight Manager', 'admin': 'Admin' }[user.role] }}</div>
                     </td>
                     <td>
-                        <div v-if="currentUser.id !== user.id" class="inline-block">
+                        <div v-if="authStore.user?.id !== user.id" class="inline-block">
                             <button class="btn-primary h-12" @click="changeUserDialog.reveal({ user: user })">Change Role</button>
                         </div>
                     </td>

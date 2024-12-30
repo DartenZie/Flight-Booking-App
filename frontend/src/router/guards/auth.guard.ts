@@ -22,6 +22,7 @@ export function createPermissionGuard(requiredPermissionLevel: number = 1) {
         next: NavigationGuardNext
     ): Promise<void> => {
         const authStore = useAuthStore();
+        await authStore.fetchUser();
 
         if (!authStore.isLoggedIn) {
             next({ name: 'sign-in' });
@@ -29,8 +30,7 @@ export function createPermissionGuard(requiredPermissionLevel: number = 1) {
         }
 
         try {
-            const user = await authStore.user();
-            const userPermissionLevel = user.permissionLevel;
+            const userPermissionLevel = authStore.user.permissionLevel;
 
             if (userPermissionLevel >= requiredPermissionLevel) {
                 next();

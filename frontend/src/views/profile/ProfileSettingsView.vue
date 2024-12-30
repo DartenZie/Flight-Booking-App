@@ -2,26 +2,90 @@
 import AdminCard from "@/components/admin/AdminCard.vue";
 import {faChevronRight} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import nationalities from '@/static/nationalities.json';
-import {onMounted, ref} from "vue";
+import {computed, reactive, ref, watch} from "vue";
 import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
-import {UserModel} from "@/models/user.model";
+import {useAuthStore} from "@/store/auth.store";
+import FormControl from "@/components/FormControl.vue";
+import NationalityFormSelect from "@/components/NationalityFormSelect.vue";
+import useVuelidate, {ValidationArgs} from "@vuelidate/core";
+import {email, required, sameAs} from "@vuelidate/validators";
 
-const user = ref<UserModel>(null);
+const API_URL = process.env.VITE_API_URL;
 
-onMounted(async () => {
-    const { data } = await useAuthenticatedFetch('http://localhost:8080/user').get().json();
-    user.value = data.value;
+const authStore = useAuthStore();
+
+const state = reactive({
+    firstName: '',
+    lastName: '',
+    nationality: '',
+    dateOfBirth: '',
+    sex: '',
+    email: '',
+    confirmEmail: '',
+    phone: ''
 });
 
-const handleSubmit = async () => {
-    const { data } = await useAuthenticatedFetch('http://localhost:8080/user').put(user).json();
-    user.value = data.value;
+const rules: ValidationArgs = {
+    firstName: { required },
+    lastName: { required },
+    email: { required, email },
+    confirmEmail: { sameAs: sameAs(computed(() => state.email )) },
+};
+
+const v$ = useVuelidate(rules, state);
+
+const emailChanged = ref<boolean>(false);
+
+watch(
+    () => authStore.user,
+    () => {
+        state.firstName = authStore.user?.firstName;
+        state.lastName = authStore.user?.lastName;
+        state.nationality = authStore.user?.nationality;
+        state.dateOfBirth = authStore.user?.dateOfBirth;
+        state.sex = authStore.user?.sex;
+        state.email = authStore.user?.email;
+        state.confirmEmail = authStore.user?.email;
+        state.phone = authStore.user?.phone;
+    },
+    { immediate: true }
+);
+
+const handleEmailChange = (value: string) => {
+    if (value === authStore.user.email) {
+        state.confirmEmail = authStore.user.email;
+        emailChanged.value = false;
+    } else {
+        state.confirmEmail = '';
+        emailChanged.value = true;
+    }
+};
+
+async function handleSubmit() {
+    const isFormCorrect = await this.v$.$validate();
+    if (!isFormCorrect) {
+        return;
+    }
+
+    const body = {
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        nationality: this.state.nationality,
+        dateOfBirth: this.state.dateOfBirth,
+        sex: this.state.sex,
+        email: this.state.email,
+        phone: this.state.phone
+    };
+
+    const response = await useAuthenticatedFetch(`${API_URL}/user`).put(body).json();
+    if (response.statusCode.value === 200) {
+        authStore.invalidateCache();
+    }
 };
 </script>
 
 <template>
-    <admin-card v-if="user" class="col-span-12">
+    <admin-card v-if="state" class="col-span-12">
         <form class="space-y-8" @submit.prevent="handleSubmit()">
             <div>
                 <h2 class="text-2xl font-semibold mb-2">Profile settings</h2>
@@ -32,38 +96,34 @@ const handleSubmit = async () => {
                 <div class="max-w-3xl">
                     <div class="flex gap-x-6 mb-6">
                         <div class="flex">
-                            <input type="radio" name="gender-group" v-model="user.sex" value="male" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="gender-group-1">
+                            <input type="radio" name="gender-group" v-model="state.sex" value="male" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="gender-group-1">
                             <label for="gender-group-1" class="text-sm text-gray-900 ms-2">Male</label>
                         </div>
 
                         <div class="flex">
-                            <input type="radio" name="gender-group" v-model="user.sex" value="female" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="gender-group-2">
+                            <input type="radio" name="gender-group" v-model="state.sex" value="female" class="shrink-0 mt-0.5 border-gray-200 rounded-full text-blue-600 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" id="gender-group-2">
                             <label for="gender-group-2" class="text-sm text-gray-900 ms-2">Female</label>
                         </div>
                     </div>
 
                     <div class="flex gap-x-10 mb-6">
                         <div class="w-1/2">
-                            <label for="firstName" class="block text-sm font-medium mb-2">First Name</label>
-                            <input type="text" id="firstName" v-model="user.firstName" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="John">
+                            <form-control id="firstName" v-model="state.firstName" label="First Name" type="text"
+                                          placeholder="John" />
                         </div>
                         <div class="w-1/2">
-                            <label for="lastName" class="block text-sm font-medium mb-2">Last Name</label>
-                            <input type="text" id="lastName" v-model="user.lastName" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="Doe">
+                            <form-control id="firstName" v-model="state.lastName" label="Last Name" type="text"
+                                          placeholder="Doe" />
+                            <p v-if="v$.firstName.$error || v$.lastName.$error" class="text-sm/6 text-red-600">Full name is required.</p>
                         </div>
                     </div>
 
                     <div class="flex gap-x-10">
                         <div class="w-1/2">
-                            <label for="nationality" class="block text-sm font-medium mb-2">Nationality</label>
-                            <select id="nationality" v-model="user.nationality" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                                <option selected value="" disabled>Select nationality</option>
-                                <option v-for="{ nationality } in nationalities" :key="nationality" :value="nationality">{{ nationality }}</option>
-                            </select>
+                            <nationality-form-select v-model="state.nationality" />
                         </div>
                         <div class="w-1/2">
-                            <label for="lastName" class="block text-sm font-medium mb-2">Date of Birth</label>
-                            <input type="text" id="lastName" v-model="user.dateOfBirth" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="YYYY-MM-DD">
+                            <form-control id="dateOfBirth" v-model="state.dateOfBirth" label="Date of Birth" type="date" />
                         </div>
                     </div>
                 </div>
@@ -73,32 +133,21 @@ const handleSubmit = async () => {
                 <div class="max-w-3xl">
                     <div class="flex gap-x-10 mb-6">
                         <div class="w-1/2">
-                            <label for="firstName" class="block text-sm font-medium mb-2">Email</label>
-                            <input type="email" id="email" v-model="user.email" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="johndoe@gmail.com">
+                            <form-control id="firstName" v-model="state.email" @update:modelValue="handleEmailChange" label="Email" type="email"
+                                          placeholder="Email" />
+                            <p v-if="v$.email.$errors.some(v => v.$validator === 'required')" class="text-sm/6 text-red-600">Email is required.</p>
+                            <p v-if="v$.email.$errors.some(v => v.$validator === 'email')" class="text-sm/6 text-red-600">Email is not valid.</p>
                         </div>
-                        <div class="w-1/2">
-                            <label for="lastName" class="block text-sm font-medium mb-2">Confirm Email</label>
-                            <input type="email" id="confirmEmail" v-model="user.email" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="johndoe@gmail.com">
+                        <div v-if="emailChanged" class="w-1/2">
+                            <form-control id="confirmEmail" v-model="state.confirmEmail" label="Confirm Email" type="email"
+                                          placeholder="johndoe@gmail.com" />
+                            <p v-if="v$.confirmEmail.$error" class="text-sm/6 text-red-600">Emails are not the same.</p>
                         </div>
                     </div>
 
-                    <div class="w-1/2 pe-5">
-                        <label for="lastName" class="block text-sm font-medium mb-2">Telephone</label>
-
-                        <div class="flex gap-x-2">
-                            <div class="w-1/6">
-                                <select id="phonePrefix" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
-                                    <option value="cz">Czech Republic (+420)</option>
-                                    <option value="—————" disabled>—————</option>
-                                    <option value="ge">German (+49)</option>
-                                    <option value="nor">Norwegian (+47)</option>
-                                    <option value="fr">French (+33)</option>
-                                </select>
-                            </div>
-                            <div class="w-5/6">
-                                <input type="text" id="phoneNumber" v-model="user.phone" class="py-3 px-4 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="777888999">
-                            </div>
-                        </div>
+                    <div class="w-1/2">
+                        <form-control id="phone" v-model="state.phone" label="Phone number" type="text"
+                                      placeholder="+420777888999" />
                     </div>
                 </div>
             </div>

@@ -6,6 +6,8 @@ import {AirlinesResponse} from "@/models/airline.model";
 import {createConfirmDialog} from "vuejs-confirm-dialog";
 import AddAirlineModal from "@/components/modals/AddAirlineModal.vue";
 
+const API_URL = process.env.VITE_API_URL;
+
 const createAirlineDialog = createConfirmDialog(AddAirlineModal, {});
 
 const airlines = ref<AirlinesResponse>(null);
@@ -15,7 +17,7 @@ onMounted(() => {
 });
 
 const loadAirlines = async () => {
-    const { data } = await useAuthenticatedFetch<AirlinesResponse>('http://localhost:8080/airline').get().json();
+    const { data } = await useAuthenticatedFetch<AirlinesResponse>(`${API_URL}/airline`).get().json();
     airlines.value = data.value;
 };
 
@@ -25,7 +27,7 @@ const handleImageError = (event: Event) => {
 };
 
 createAirlineDialog.onConfirm(async (body: { name: string }) => {
-    const response = await useAuthenticatedFetch('http://localhost:8080/airline').post(body).json();
+    const response = await useAuthenticatedFetch(`${API_URL}/airline`).post(body).json();
     if (response.statusCode.value === 200) {
         await loadAirlines();
     }
@@ -60,7 +62,7 @@ createAirlineDialog.onCancel(createAirlineDialog.close);
             <tbody>
                 <tr v-for="airline in airlines.airlines" :key="airline.id" class="h-16">
                     <td>
-                        <img :src="`http://localhost:8080/airline/logo?airlineId=${airline.id}`"
+                        <img :src="`${API_URL}/airline/logo?airlineId=${airline.id}`"
                              :alt="airline.name"
                              class="w-12 h-12 object-contain"
                              @error="handleImageError"

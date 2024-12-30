@@ -23,7 +23,7 @@ import {faCircleArrowRight} from "@fortawesome/free-solid-svg-icons";
 
                 <div class="grid grid-cols-12 gap-x-3 w-full items-center">
                     <div class="col-span-2">
-                        <img class="w-10 h-10 object-contain" src="../../static/companies/wizzair.png" alt="Wizzair" />
+<!--                        <img class="w-10 h-10 object-contain" src="../../static/companies/wizzair.png" alt="Wizzair" />-->
                     </div>
                     <div class="col-span-6">
                         <div class="flex gap-x-3 items-center -mb-1">
@@ -50,7 +50,7 @@ import {faCircleArrowRight} from "@fortawesome/free-solid-svg-icons";
 
                 <div class="grid grid-cols-12 gap-x-3 w-full items-center">
                     <div class="col-span-2">
-                        <img class="w-10 h-10 object-contain" src="../../static/companies/ryanair.png" alt="Ryanair" />
+<!--                        <img class="w-10 h-10 object-contain" src="../../static/companies/ryanair.png" alt="Ryanair" />-->
                     </div>
                     <div class="col-span-6">
                         <div class="flex gap-x-3 items-center -mb-1">

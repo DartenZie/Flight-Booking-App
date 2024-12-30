@@ -1,9 +1,9 @@
-import {computed, ref} from 'vue';
+import {computed, ref, watch} from 'vue';
 import {defineStore} from 'pinia';
 import {useFetch, useStorage} from '@vueuse/core';
 import {useAuthenticatedFetch} from "../utils/authenticated-fetch";
 
-const API_URL = 'http://localhost:8080';
+const API_URL = process.env.VITE_API_URL;
 
 export interface User {
     id: number;
@@ -33,14 +33,9 @@ interface RegisterResponse {
 }
 
 export const useAuthStore = defineStore('auth', () => {
-    // Access token used to authorize requests
     const accessToken = useStorage('access_token', '', localStorage);
-
-    // Cache for user data
-    const cachedUser = ref<User>(null);
-
-    // Flag if user is logged in
     const isLoggedIn = computed(() => !!accessToken.value);
+    const user = ref<User>(null);
 
     async function login(email: string, password: string): Promise<void> {
         try {
@@ -70,19 +65,15 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
-    async function user(): Promise<User | null> {
-        if (!isLoggedIn.value) {
-            return null;
-        }
-
-        if (cachedUser.value) {
-            return cachedUser.value;
-        }
-
+    async function fetchUser(): Promise<void> {
         try {
-            const { data } = await useAuthenticatedFetch(`${API_URL}/user`).get().json();
+            const { data, statusCode } = await useAuthenticatedFetch(`${API_URL}/user`).get().json();
 
-            cachedUser.value = {
+            if (statusCode.value !== 200) {
+                return;
+            }
+
+            user.value = {
                 id: data.value.id,
                 email: data.value.email,
                 firstName: data.value.firstName,
@@ -91,15 +82,26 @@ export const useAuthStore = defineStore('auth', () => {
                 sex: data.value.sex,
                 dateOfBirth: data.value.dateOfBirth,
                 phone: data.value.phone,
-                permissionLevel: data.value.permission_level
+                permissionLevel: data.value.permissionLevel
             };
-
-            return cachedUser.value;
         } catch (error) {
             console.error('Failed to fetch user data:', error);
-            return null;
         }
     }
 
-    return { accessToken, isLoggedIn, login, logout, register, user };
+    watch(
+        () => accessToken.value,
+        () => {
+            // noinspection JSIgnoredPromiseFromCall
+            fetchUser();
+        },
+        { immediate: true },
+    );
+
+    function invalidateCache(): void {
+        // noinspection JSIgnoredPromiseFromCall
+        fetchUser();
+    }
+
+    return { accessToken, isLoggedIn, user, login, logout, register, invalidateCache};
 });

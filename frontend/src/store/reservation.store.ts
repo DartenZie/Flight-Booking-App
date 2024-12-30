@@ -6,7 +6,7 @@ import {useFetch} from "@vueuse/core";
 const API_URL = process.env.VITE_API_URL;
 
 export const useReservationStore = defineStore('reservation', () => {
-    const departureFlightId = ref<number>(1);
+    const departureFlightId = ref<number>(11);
     const departureFlight = ref<Flight>(null);
     const returnFlightId = ref<number>(0);
     const returnFlight = ref<Flight>(null);

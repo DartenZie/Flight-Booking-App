@@ -7,6 +7,8 @@ import Dropzone from "dropzone";
 import {useAuthStore} from "@/store/auth.store";
 import {useAirlineStore} from "@/store/airline.store";
 
+const API_URL = process.env.VITE_API_URL;
+
 const router = useRouter();
 
 const auth = useAuthStore();
@@ -20,7 +22,7 @@ const uploadStatus = ref<string>('');
 onMounted(() => {
     if (dropzoneElement.value) {
         const dropzone = new Dropzone(dropzoneElement.value, {
-            url: `http://localhost:8080/airline/logo?airlineId=${airlineId}`,
+            url: `${API_URL}/airline/logo?airlineId=${airlineId}`,
             acceptedFiles: 'image/*',
             maxFiles: 1,
             addRemoveLinks: true,

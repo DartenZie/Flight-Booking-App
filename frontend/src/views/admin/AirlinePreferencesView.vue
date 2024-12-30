@@ -8,6 +8,8 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import LogoDropzone from "@/components/LogoDropzone.vue";
 import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
 
+const API_URL = process.env.VITE_API_URL;
+
 const airlineStore = useAirlineStore();
 
 const airlineName = ref<string>(airlineStore.airline.name);
@@ -22,7 +24,7 @@ const handleSubmit = async () => {
         name: airlineName.value
     };
 
-    const response = await useAuthenticatedFetch('http://localhost:8080/airline').put(body).json();
+    const response = await useAuthenticatedFetch(`${API_URL}/airline`).put(body).json();
     if (response.statusCode.value === 200) {
         airlineStore.invalidateCache();
     }

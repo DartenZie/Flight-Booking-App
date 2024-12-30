@@ -5,7 +5,6 @@ import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {faUser} from '@fortawesome/free-solid-svg-icons';
 
 const isScrolled = ref(false);
-const user = ref(null);
 
 const auth = useAuthStore();
 
@@ -15,7 +14,6 @@ const handleScroll = (): void => {
 
 onMounted(async () => {
     window.addEventListener('scroll', handleScroll);
-    user.value = await auth.user();
 });
 
 onUnmounted(() => {
@@ -32,10 +30,10 @@ onUnmounted(() => {
                 </span>
             </router-link>
 
-            <div v-if="user">
+            <div v-if="auth.user">
                 <router-link to="/profile/dashboard" class="btn-primary h-10 flex gap-x-4 items-center">
                     <font-awesome-icon :icon="faUser" />
-                    {{ user.firstName + ' ' + user.lastName }}
+                    {{ auth.user.firstName + ' ' + auth.user.lastName }}
                 </router-link>
             </div>
             <div v-else class="flex gap-x-8">

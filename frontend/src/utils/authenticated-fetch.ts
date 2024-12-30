@@ -1,7 +1,7 @@
 import {useFetch, UseFetchOptions, UseFetchReturn} from '@vueuse/core';
 import {useAuthStore} from '../store/auth.store';
 
-const BASE_URL = 'http://localhost:8080';
+const BASE_URL = process.env.VITE_API_URL;
 
 /**
  * Custom hook for making authenticated fetch requests with VueUse's useFetch.

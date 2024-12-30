@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {computed, onMounted, reactive} from "vue";
+import {computed, reactive, watch} from "vue";
 import router from '@/router';
 
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
@@ -8,12 +8,9 @@ import FormControl from "@/components/FormControl.vue";
 import NationalityFormSelect from "@/components/NationalityFormSelect.vue";
 import {useAuthStore} from "@/store/auth.store";
 import {useReservationStore} from "@/store/reservation.store";
-import {Flight, FlightResult} from "../../models/flight.model";
 import useVuelidate, {ValidationArgs} from "@vuelidate/core";
 import {email, helpers, required, sameAs} from "@vuelidate/validators";
 import ReservationFlightCard from "@/components/ReservationFlightCard.vue";
-
-const API_URL = process.env.VITE_API_URL;
 
 const authStore = useAuthStore();
 const reservationStore = useReservationStore();
@@ -33,26 +30,29 @@ const rules: ValidationArgs = {
     firstName: { required },
     lastName: { required },
     nationality: { required },
-    dateOfBirth: { required, date: helpers.regex(/^\d{4}-(0[1-9]|[12]\d|3[01])-(0[1-9]|1[0-2])$/) },
+    dateOfBirth: { required, date: helpers.regex(/^\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12]\d|3[01])$/) },
     sex: { required },
     email: { required, email },
-    confirmEmail: { sameAs: sameAs(computed(() => state.confirmEmail )) },
+    confirmEmail: { sameAs: sameAs(computed(() => state.email )) },
     phone: { required }
 };
 
 const v$ = useVuelidate(rules, state);
 
-onMounted(async () => {
-    const user = await authStore.user();
-    state.firstName = user.firstName;
-    state.lastName = user.lastName;
-    state.nationality = user.nationality;
-    state.dateOfBirth = user.dateOfBirth;
-    state.sex = user.sex;
-    state.email = user.email;
-    state.confirmEmail = user.email;
-    state.phone = user.phone;
-});
+watch(
+    () => authStore.user,
+    () => {
+        state.firstName = authStore.user?.firstName;
+        state.lastName = authStore.user?.lastName;
+        state.nationality = authStore.user?.nationality;
+        state.dateOfBirth = authStore.user?.dateOfBirth;
+        state.sex = authStore.user?.sex;
+        state.email = authStore.user?.email;
+        state.confirmEmail = authStore.user?.email;
+        state.phone = authStore.user?.phone;
+    },
+    { immediate: true }
+);
 
 async function handleSubmit(): void {
     const isFormCorrect = await this.v$.$validate();
@@ -61,7 +61,7 @@ async function handleSubmit(): void {
     }
 
     await router.push('/book/seat-reservation');
-};
+}
 </script>
 
 <template>
@@ -73,7 +73,7 @@ async function handleSubmit(): void {
         >
             <p class="font-thin text-5xl leading-snug text-slate-950 z-10">
                 Let's book your flight<br />
-                to <span class="font-medium">{{ reservationStore.departureFlight.arrivalAirport.city }}</span>!
+                to <span class="font-medium" v-if="reservationStore.departureFlight">{{ reservationStore.departureFlight.arrivalAirport.city }}</span>!
             </p>
         </div>
     </div>
@@ -153,7 +153,7 @@ async function handleSubmit(): void {
                                     <form-control id="dateOfBirth" v-model="state.dateOfBirth" label="Date of Birth" type="text"
                                                   placeholder="YYYY-DD-MM" />
                                     <p v-if="v$.dateOfBirth.$errors.some(v => v.$validator === 'required')" class="text-sm/6 text-red-600">Date of birth is required.</p>
-                                    <p v-if="v$.dateOfBirth.$errors.some(v => v.$validator === 'date')" class="text-sm/6 text-red-600">Date of birth is not in YYYY-DD-MM format.</p>
+                                    <p v-if="v$.dateOfBirth.$errors.some(v => v.$validator === 'date')" class="text-sm/6 text-red-600">Date of birth is not in YYYY-MM-DD format.</p>
                                 </div>
                             </div>
                         </div>

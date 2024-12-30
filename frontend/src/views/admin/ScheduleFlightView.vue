@@ -10,6 +10,8 @@ import {AirportModel} from "@/models/airport.model";
 import {CreateFlightRequest} from "@/models/flight.model";
 import {useRouter} from "vue-router";
 
+const API_URL = process.env.VITE_API_URL;
+
 const router = useRouter();
 
 const airlineId = router.currentRoute.value.params.airlineId;
@@ -25,7 +27,7 @@ const arrivalTime = ref<string>('');
 const prices = ref<Map<string, number>>(new Map<string, number>());
 
 onMounted(async () => {
-    const { data } = await useAuthenticatedFetch<PlanesResponse>(`http://localhost:8080/plane?airline_id=${airlineId}`).get().json();
+    const { data } = await useAuthenticatedFetch<PlanesResponse>(`${API_URL}/plane/?airline_id=${airlineId}`).get().json();
     planes.value = data.value.planes.map((plane) => Plane.parsePlane(plane));
 });
 
@@ -49,10 +51,8 @@ const submit = async () => {
         arrivalAirportId: arrivalAirport.value?.id
     };
 
-    const response = await useAuthenticatedFetch('http://localhost:8080/flight').post(body);
-    if (response.statusCode.value !== 200) {
-        console.error(response.statusMessage);
-    } else {
+    const response = await useAuthenticatedFetch(`${API_URL}/flight`).post(body);
+    if (response.statusCode.value === 201) {
         router.back();
     }
 };

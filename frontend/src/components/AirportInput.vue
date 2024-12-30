@@ -5,6 +5,8 @@ import {throttle} from "lodash";
 import {useFetch} from "@vueuse/core";
 import FloatingUiSearchFlightsList from "@/components/floating-ui/FloatingUiSearchFlightsList.vue";
 
+const API_URL = process.env.VITE_API_URL;
+
 const props = defineProps<{
     id: string,
     placeholder: string,
@@ -25,7 +27,7 @@ const fetchSuggestions = throttle(async () => {
 
     isSearching.value = true;
     try {
-        const { data } = await useFetch<AirportSearchResponse>(`http://localhost:8080/airport/search?q=${searchQuery.value}`)
+        const { data } = await useFetch<AirportSearchResponse>(`${API_URL}/airport/search?q=${searchQuery.value}`)
             .get().json();
 
         suggestions.value = data.value.airports

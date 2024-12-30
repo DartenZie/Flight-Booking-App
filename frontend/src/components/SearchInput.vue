@@ -6,6 +6,8 @@ import FloatingUiSearchFlightsList from "@/components/floating-ui/FloatingUiSear
 import {useFetch} from "@vueuse/core";
 import {AirportModel, AirportSearchResponse} from "@/models/airport.model";
 
+const API_URL = process.env.VITE_API_URL;
+
 defineProps<{
     id: string,
     label: string,
@@ -28,7 +30,7 @@ const fetchSuggestions = throttle(async () => {
 
     isSearching.value = true;
     try {
-        const { data } = await useFetch<AirportSearchResponse>(`http://localhost:8080/airport/search?q=${searchQuery.value}`)
+        const { data } = await useFetch<AirportSearchResponse>(`${API_URL}/airport/search?q=${searchQuery.value}`)
             .get().json();
 
         suggestions.value = data.value.airports

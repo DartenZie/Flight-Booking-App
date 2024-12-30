@@ -13,7 +13,7 @@ const smallestPrice = (flight: Flight): number => {
 </script>
 
 <template>
-    <div class="flex gap-x-4 mb-12">
+    <div v-if="flight" class="flex gap-x-4 mb-12">
         <div class="w-1/3 flex gap-x-4 items-center">
             <div class="shrink-0">
                 <img

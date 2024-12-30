@@ -88,21 +88,24 @@ async function handleSubmit(): void {
                         <div class="space-y-1 mt-3">
                             <div class="flex gap-x-3 items-center" :class="[
                                 !v$.password.$dirty ? 'text-gray-400' : '',
-                                v$.password.$errors.some(v => ['required', 'noFirstName', 'noLastName', 'noEmail'].includes(v.$validator)) ? 'text-red-600' : 'text-green-600',
+                                v$.password.$dirty && v$.password.$errors.some(v => ['required', 'noFirstName', 'noLastName', 'noEmail'].includes(v.$validator)) ? 'text-red-600' : '',
+                                v$.password.$dirty && !v$.password.$errors.some(v => ['required', 'noFirstName', 'noLastName', 'noEmail'].includes(v.$validator)) ? 'text-green-600' : ''
                             ]">
                                 <font-awesome-icon :icon="faCheckCircle" class="text-sm/6" />
                                 <p class="text-sm/6 font-light">Must not contain your name or email</p>
                             </div>
                             <div class="flex gap-x-3 items-center" :class="[
                                 !v$.password.$dirty ? 'text-gray-400' : '',
-                                v$.password.$errors.some(v => ['required', 'minLength'].includes(v.$validator)) ? 'text-red-600' : 'text-green-600',
+                                v$.password.$dirty && v$.password.$errors.some(v => ['required', 'minLength'].includes(v.$validator)) ? 'text-red-600' : '',
+                                v$.password.$dirty && !v$.password.$errors.some(v => ['required', 'minLength'].includes(v.$validator)) ? 'text-green-600' : ''
                             ]">
                                 <font-awesome-icon :icon="faCheckCircle" class="text-sm/6" />
                                 <p class="text-sm/6 font-light">At least 8 characters</p>
                             </div>
                             <div class="flex gap-x-3 items-center"  :class="[
                                 !v$.password.$dirty ? 'text-gray-400' : '',
-                                v$.password.$errors.some(v => ['required', 'numOrSpecialChar'].includes(v.$validator)) ? 'text-red-600' : 'text-green-600',
+                                v$.password.$dirty && v$.password.$errors.some(v => ['required', 'numOrSpecialChar'].includes(v.$validator)) ? 'text-red-600' : '',
+                                v$.password.$dirty && !v$.password.$errors.some(v => ['required', 'numOrSpecialChar'].includes(v.$validator)) ? 'text-green-600' : ''
                             ]">
                                 <font-awesome-icon :icon="faCheckCircle" class="text-sm/6" />
                                 <p class="text-sm/6 font-light">Contains a symbol or a number</p>

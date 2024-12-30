@@ -8,23 +8,16 @@ import {
     faPlane,
     faUsers
 } from "@fortawesome/free-solid-svg-icons";
-import {useAuthStore, User} from "@/store/auth.store";
+import {useAuthStore} from "@/store/auth.store";
 import {useRouter} from "vue-router";
-import {onMounted, ref} from "vue";
 
-const user = ref<User>(null);
-
-const auth = useAuthStore();
+const authStore = useAuthStore();
 const router = useRouter();
 
 function handleLogout() {
-    auth.logout();
+    authStore.logout();
     router.push('/sign-in');
 }
-
-onMounted(async () => {
-    user.value = await auth.user();
-});
 </script>
 
 <template>
@@ -63,14 +56,14 @@ onMounted(async () => {
 
                     <hr class="mb-2" />
 
-                    <router-link v-if="user && user.permissionLevel >= 2" to="/profile/manage-airlines" active-class="admin-link-active" class="admin-link">
+                    <router-link v-if="authStore.user && authStore.user.permissionLevel >= 2" to="/profile/manage-airlines" active-class="admin-link-active" class="admin-link">
                         <div class="px-8 flex h-full items-center gap-x-4">
                             <font-awesome-icon :icon="faPlane" class="w-4" />
                             <div>Manage airlines</div>
                         </div>
                     </router-link>
 
-                    <router-link v-if="user && user.permissionLevel >= 3" to="/profile/manage-users" active-class="admin-link-active" class="admin-link">
+                    <router-link v-if="authStore.user && authStore.user.permissionLevel >= 3" to="/profile/manage-users" active-class="admin-link-active" class="admin-link">
                         <div class="px-8 flex h-full items-center gap-x-4">
                             <font-awesome-icon :icon="faUsers" class="w-4" />
                             <div>Manage users</div>
@@ -85,12 +78,12 @@ onMounted(async () => {
                     </button>
                 </div>
 
-                <div v-if="user" class="flex flex-col items-center">
+                <div v-if="authStore.user" class="flex flex-col items-center">
                     <div class="bg-white h-20 w-20 rounded-full border-3 border-white mb-6">
                         <img src="@/assets/images/profile_female_placeholder.svg" alt="Profile" class="w-full h-full object-cover rounded-full" />
                     </div>
-                    <div class="font-medium text-xl mb-1">{{ user.firstName + ' ' + user.lastName }}</div>
-                    <div class="font-normal text-md text-gray-500">{{ user.email }}</div>
+                    <div class="font-medium text-xl mb-1">{{ authStore.user.firstName + ' ' + authStore.user.lastName }}</div>
+                    <div class="font-normal text-md text-gray-500">{{ authStore.user.email }}</div>
                 </div>
             </div>
 
