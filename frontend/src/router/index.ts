@@ -49,18 +49,7 @@ const router = createRouter({
                 {
                     path: 'reservations',
                     name: 'reservations',
-                    children: [
-                        {
-                            path: '',
-                            name: 'reservations-list',
-                            component: () => import('../views/profile/ReservationsView.vue'),
-                        },
-                        {
-                            path: 'change',
-                            name: 'reservations-change',
-                            component: () => import('../views/profile/ReservationChangeView.vue')
-                        }
-                    ]
+                    component: () => import('../views/profile/ReservationsView.vue'),
                 },
                 {
                     path: 'settings',

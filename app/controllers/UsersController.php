@@ -38,8 +38,8 @@ class UsersController extends Controller {
 
         $users = array_map(fn($user) => [
             'id' => $user['id'],
-            'firstName' => $user['firstName'],
-            'lastName' => $user['lastName'],
+            'firstName' => $user['first_name'],
+            'lastName' => $user['last_name'],
             'email' => $user['email'],
             'role' => $user['role_name']
         ], $users);

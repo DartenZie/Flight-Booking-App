@@ -140,7 +140,7 @@ class FlightController extends Controller {
             if (isset($data[$inputField])) {
                 $sanitizer = match ($inputField) {
                     'price' => 'sanitizeString',
-                    'departureTime', 'arrivalTime' => 'sanitizeDateTime',
+                    'departureTime', 'arrivalTime' => 'sanitizeDate',
                     'planeId', 'departureAirportId', 'arrivalAirportId', 'cancelled' => 'sanitizeInt',
                     default => null,
                 };
@@ -231,9 +231,9 @@ class FlightController extends Controller {
 
         $departureAirportId = InputValidator::sanitizeInt($data['departureAirportId']);
         $arrivalAirportId = InputValidator::sanitizeInt($data['arrivalAirportId']);
-        $departureDate = InputValidator::sanitizeDateTime($data['departureDate']);
+        $departureDate = InputValidator::sanitizeDate($data['departureDate']);
         $flightType = $data['type'] ?? 'oneway';
-        $returnDate = isset($data['returnDate']) ? InputValidator::sanitizeDateTime($data['returnDate']) : null;
+        $returnDate = isset($data['returnDate']) ? InputValidator::sanitizeDate($data['returnDate']) : null;
 
         if ($flightType === 'return' && !$returnDate) {
             throw new ValidationException('Return date is required for return flight searches.', 400);

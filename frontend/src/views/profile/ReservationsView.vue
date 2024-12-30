@@ -71,10 +71,8 @@ onlineCheckIn.onCancel(onlineCheckIn.close);
 const handleSelect = (key: string, reservationId: number) => {
     switch (key) {
     case 'view':
-        boardingTicket.reveal();
-        break;
-    case 'change':
-        router.push('/profile/reservations/change');
+        const reservation = reservations.value.find((r) => r.id === reservationId);
+        boardingTicket.reveal({ reservation });
         break;
     case 'checkIn':
         onlineCheckIn.reveal();
@@ -151,7 +149,6 @@ const handleImageError = (event: Event) => {
 
                     <floating-ui-dropdown :component-id="`edit-flight-${reservation.id}`" position="right" @select="(key) => handleSelect(key, reservation.id)" :dropdown-items="[
                         { name: 'view', value: 'View boarding ticket' },
-                        { name: 'change', value: 'Flight change' },
                         { name: 'checkIn', value: 'Online check-in' },
                         { name: 'cancelFlight', value: 'Cancel flight' },
                     ]" />
