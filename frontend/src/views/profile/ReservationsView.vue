@@ -7,7 +7,6 @@ import AdminCard from "@/components/admin/AdminCard.vue";
 import FloatingUiDropdown from "@/components/floating-ui/FloatingUiDropdown.vue";
 import ConfirmFlightCancelModal from "@/components/modals/ConfirmFlightCancelModal.vue";
 
-import router from "@/router";
 import BoardingTicketModal from "@/components/modals/BoardingTicketModal.vue";
 import OnlineCheckinModal from "@/components/modals/OnlineCheckinModal.vue";
 import {ref, watch} from "vue";

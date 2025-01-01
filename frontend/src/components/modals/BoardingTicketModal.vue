@@ -1,9 +1,8 @@
 <script setup lang="ts">
 import BoardingPass from "@/components/BoardingPass.vue";
 import {Reservation} from "@/models/reservation.model";
-import {onMounted} from "vue";
 
-const props = defineProps<{
+defineProps<{
     reservation: Reservation
 }>();
 

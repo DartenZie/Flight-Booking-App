@@ -36,6 +36,8 @@ const flights = ref<ReadonlyArray<FlightResultType>>([
 const returnFlights = ref<ReadonlyArray<FlightResult>>([
 ]);
 
+const total = ref(0);
+
 const outboundFlight = ref<FlightResultType | null>(null);
 
 const handleSelect = (flight: FlightResultType): void => {
@@ -79,6 +81,9 @@ const handleSearch = async () => {
         flight.price,
         'oneWay'
     ));
+
+    // todo refactor with paging
+    total.value = flights.value.length;
 };
 
 onMounted(async () => {
@@ -87,19 +92,19 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="bg-hero bg-cover bg-center h-160">
+    <div class="mt-8 lg:mt-0 lg:bg-hero lg:bg-cover lg:bg-center lg:h-128 xl:h-160">
         <div
-            class="container mx-auto h-full flex flex-auto items-center justify-start"
+            class="container mx-auto px-4 md:px-8 lg:px-20 xl:px-0 h-full flex flex-auto items-center justify-start"
         >
-            <p class="font-thin text-5xl leading-snug text-gray-900">
+            <p class="lg:-mt-20 xl:mt-0 font-thin text-3xl xl:text-5xl leading-snug text-gray-900">
                 Hey Buddy? where are you<br />
                 <span class="font-medium">Flying</span> to?
             </p>
         </div>
     </div>
-    <div class="container mx-auto -mt-32">
+    <div class="lg:px-20 xl:px-0 container mt-8 mx-auto lg:-mt-50 xl:-mt-32">
         <div
-            class="relative h-68 bg-white rounded-lg shadow-md px-10 pt-6 pb-12"
+            class="relative px-4 md:px-8 lg:h-100 xl:h-68 bg-white lg:rounded-lg lg:shadow-md lg:px-10 lg:pt-6 lg:pb-12"
         >
             <h2 class="font-medium text-lg mb-4">
                 <font-awesome-icon :icon="faPlane" />
@@ -125,8 +130,8 @@ onMounted(async () => {
                 </div>
             </div>
 
-            <div class="h-20 w-full flex gap-x-6">
-                <div class="w-[30%]">
+            <div class="mb-6 lg:mb-0 w-full grid grid-cols-10 gap-6">
+                <div class="col-span-10 md:col-span-5 xl:col-span-3">
                     <search-input
                         id="fromLocation"
                         label="From"
@@ -134,7 +139,7 @@ onMounted(async () => {
                         placeholder="Frankfurt"
                     />
                 </div>
-                <div class="w-[30%]">
+                <div class="col-span-10 md:col-span-5 xl:col-span-3">
                     <search-input
                         id="toLocation"
                         label="To"
@@ -142,25 +147,25 @@ onMounted(async () => {
                         placeholder="Denmark"
                     />
                 </div>
-                <div class="w-[40%]">
+                <div class="col-span-10 xl:col-span-4">
                     <search-date-pick id="searchDate" :type="flightTypeId" />
                 </div>
             </div>
 
             <button
-                class="btn-primary absolute bottom-0 right-10 h-16 w-56 translate-y-1/2 text-left"
+                class="btn-primary h-12 ms-auto lg:ms-0 lg:absolute lg:bottom-0 lg:right-10 lg:h-16 lg:w-56 lg:translate-y-1/2 text-left"
                 @click="handleSearch"
             >
-                <span>Search Flights</span>
+                <span class="me-7 lg:me-0">Search Flights</span>
                 <font-awesome-icon
                     :icon="faArrowRight"
-                    class="absolute right-6 bottom-1/2 translate-y-1/2"
+                    class="lg:absolute lg:right-6 lg:bottom-1/2 lg:translate-y-1/2"
                 />
             </button>
         </div>
     </div>
 
-    <div class="container mt-24 mb-24 mx-auto">
+    <div class="container px-4 md:px-8 lg:px-20 xl:px-0 my-12 xl:my-24 mx-auto">
         <template v-if="outboundFlight">
             <div class="mb-6">
                 <h2 class="text-2xl font-medium leading-normal">Selected flight</h2>
@@ -179,7 +184,7 @@ onMounted(async () => {
                 <h2 class="text-2xl font-medium leading-normal">Flights</h2>
                 <div class="h-5 w-[1px] bg-slate-600"></div>
                 <p class="text-sm font-normal leading-normal">
-                    Total <span class="font-medium">126 results</span>
+                    Total <span class="font-medium">{{ total }} results</span>
                 </p>
             </div>
 

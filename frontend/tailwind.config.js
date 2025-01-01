@@ -16,10 +16,16 @@ export default {
             },
             height: {
                 '160': '40rem',
+                '128': '32rem',
+                '100': '25rem',
                 '68': '17rem',
             },
             width: {
                 '144': '36rem'
+            },
+            margin: {
+                '18': '4.5rem',
+                '50': '12.5rem'
             },
             borderWidth: {
                 '3': '3px',

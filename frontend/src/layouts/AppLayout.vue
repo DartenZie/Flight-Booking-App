@@ -23,7 +23,7 @@ onUnmounted(() => {
 
 <template>
     <nav :class="['fixed top-0 z-20 w-full transition-colors duration-200', isScrolled ? 'bg-white shadow-lg' : '']">
-        <div class="container mx-auto py-4 flex justify-between items-center">
+        <div class="container mx-auto p-4 md:px-8 xl:px-0 flex justify-between items-center">
             <router-link to="/" class="block">
                 <span class="text-xl">
                     Sky<span class="font-semibold">Trip</span>
@@ -43,5 +43,7 @@ onUnmounted(() => {
         </div>
     </nav>
 
-    <slot />
+    <div class="mt-18 xl:mt-0 overflow-x-hidden overflow-y-auto">
+        <slot />
+    </div>
 </template>
