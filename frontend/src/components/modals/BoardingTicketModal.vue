@@ -11,10 +11,6 @@ const emit = defineEmits<{
   (e: 'cancel'): void,
 }>();
 
-onMounted(() => {
-    console.log(props.reservation.id);
-});
-
 function outsideClose(event: MouseEvent) {
     if (!(event.target as HTMLElement).closest('.boarding-pass')) {
         emit('cancel');
