@@ -66,7 +66,7 @@ async function handleSubmit(): void {
 
                 <form @submit.prevent="handleSubmit()">
                     <div class="mb-6">
-                        <div class="flex justify-between gap-x-6">
+                        <div class="flex justify-between gap-x-2 lg:gap-x-6">
                             <div class="w-full">
                                 <form-control id="firstName" v-model="state.firstName" label="First name" type="text" placeholder="John" />
                             </div>
@@ -118,8 +118,7 @@ async function handleSubmit(): void {
                         <p v-if="v$.passwordConfirm.$error" class="text-sm/6 text-red-600">Passwords are not same.</p>
                     </div>
 
-                    <div class="flex items-center justify-between">
-                        <router-link class="btn-text h-8" to="/register-airline">Join as Airline</router-link>
+                    <div class="flex items-center justify-end">
                         <button class="btn-primary h-12" type="submit">
                             <span class="me-7">Sign Up</span>
                             <font-awesome-icon :icon="faChevronRight" />
@@ -127,7 +126,7 @@ async function handleSubmit(): void {
                     </div>
                 </form>
             </div>
-            <div class="lg:col-span-4 h-full content-center">
+            <div class="hidden lg:block lg:col-span-4 h-full content-center">
                 <img src="../assets/illustrations/register_illustration.svg" alt="Register illustration" class="w-full" />
             </div>
         </div>

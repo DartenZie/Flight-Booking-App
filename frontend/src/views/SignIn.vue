@@ -62,7 +62,7 @@ async function handleSubmit(): void {
                     </div>
                 </form>
             </div>
-            <div class="lg:col-span-4 h-full content-center">
+            <div class="hidden lg:block lg:col-span-4 h-full content-center">
                 <img src="../assets/illustrations/login_illustration.svg" alt="Login illustration" class="w-full" />
             </div>
         </div>

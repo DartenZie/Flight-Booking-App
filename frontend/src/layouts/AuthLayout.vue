@@ -10,7 +10,7 @@ const showSignIn = computed(() => ['/sign-up'].includes(route.path));
 
 <template>
     <nav class="absolute top-0 w-full">
-        <div class="container mx-auto py-4 flex justify-between items-center">
+        <div class="container mx-auto p-4 md:px-8 xl:px-0 flex justify-between items-center">
             <router-link to="/" class="block">
                 <span class="text-xl">
                     Sky<span class="font-semibold">Trip</span>
@@ -24,10 +24,12 @@ const showSignIn = computed(() => ['/sign-up'].includes(route.path));
         </div>
     </nav>
 
-    <slot />
+    <div class="container mx-auto px-4 md:px-8 xl:px-0">
+        <slot />
+    </div>
 
     <div class="absolute bottom-0 w-full">
-        <div class="container mx-auto py-4 flex justify-center items-center gap-x-6">
+        <div class="container mx-auto p-4 md:px-8 xl:px-0 flex justify-center items-center gap-x-2 md:gap-x-4 lg:gap-x-6">
             <div class="text-slate-700">&copy; Miroslav Pašek 2024</div>
             <div class="text-slate-400">|</div>
             <div class="text-slate-700">All rights reserved</div>
