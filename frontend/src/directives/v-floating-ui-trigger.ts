@@ -16,7 +16,7 @@ export default {
         const { componentId, triggerEvent } = binding.value;
 
         const toggleOpen = (): void => {
-            if (floatingUIStore.isOpen(componentId) && triggerEvent !== 'input') {
+            if (floatingUIStore.isOpen(componentId) && !['input', 'focus'].includes(triggerEvent)) {
                 floatingUIStore.close();
             } else {
                 floatingUIStore.open(componentId);

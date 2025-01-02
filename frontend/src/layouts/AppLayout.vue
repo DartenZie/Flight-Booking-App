@@ -43,7 +43,7 @@ onUnmounted(() => {
         </div>
     </nav>
 
-    <div class="mt-18 lg:mt-0 overflow-x-hidden overflow-y-auto">
+    <div class="min-h-screen mt-18 lg:mt-0 overflow-x-hidden overflow-y-auto">
         <slot />
     </div>
 </template>
