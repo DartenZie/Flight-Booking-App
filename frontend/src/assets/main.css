@@ -48,6 +48,6 @@
     }
 
     .seat {
-        @apply w-10 h-10 rounded flex items-center justify-center cursor-pointer;
+        @apply w-8 h-8 md:w-9 md:h-9 lg:w-10 lg:h-10 rounded flex items-center justify-center cursor-pointer;
     }
 }

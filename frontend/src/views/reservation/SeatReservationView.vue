@@ -7,6 +7,7 @@ import {useReservationStore} from "@/store/reservation.store";
 import {useAuthStore} from "@/store/auth.store";
 import {ref, watch} from "vue";
 import {Flight} from "@/models/flight.model";
+import HeroSection from "@/components/HeroSection.vue";
 
 const authStore = useAuthStore();
 const reservationStore = useReservationStore();
@@ -38,57 +39,40 @@ const handleSubmit = () => {
 </script>
 
 <template>
-    <div class="relative bg-copenhagen bg-cover bg-center h-160">
-        <div class="absolute bottom-0 left-0 right-0 top-0 h-full w-full overflow-hidden bg-gradient-to-r from-green-100 via-green-50 to-transparent opacity-80"></div>
+    <hero-section v-if="reservationStore.departureFlight" :city="reservationStore.departureFlight.arrivalAirport.city">
+        <h2 class="font-medium text-lg mb-8">
+            <font-awesome-icon :icon="faPlane" />
+            <span class="ms-3">Flight information</span>
+        </h2>
 
-        <div
-            class="container mx-auto h-full flex flex-auto items-center justify-start"
+        <reservation-flight-card :flight="reservationStore.departureFlight" />
+        <reservation-flight-card v-if="reservationStore.returnFlight" :flight="reservationStore.returnFlight" />
+
+        <router-link
+            class="btn-primary flex w-min h-12 ms-auto lg:absolute lg:bottom-0 lg:right-10 lg:h-16 lg:w-56 lg:translate-y-1/2 text-left"
+            to="/"
         >
-            <p v-if="reservationStore.departureFlight" class="font-thin text-5xl leading-snug text-slate-950 z-10">
-                Let's book your flight<br />
-                to <span class="font-medium">{{ reservationStore.departureFlight.arrivalAirport.city }}</span>!
-            </p>
-        </div>
-    </div>
+            <span class="me-7 lg:me-0">Change Flights</span>
+            <font-awesome-icon
+                :icon="faArrowLeft"
+                class="lg:absolute lg:right-6 lg:bottom-1/2 lg:translate-y-1/2"
+            />
+        </router-link>
+    </hero-section>
 
-    <div class="container mx-auto -mt-32">
-        <div
-            class="relative h-72 bg-white rounded-lg shadow-md px-10 pt-6 pb-12"
-        >
-            <h2 class="font-medium text-lg mb-8">
-                <font-awesome-icon :icon="faPlane" />
-                <span class="ms-3">Flight information</span>
-            </h2>
-
-            <reservation-flight-card v-if="reservationStore.departureFlight" :flight="reservationStore.departureFlight" />
-            <reservation-flight-card v-if="reservationStore.returnFlight" :flight="reservationStore.returnFlight" />
-
-            <router-link
-                class="btn-primary absolute bottom-0 right-10 h-16 w-56 translate-y-1/2 text-left"
-                to="/"
-            >
-                <span>Change Flights</span>
-                <font-awesome-icon
-                    :icon="faArrowLeft"
-                    class="absolute right-6 bottom-1/2 translate-y-1/2"
-                />
-            </router-link>
-        </div>
-    </div>
-
-    <div class="container mt-24 mb-24 mx-auto">
+    <div class="container px-4 md:px-8 lg:px-20 xl:px-0 my-12 lg:mt-0 xl:mb-24 mx-auto">
         <form @submit.prevent="handleSubmit">
             <div class="space-y-12">
-                <div class="border-b border-gray-900/10 pb-12 flex justify-center">
+                <div class="border-b border-gray-900/10 pb-12 lg:flex lg:justify-center">
                     <div>
                         <div class="mb-14">
                             <h2 class="text-base/7 font-semibold text-gray-900">Select your seats</h2>
                             <p class="mt-1 text-sm/6 text-gray-600">Choose your preferred seats for the best travel experience.</p>
                         </div>
 
-                        <div class="flex gap-x-20 h-160">
-                            <div class="w-96 h-full flex flex-col justify-between">
-                                <div class="mt-4">
+                        <div class="lg:flex lg:gap-x-20 lg:h-160">
+                            <div class="lg:w-96 h-full flex flex-col justify-between">
+                                <div class="mt-4 mb-4 lg:mb-0">
                                     <h4 class="text-slate-500 font-medium text-sm">Flight #1</h4>
                                     <div v-if="currentFlight" class="text-slate-950 font-bold text-md mb-8">
                                         {{ currentFlight.departureAirport.city }} ({{ currentFlight.departureAirport.iata }}) -
@@ -143,8 +127,10 @@ const handleSubmit = () => {
                                 </div>
                             </div>
 
-                            <plane-cabins-visualization v-if="currentFlight" @select="selectedSeat = $event"
-                                                        :seating-model="currentFlight.plane.seatingConfiguration" />
+                            <div class="mt-16 lg:mt-0 h-160 lg:h-auto">
+                                <plane-cabins-visualization v-if="currentFlight" @select="selectedSeat = $event"
+                                                            :seating-model="currentFlight.plane.seatingConfiguration" />
+                            </div>
                         </div>
                     </div>
                 </div>
