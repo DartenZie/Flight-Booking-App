@@ -1,7 +1,13 @@
 <script setup lang="ts">
 import {createConfirmDialog} from "vuejs-confirm-dialog";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
-import {faClock, faLocationDot, faChevronDown} from "@fortawesome/free-solid-svg-icons";
+import {
+    faClock,
+    faLocationDot,
+    faChevronDown,
+    faPlaneDeparture,
+    faPlaneArrival, faPen
+} from "@fortawesome/free-solid-svg-icons";
 
 import AdminCard from "@/components/admin/AdminCard.vue";
 import FloatingUiDropdown from "@/components/floating-ui/FloatingUiDropdown.vue";
@@ -89,7 +95,7 @@ const handleImageError = (event: Event) => {
 </script>
 
 <template>
-    <admin-card class="col-span-12 h-28 flex justify-between">
+    <admin-card class="hidden lg:flex col-span-12 h-28 justify-between">
 
         <router-link to="/" class="ms-auto btn-primary">Book flight</router-link>
     </admin-card>
@@ -98,23 +104,27 @@ const handleImageError = (event: Event) => {
         <h2 class="text-2xl font-semibold mb-2">Bookings</h2>
         <p class="text-md text-gray-700 mb-6">See your scheduled flights in the calendar view.</p>
 
+        <div class="lg:hidden mb-6 flex justify-end">
+            <router-link to="/" class="btn-primary h-14">Book flight</router-link>
+        </div>
+
         <div class="grid grid-cols-1 gap-y-2">
 
-            <div v-for="reservation in reservations" :key="reservation.id" class="border border-gray-200 rounded-2xl h-20 flex items-center gap-x-10">
-                <div class="text-center w-20 text-gray-700 border-e border-gray-200">
+            <div v-for="reservation in reservations" :key="reservation.id" class="border border-gray-200 rounded-2xl md:h-20 grid grid-cols-12 md:flex md:items-center md:gap-x-10">
+                <div class="col-span-3 text-center md:w-20 md:min-w-20 text-gray-700 border-b border-e md:border-b-0 border-gray-200">
                     <div class="text-lg font-normal">{{  month(reservation.flight) }}</div>
                     <div class="text-2xl font-bold">{{ reservation.flight.departureTime.getDate() }}</div>
                 </div>
 
-                <div>
-                    <div class="flex gap-x-2 items-center mb-1">
+                <div class="col-span-6 flex flex-col justify-center border-b border-e md:border-b-0 md:border-e-0 border-gray-200 md:block">
+                    <div class="px-3 md:px-0 flex gap-x-2 items-center mb-1">
                         <font-awesome-icon :icon="faClock" class="w-6 text-gray-600 text-xs" />
                         <span class="text-gray-700 font-light text-sm">
                             {{ FlightResult.formatTime(reservation.flight.departureTime) }} -
                             {{ FlightResult.formatTime(reservation.flight.arrivalTime) }}
                         </span>
                     </div>
-                    <div class="flex gap-x-2 items-center">
+                    <div class="px-3 md:px-0 flex gap-x-2 items-center">
                         <font-awesome-icon :icon="faLocationDot" class="w-6 text-gray-600 text-xs" />
                         <span class="text-gray-700 font-light text-sm">
                             {{ reservation.flight.departureAirport.iata }} -
@@ -123,12 +133,42 @@ const handleImageError = (event: Event) => {
                     </div>
                 </div>
 
-                <div>
-                    <div class="text-sm mb-1">
+                <div class="col-span-3 border-b md:border-b-0 border-gray-200 md:hidden flex justify-center items-center">
+                    <button class="block relative mx-auto btn-text h-12" v-floating-ui-trigger="{ componentId: `edit-flight-${reservation.id}` }">
+                        <font-awesome-icon :icon="faPen" />
+
+                        <floating-ui-dropdown :component-id="`edit-flight-${reservation.id}`" position="right" @select="(key) => handleSelect(key, reservation.id)" :dropdown-items="[
+                            { name: 'view', value: 'View boarding ticket' },
+                            { name: 'checkIn', value: 'Online check-in' },
+                            { name: 'cancelFlight', value: 'Cancel flight' },
+                        ]" />
+                    </button>
+                </div>
+
+                <div class="col-span-12">
+                    <div class="hidden 2xl:block text-sm mb-1">
                         {{ duration(reservation.flight) }} flight from
                         <span class="font-semibold">{{ reservation.flight.departureAirport.name }}</span> to
-                        <span class="font-semibold">{{ reservation.flight.arrivalAirport.name }}</span></div>
-                    <div class="flex gap-x-2 items-center">
+                        <span class="font-semibold">{{ reservation.flight.arrivalAirport.name }}</span>
+                    </div>
+                    <div class="hidden md:block 2xl:hidden text-sm mb-1">
+                        {{ duration(reservation.flight) }} flight from
+                        <span class="font-semibold">{{ reservation.flight.departureAirport.iata }}</span> to
+                        <span class="font-semibold">{{ reservation.flight.arrivalAirport.iata }}</span>
+                    </div>
+
+                    <div class="md:hidden text-sm mb-2 px-6 mt-2">
+                        <div class="flex items-center gap-x-6 mb-1">
+                            <font-awesome-icon :icon="faPlaneDeparture" class="text-gray-700" />
+                            <div class="font-medium">{{ reservation.flight.departureAirport.name }}</div>
+                        </div>
+                        <div class="flex items-center gap-x-6">
+                            <font-awesome-icon :icon="faPlaneArrival" class="text-gray-700" />
+                            <div class="font-medium">{{ reservation.flight.arrivalAirport.name }}</div>
+                        </div>
+                    </div>
+
+                    <div class="flex gap-x-2 items-center px-6 mb-4 md:mb-0 md:px-0">
                         <img :src="`${API_URL}/airline/logo?airlineId=${reservation.flight.plane.airlineId}`"
                              :alt="reservation.flight.plane.airline"
                              class="w-4 h-4 object-contain"
@@ -142,7 +182,7 @@ const handleImageError = (event: Event) => {
                     </div>
                 </div>
 
-                <button class="relative block ms-auto me-8 btn-primary h-12" v-floating-ui-trigger="{ componentId: `edit-flight-${reservation.id}` }">
+                <button class="hidden md:block relative ms-auto me-8 btn-primary h-12" v-floating-ui-trigger="{ componentId: `edit-flight-${reservation.id}` }">
                     <span class="me-7">Edit</span>
                     <font-awesome-icon :icon="faChevronDown" />
 

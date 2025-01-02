@@ -71,6 +71,16 @@ class InputValidator {
     /**
      * @throws ValidationException
      */
+    public static function sanitizeBool($input): int {
+        if (!is_bool($input)) {
+            throw new ValidationException('Invalid input: expected a boolean value.');
+        }
+        return $input === true ? 1 : 0;
+    }
+
+    /**
+     * @throws ValidationException
+     */
     public static function sanitizeDate(string $dateTime, array $formats = ['Y-m-d H:i:s', 'Y-m-d', 'Y-m-d\TH:i']): string {
         foreach ($formats as $format) {
             $date = DateTime::createFromFormat($format, $dateTime);

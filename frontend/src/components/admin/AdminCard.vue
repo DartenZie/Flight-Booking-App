@@ -6,7 +6,7 @@ const props = defineProps({
 </script>
 
 <template>
-    <div :class="['bg-white border-[#D6DDE1] border-1 rounded-3xl shadow-md', props.padding ? 'px-10 py-7' : '', props.class]">
+    <div :class="['bg-white border-[#D6DDE1] border-1 rounded-3xl shadow-md overflow-hidden', props.padding ? 'px-6 lg:px-10 py-5 lg:py-7' : '', props.class]">
         <slot />
     </div>
 </template>

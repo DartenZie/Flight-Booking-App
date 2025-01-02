@@ -62,7 +62,7 @@
                             </div>
                         </div>
                     </div>
-                    <div class="bg-gray-100 px-4 py-3 sm:flex sm:flex-row-reverse sm:px-6 gap-x-4">
+                    <div class="bg-gray-100 px-4 py-3 flex flex-row-reverse sm:px-6 gap-x-4">
                         <button type="button" class="btn-primary h-10" @click="$emit('confirm')">Confirm</button>
                         <button type="button" class="btn-default h-10" @click="$emit('cancel')">Cancel</button>
                     </div>

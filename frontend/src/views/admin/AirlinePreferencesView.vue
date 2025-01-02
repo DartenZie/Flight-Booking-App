@@ -41,11 +41,9 @@ const handleSubmit = async () => {
 
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="max-w-3xl">
-                    <div class="flex">
-                        <div class="w-1/2">
-                            <label for="airlineName" class="block text-sm font-medium mb-2">Airline name</label>
-                            <input type="text" id="airlineName" v-model="airlineName" class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="AbcAir" />
-                        </div>
+                    <div class="md:w-1/2">
+                        <label for="airlineName" class="block text-sm font-medium mb-2">Airline name</label>
+                        <input type="text" id="airlineName" v-model="airlineName" class="py-3 px-4 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none" placeholder="AbcAir" />
                     </div>
                 </div>
             </div>

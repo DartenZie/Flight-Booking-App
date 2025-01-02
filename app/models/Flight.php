@@ -86,9 +86,9 @@ class Flight extends Model {
         $stmt = $this->db->prepare($sql);
 
         foreach ($fields as $field => $value) {
-            $stmt->bindValue(":$field", $value);
+            $stmt->bindParam(":$field", $value);
         }
-        $stmt->bindValue(":id", $id, PDO::PARAM_INT);
+        $stmt->bindParam(":id", $id, PDO::PARAM_INT);
 
         return $stmt->execute();
     }

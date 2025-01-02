@@ -141,7 +141,8 @@ class FlightController extends Controller {
                 $sanitizer = match ($inputField) {
                     'price' => 'sanitizeString',
                     'departureTime', 'arrivalTime' => 'sanitizeDate',
-                    'planeId', 'departureAirportId', 'arrivalAirportId', 'cancelled' => 'sanitizeInt',
+                    'planeId', 'departureAirportId', 'arrivalAirportId' => 'sanitizeInt',
+                    'cancelled' => 'sanitizeBool',
                     default => null,
                 };
                 if ($sanitizer) {
@@ -295,6 +296,7 @@ class FlightController extends Controller {
             'price' => $flight['price'],
             'departureAirport' => $this->airportModel->getAirportById($flight['departure_airport_id']),
             'arrivalAirport' => $this->airportModel->getAirportById($flight['arrival_airport_id']),
+            'cancelled' => $flight['cancelled'],
             'plane' => [
                 'id' => $plane['id'],
                 'name' => $plane['name'],

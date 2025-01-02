@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
-import {loadLayoutMiddleware} from '@/router/middleware/loadLayoutMiddleware';
 import {authGuard, createPermissionGuard} from './guards/auth.guard';
 import {signGuard} from "./guards/sign.guard";
 import ErrorView from "../views/ErrorView.vue";
 import {airlineExistsGuard} from "./guards/airline-exists.guard";
 import {passengerInformationGuard} from "./guards/passenger-information.guard";
+import {loadLayoutMiddleware} from "./middleware/load-layout.middleware";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -69,7 +69,9 @@ const router = createRouter({
                     beforeEnter: createPermissionGuard(3)
                 }
             ],
-            meta: { layout: 'ProfileLayout' },
+            meta: {
+                layout: 'ProfileLayout',
+            },
             beforeEnter: authGuard
         },
         {

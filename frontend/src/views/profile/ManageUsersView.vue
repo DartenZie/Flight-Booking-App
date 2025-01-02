@@ -6,6 +6,8 @@ import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
 import {createConfirmDialog} from "vuejs-confirm-dialog";
 import ChangeUserRoleModal from "@/components/modals/ChangeUserRoleModal.vue";
 import {useAuthStore} from "@/store/auth.store";
+import {faPen} from "@fortawesome/free-solid-svg-icons";
+import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 
 const API_URL = process.env.VITE_API_URL;
 
@@ -47,33 +49,38 @@ changeUserDialog.onCancel(changeUserDialog.close);
             </div>
         </div>
 
-        <table class="w-full">
-            <thead class="border-b border-t border-[#D6DDE1] h-14">
-                <tr>
-                    <th class="text-left text-gray-500 font-normal">Name</th>
-                    <th class="text-left text-gray-500 font-normal">Email</th>
-                    <th class="text-left text-gray-500 font-normal">Role</th>
-                    <th class="text-left text-gray-500 font-normal w-48">Action</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr v-for="user in users.users" :key="user.id" class="h-16">
-                    <td>
-                        <div>{{ user.firstName }} {{ user.lastName }}</div>
-                    </td>
-                    <td>
-                        <div>{{ user.email }}</div>
-                    </td>
-                    <td>
-                        <div>{{ { 'user': 'User', 'flightManager': 'Flight Manager', 'admin': 'Admin' }[user.role] }}</div>
-                    </td>
-                    <td>
-                        <div v-if="authStore.user?.id !== user.id" class="inline-block">
-                            <button class="btn-primary h-12" @click="changeUserDialog.reveal({ user: user })">Change Role</button>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+        <div class="w-full overflow-y-auto">
+            <table class="min-w-full w-max">
+                <thead class="border-b border-t border-[#D6DDE1] h-14">
+                    <tr>
+                        <th class="text-left text-gray-500 font-normal">Name</th>
+                        <th class="text-left text-gray-500 font-normal">Email</th>
+                        <th class="text-left text-gray-500 font-normal">Role</th>
+                        <th class="text-right lg:text-left text-gray-500 font-normal lg:w-48">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-for="user in users.users" :key="user.id" class="h-16">
+                        <td class="pe-2">
+                            <div>{{ user.firstName }} {{ user.lastName }}</div>
+                        </td>
+                        <td class="px-2">
+                            <div>{{ user.email }}</div>
+                        </td>
+                        <td class="px-2">
+                            <div>{{ { 'user': 'User', 'flightManager': 'Flight Manager', 'admin': 'Admin' }[user.role] }}</div>
+                        </td>
+                        <td class="ps-2">
+                            <div v-if="authStore.user?.id !== user.id" class="flex justify-end lg:inline-block">
+                                <button class="hidden lg:flex btn-primary h-12" @click="changeUserDialog.reveal({ user: user })">Change Role</button>
+                                <button class="lg:hidden justify-end btn-text h-12" @click="changeUserDialog.reveal({ user: user })">
+                                    <font-awesome-icon :icon="faPen" />
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </admin-card>
 </template>

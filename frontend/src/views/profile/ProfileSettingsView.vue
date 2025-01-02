@@ -106,7 +106,7 @@ async function handleSubmit() {
                         </div>
                     </div>
 
-                    <div class="flex gap-x-10 mb-6">
+                    <div class="flex gap-x-2 lg:gap-x-6 xl:gap-x-10 mb-6">
                         <div class="w-1/2">
                             <form-control id="firstName" v-model="state.firstName" label="First Name" type="text"
                                           placeholder="John" />
@@ -118,11 +118,11 @@ async function handleSubmit() {
                         </div>
                     </div>
 
-                    <div class="flex gap-x-10">
-                        <div class="w-1/2">
+                    <div class="lg:flex lg:gap-x-10">
+                        <div class="mb-6 lg:mb-0 lg:w-1/2">
                             <nationality-form-select v-model="state.nationality" />
                         </div>
-                        <div class="w-1/2">
+                        <div class="lg:w-1/2">
                             <form-control id="dateOfBirth" v-model="state.dateOfBirth" label="Date of Birth" type="date" />
                         </div>
                     </div>
@@ -131,21 +131,21 @@ async function handleSubmit() {
 
             <div class="border-b border-gray-900/10 pb-12">
                 <div class="max-w-3xl">
-                    <div class="flex gap-x-10 mb-6">
-                        <div class="w-1/2">
+                    <div class="lg:flex lg:gap-x-10 mb-6">
+                        <div class="mb-6 lg:mb-0 lg:w-1/2">
                             <form-control id="firstName" v-model="state.email" @update:modelValue="handleEmailChange" label="Email" type="email"
                                           placeholder="Email" />
                             <p v-if="v$.email.$errors.some(v => v.$validator === 'required')" class="text-sm/6 text-red-600">Email is required.</p>
                             <p v-if="v$.email.$errors.some(v => v.$validator === 'email')" class="text-sm/6 text-red-600">Email is not valid.</p>
                         </div>
-                        <div v-if="emailChanged" class="w-1/2">
+                        <div v-if="emailChanged" class="lg:w-1/2">
                             <form-control id="confirmEmail" v-model="state.confirmEmail" label="Confirm Email" type="email"
                                           placeholder="johndoe@gmail.com" />
                             <p v-if="v$.confirmEmail.$error" class="text-sm/6 text-red-600">Emails are not the same.</p>
                         </div>
                     </div>
 
-                    <div class="w-1/2">
+                    <div class="lg:w-1/2">
                         <form-control id="phone" v-model="state.phone" label="Phone number" type="text"
                                       placeholder="+420777888999" />
                     </div>
@@ -159,10 +159,5 @@ async function handleSubmit() {
                 </button>
             </div>
         </form>
-    </admin-card>
-
-    <admin-card class="col-span-12 h-min">
-        <p class="mb-6">At <strong>SkyTrip</strong>, your privacy is our priority. This GDPR Privacy Notice explains how we collect, use, and protect your personal data in compliance with the General Data Protection Regulation (EU) 2016/679 (GDPR).</p>
-        <button class="btn-text ms-auto">Learn more</button>
     </admin-card>
 </template>
