@@ -9,6 +9,8 @@ CREATE TABLE airports (
     city VARCHAR(255),
     country VARCHAR(255),
     iata CHAR(3),
+    latitude DOUBLE,
+    longitude DOUBLE,
     timezone VARCHAR(255)
 );
 
@@ -31,6 +33,7 @@ CREATE TABLE users (
     phone VARCHAR(255),
     sex VARCHAR(255),
     role_id INT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 

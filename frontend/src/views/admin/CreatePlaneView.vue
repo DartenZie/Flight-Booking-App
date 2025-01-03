@@ -6,6 +6,7 @@ import {Plane, SeatingModel} from "@/models/plane.model";
 import FormControl from "@/components/FormControl.vue";
 import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
 import {useAirlineStore} from "@/store/airline.store";
+import router from "@/router";
 
 const API_URL = process.env.VITE_API_URL;
 
@@ -35,7 +36,10 @@ const submit = async (): Promise<void> => {
 
     if (response.statusCode.value !== 200) {
         console.error(response.error.value);
+        return;
     }
+
+    router.back();
 };
 </script>
 

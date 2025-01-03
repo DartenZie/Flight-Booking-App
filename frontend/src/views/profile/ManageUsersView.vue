@@ -72,7 +72,7 @@ changeUserDialog.onCancel(changeUserDialog.close);
                             <div>{{ user.email }}</div>
                         </td>
                         <td class="px-2">
-                            <div>{{ { 'user': 'User', 'flightManager': 'Flight Manager', 'admin': 'Admin' }[user.role] }}</div>
+                            <div>{{ { 'user': 'User', 'flightManager': 'Flight Manager', 'admin': 'Admin', 'super_admin': 'Super Admin' }[user.role] }}</div>
                         </td>
                         <td class="ps-2">
                             <div v-if="authStore.user?.id !== user.id" class="flex justify-end lg:inline-block">

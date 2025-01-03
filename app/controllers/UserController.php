@@ -86,6 +86,7 @@ class UserController extends Controller {
             'phone' => $user['phone'],
             'sex' => $user['sex'],
             'permissionLevel' => $user['permission_level'],
+            'createdAt' => $user['created_at']
         ];
     }
 }

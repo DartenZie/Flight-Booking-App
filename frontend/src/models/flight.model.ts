@@ -1,5 +1,5 @@
 import {Plane} from "./plane.model";
-import {Airline} from "../store/airline.store";
+import {calculateDistance} from "../utils/general.utils";
 
 export interface FlightPlaneResponse {
     id: number;
@@ -15,6 +15,8 @@ export interface FlightAirportResponse {
     city: string;
     country: string;
     iata: string;
+    latitude: number;
+    longitude: number;
     timezone: string;
 }
 
@@ -58,6 +60,7 @@ export class Flight {
     plane: Plane;
     departureAirport: FlightAirportResponse;
     arrivalAirport: FlightAirportResponse;
+    distance: number;
     cancelled: boolean;
 
     constructor(id: number) {
@@ -72,6 +75,12 @@ export class Flight {
         flight.plane = Plane.parsePlane(flightResponse.plane);
         flight.departureAirport = flightResponse.departureAirport;
         flight.arrivalAirport = flightResponse.arrivalAirport;
+        flight.distance = Math.ceil(calculateDistance(
+            flight.departureAirport.latitude,
+            flight.departureAirport.longitude,
+            flight.arrivalAirport.latitude,
+            flight.arrivalAirport.longitude,
+        ));
         flight.cancelled = flightResponse.cancelled;
         return flight;
     }

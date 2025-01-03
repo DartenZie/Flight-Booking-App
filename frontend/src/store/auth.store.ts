@@ -15,6 +15,7 @@ export interface User {
     dateOfBirth: string;
     phone: string;
     permissionLevel: number;
+    createdAt: Date;
 }
 
 interface RegisterModel {
@@ -82,7 +83,8 @@ export const useAuthStore = defineStore('auth', () => {
                 sex: data.value.sex,
                 dateOfBirth: data.value.dateOfBirth,
                 phone: data.value.phone,
-                permissionLevel: data.value.permissionLevel
+                permissionLevel: data.value.permissionLevel,
+                createdAt: new Date(data.value.createdAt)
             };
         } catch (error) {
             console.error('Failed to fetch user data:', error);
