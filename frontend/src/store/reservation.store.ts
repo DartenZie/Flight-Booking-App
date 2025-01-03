@@ -10,7 +10,7 @@ const API_URL = process.env.VITE_API_URL;
 export const useReservationStore = defineStore('reservation', () => {
     const router = useRouter();
 
-    const departureFlightId = ref<number>(14);
+    const departureFlightId = ref<number>(0);
     const departureFlight = ref<Flight>(null);
     const departureSeat = ref<string>('');
     const returnFlightId = ref<number>(0);

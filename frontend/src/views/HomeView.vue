@@ -31,13 +31,13 @@ const flightTypeOptions: ReadonlyArray<{ name: string; value: string }> = [
 const fromLocation = ref({});
 const toLocation = ref({});
 
-const flights = ref<ReadonlyArray<FlightResultType>>([
-]);
+const date = ref<[Date, Date]>();
 
-const returnFlights = ref<ReadonlyArray<FlightResult>>([
-]);
+const flights = ref<ReadonlyArray<FlightResultType>>([]);
+const returnFlights = ref<ReadonlyArray<FlightResult>>([]);
 
 const total = ref(0);
+const returnTotal = ref(0);
 
 const outboundFlight = ref<FlightResultType | null>(null);
 
@@ -45,6 +45,7 @@ const handleSelect = (flight: FlightResultType): void => {
     switch (flight.type) {
     case 'outbound':
         flight.type = 'selected';
+        reservationStore.departureFlightId = flight.id;
         outboundFlight.value = flight;
         break;
     case 'selected':
@@ -56,6 +57,7 @@ const handleSelect = (flight: FlightResultType): void => {
         router.push('/book/passenger-information');
         break;
     case 'return':
+        reservationStore.returnFlightId = flight.id;
         router.push('/book/passenger-information');
         break;
     }
@@ -66,25 +68,63 @@ const handleSearch = async () => {
         return;
     }
 
-    const body = {
-        departureAirportId: fromLocation.value?.id,
-        arrivalAirportId: toLocation.value?.id,
-        departureDate: '2024-12-31',
-        type: 'oneway'
-    };
-    const { data } = await useFetch(`${API_URL}/flight/search`).post(body).json();
+    if (flightTypeId.value === 'roundTrip') {
+        const body = {
+            departureAirportId: fromLocation.value.id,
+            arrivalAirportId: toLocation.value.id,
+            departureDate: formatDate(date.value[0]),
+            returnDate: formatDate(date.value[1]),
+            type: 'round'
+        };
+        const { data } = await useFetch(`${API_URL}/flight/search`).post(body).json();
 
-    flights.value = data.value.flights.map((flight) => new FlightResult(
-        flight.id,
-        { name: flight.plane.airlineName, logo: `${API_URL}/airline/logo?airlineId=${flight.plane.airlineId}` },
-        { name: flight.departureAirport.iata, time: new Date(flight.departureTime) },
-        { name: flight.arrivalAirport.iata, time: new Date(flight.arrivalTime) },
-        flight.price,
-        'oneWay'
-    ));
+        flights.value = data.value.departingFlights.map((flight) => new FlightResult(
+            flight.id,
+            { name: flight.plane.airlineName, logo: `${API_URL}/airline/logo?airlineId=${flight.plane.airlineId}` },
+            { name: flight.departureAirport.iata, time: new Date(flight.departureTime) },
+            { name: flight.arrivalAirport.iata, time: new Date(flight.arrivalTime) },
+            flight.price,
+            'outbound'
+        ));
+        returnFlights.value = data.value.returningFlights.map((flight) => new FlightResult(
+            flight.id,
+            { name: flight.plane.airlineName, logo: `${API_URL}/airline/logo?airlineId=${flight.plane.airlineId}` },
+            { name: flight.departureAirport.iata, time: new Date(flight.departureTime) },
+            { name: flight.arrivalAirport.iata, time: new Date(flight.arrivalTime) },
+            flight.price,
+            'return'
+        ));
 
-    // todo refactor with paging
-    total.value = flights.value.length;
+        total.value = flights.value.length;
+        returnTotal.value = returnFlights.value.length;
+    } else if (flightTypeId.value === 'oneWayTrip') {
+        const body = {
+            departureAirportId: fromLocation.value.id,
+            arrivalAirportId: toLocation.value.id,
+            departureDate: formatDate(date.value[0]),
+            type: 'oneway'
+        };
+        const { data } = await useFetch(`${API_URL}/flight/search`).post(body).json();
+
+        flights.value = data.value.flights.map((flight) => new FlightResult(
+            flight.id,
+            { name: flight.plane.airlineName, logo: `${API_URL}/airline/logo?airlineId=${flight.plane.airlineId}` },
+            { name: flight.departureAirport.iata, time: new Date(flight.departureTime) },
+            { name: flight.arrivalAirport.iata, time: new Date(flight.arrivalTime) },
+            flight.price,
+            'oneWay'
+        ));
+
+        total.value = flights.value.length;
+    }
+};
+
+const formatDate = (date: Date): string => {
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+
+    return `${year}-${month}-${day}`;
 };
 
 onMounted(async () => {
@@ -137,7 +177,7 @@ onMounted(async () => {
                     />
                 </div>
                 <div class="col-span-10 xl:col-span-4">
-                    <search-date-pick id="searchDate" :type="flightTypeId" />
+                    <search-date-pick id="searchDate" v-model="date" :type="flightTypeId" />
                 </div>
             </div>
 
@@ -192,7 +232,7 @@ onMounted(async () => {
                 <h2 class="text-2xl font-medium leading-normal">Return Flights</h2>
                 <div class="h-5 w-[1px] bg-slate-600"></div>
                 <p class="text-sm font-normal leading-normal">
-                    Total <span class="font-medium">126 results</span>
+                    Total <span class="font-medium">{{ returnTotal }} results</span>
                 </p>
             </div>
 

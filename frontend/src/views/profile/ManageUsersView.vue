@@ -26,10 +26,14 @@ const loadUsers = async () => {
     users.value = data.value;
 };
 
-changeUserDialog.onConfirm(async (res: { id: int, role: string }) => {
+changeUserDialog.onConfirm(async (res: { id: number, role: string }) => {
+    if (!res.id || !res.role) {
+        return;
+    }
+
     const body = {
         id: res.id,
-        role_id: { 'user': 1, 'flightManager': 2, 'admin': 3 }[role],
+        role_id: { 'user': 1, 'flightManager': 2, 'admin': 3 }[res.role],
     };
     const response = await useAuthenticatedFetch<UserResponse>(`${API_URL}/users`).put(body).json();
     if (response.statusCode.value === 200) {

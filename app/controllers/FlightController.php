@@ -236,7 +236,7 @@ class FlightController extends Controller {
         $flightType = $data['type'] ?? 'oneway';
         $returnDate = isset($data['returnDate']) ? InputValidator::sanitizeDate($data['returnDate']) : null;
 
-        if ($flightType === 'return' && !$returnDate) {
+        if ($flightType === 'round' && !$returnDate) {
             throw new ValidationException('Return date is required for return flight searches.', 400);
         }
 
@@ -268,16 +268,21 @@ class FlightController extends Controller {
             return ['flights' => array_map(fn ($flight) => $this->mapFlight($flight), $flights)];
         }
 
-        if ($flightType === 'return') {
+        if ($flightType === 'round') {
             $departingFlights = $this->flightModel->searchFlights($departureAirportId, $arrivalAirportId, $departureDate);
             $returningFlights = $this->flightModel->searchFlights($arrivalAirportId, $departureAirportId, $returnDate);
+
+            if (empty($departingFlights) || empty($returningFlights)) {
+                return ['departingFlights' => [], 'returningFlights' => []];
+            }
+
             return [
                 'departingFlights' => array_map(fn ($flight) => $this->mapFlight($flight), $departingFlights),
                 'returningFlights' => array_map(fn ($flight) => $this->mapFlight($flight), $returningFlights),
             ];
         }
 
-        throw new ValidationException('Invalid flight type. Use "oneway" or "return".', 400);
+        throw new ValidationException('Invalid flight type. Use "oneway" or "round".', 400);
     }
 
     /**

@@ -1,17 +1,17 @@
 <script setup lang="ts">
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { faCalendarDays } from '@fortawesome/free-solid-svg-icons';
-import {computed, onMounted, ref} from "vue";
+import {computed, onMounted} from "vue";
 import {useFloatingUiStore} from "@/store/floating-ui.store";
 
 const floatingUIStore = useFloatingUiStore();
 
-defineProps<{
+const props = defineProps<{
     id: string,
     type: 'oneWayTrip' | 'roundTrip',
 }>();
 
-const date = ref<[Date, Date]>();
+const date = defineModel<[Date, Date]>();
 
 const isOpen = computed(() => floatingUIStore.isOpen('search-datepicker'));
 
@@ -33,9 +33,9 @@ const formatDate = (date: Date): string => {
     const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
     // Get day of week, date, and month
-    const dayOfWeek = daysOfWeek[date.getUTCDay()];
-    const dayOfMonth = date.getUTCDate();
-    const month = months[date.getUTCMonth()];
+    const dayOfWeek = daysOfWeek[date.getDay()];
+    const dayOfMonth = date.getDate();
+    const month = months[date.getMonth()];
 
     // Format the date into the desired string
     return `${dayOfWeek}, ${dayOfMonth} ${month}`;
@@ -43,23 +43,26 @@ const formatDate = (date: Date): string => {
 
 const handleBack = (calendar: 'departure' | 'return'): void => {
     if (calendar === 'departure') {
-        date.value[0] = new Date(date.value[0].setDate(date.value[0].getDate() - 1));
-    } else  {
-        if (date.value[0] >= date.value[1]) {
+        if (date.value[0] <= new Date()) {
             return;
         }
-        date.value[1] = new Date(date.value[1].setDate(date.value[1].getDate() - 1));
+        date.value = [new Date(date.value[0].setDate(date.value[0].getDate() - 1)), date.value[1]];
+    } else  {
+        if (props.type === 'roundTrip' && date.value[0] >= date.value[1]) {
+            return;
+        }
+        date.value = [date.value[0], new Date(date.value[1].setDate(date.value[1].getDate() - 1))];
     }
 };
 
 const handleNext = (calendar: 'departure' | 'return'): void => {
     if (calendar === 'departure') {
-        if (date.value[0] >= date.value[1]) {
+        if (props.type === 'roundTrip' && date.value[0] >= date.value[1]) {
             return;
         }
-        date.value[0] = new Date(date.value[0].setDate(date.value[0].getDate() + 1));
+        date.value = [new Date(date.value[0].setDate(date.value[0].getDate() + 1)), date.value[1]];
     } else  {
-        date.value[1] = new Date(date.value[1].setDate(date.value[1].getDate() + 1));
+        date.value = [date.value[0], new Date(date.value[1].setDate(date.value[1].getDate() + 1))];
     }
 };
 </script>

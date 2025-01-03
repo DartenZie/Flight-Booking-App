@@ -119,7 +119,7 @@ const handleImageError = (event: Event) => {
                 <div class="col-span-6 flex flex-col justify-center border-b border-e md:border-b-0 md:border-e-0 border-gray-200 md:block">
                     <div class="px-3 md:px-0 flex gap-x-2 items-center mb-1">
                         <font-awesome-icon :icon="faClock" class="w-6 text-gray-600 text-xs" />
-                        <span class="text-gray-700 font-light text-sm">
+                        <span class="text-gray-700 font-light text-sm inline-block w-24">
                             {{ FlightResult.formatTime(reservation.flight.departureTime) }} -
                             {{ FlightResult.formatTime(reservation.flight.arrivalTime) }}
                         </span>

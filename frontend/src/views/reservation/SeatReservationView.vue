@@ -22,13 +22,17 @@ watch(
 );
 
 const handleSubmit = () => {
+    if (!selectedSeat.value) {
+        return;
+    }
+
     if (reservationStore.returnFlightId == currentFlight.value.id) {
         reservationStore.returnSeat = selectedSeat.value;
     } else {
         reservationStore.departureSeat = selectedSeat.value;
     }
 
-    if (reservationStore.returnFlight && currentFlight.value.id === reservationStore.returnFlight.id) {
+    if (reservationStore.returnFlight && currentFlight.value.id === reservationStore.departureFlight.id) {
         selectedSeat.value = '';
         currentFlight.value = reservationStore.returnFlight;
         return;
@@ -73,7 +77,8 @@ const handleSubmit = () => {
                         <div class="lg:flex lg:gap-x-20 lg:h-160">
                             <div class="lg:w-96 h-full flex flex-col justify-between">
                                 <div class="mt-4 mb-4 lg:mb-0">
-                                    <h4 class="text-slate-500 font-medium text-sm">Flight #1</h4>
+                                    <h4 v-if="currentFlight.id === reservationStore.departureFlight.id" class="text-slate-500 font-medium text-sm">Flight #1</h4>
+                                    <h4 v-else class="text-slate-500 font-medium text-sm">Flight #2</h4>
                                     <div v-if="currentFlight" class="text-slate-950 font-bold text-md mb-8">
                                         {{ currentFlight.departureAirport.city }} ({{ currentFlight.departureAirport.iata }}) -
                                         {{ currentFlight.arrivalAirport.city }} ({{ currentFlight.arrivalAirport.iata }})
@@ -128,20 +133,23 @@ const handleSubmit = () => {
                             </div>
 
                             <div class="mt-16 lg:mt-0 h-160 lg:h-auto">
-                                <plane-cabins-visualization v-if="currentFlight" @select="selectedSeat = $event"
-                                                            :seating-model="currentFlight.plane.seatingConfiguration" />
+                                <plane-cabins-visualization v-if="currentFlight && currentFlight.id === reservationStore.departureFlight.id"
+                                                            @select="selectedSeat = $event"
+                                                            :seating-model="reservationStore.departureFlight.plane.seatingConfiguration" />
+                                <plane-cabins-visualization v-else @select="selectedSeat = $event"
+                                                            :seating-model="reservationStore.returnFlight.plane.seatingConfiguration" />
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="flex justify-end">
-                    <button v-if="reservationStore.returnFlight && currentFlight.id === reservationStore.returnFlight.id"
+                    <button v-if="reservationStore.returnFlight && currentFlight.id === reservationStore.departureFlight.id"
                             class="btn-primary h-12" type="submit">
                         <span class="me-7">Continue</span>
                         <font-awesome-icon :icon="faChevronRight" />
                     </button>
-                    <button class="btn-primary h-12" type="submit">
+                    <button v-else class="btn-primary h-12" type="submit">
                         <span class="me-7">Submit Reservation</span>
                         <font-awesome-icon :icon="faChevronRight" />
                     </button>

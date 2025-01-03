@@ -105,7 +105,7 @@ abstract class Controller {
 
             $perm_level = $this->role->getRoleByName($requiredRole)['permission_level'];
             if ($this->userData['permission_level'] < $perm_level) {
-                $this->errorResponse('forbidden_action', 403);
+                $this->errorResponse($perm_level . ' ' . $this->userData['permission_level'] . 'forbidden_action', 403);
             }
         } catch (InvalidArgumentException) {
             $this->errorResponse('invalid_login_credentials', 401);

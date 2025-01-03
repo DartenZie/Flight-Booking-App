@@ -65,21 +65,13 @@ class UsersController extends Controller {
             $this->jsonResponse(['message' => 'You cannot change your own role.']);
         }
 
-        $id = (int)$data;
-        $user = $this->user->getUserById($id);
+        $id = (int)$data['id'];
         $updateData = [
             'id' => $id,
-            'firstName' => $user['firstName'],
-            'lastName' => $user['lastName'],
-            'email' => $user['email'],
-            'nationality' => $user['nationality'] ?? null,
-            'dateOfBirth' => $user['dateOfBirth'] ?? null,
-            'phone' => $user['phone'] ?? null,
-            'sex' => $user['sex'] ?? null,
             'role_id' => (int)$data['role_id']
         ];
 
-        $this->userModel->updateUser($updateData);
+        $this->userModel->updateUser($id, $updateData);
         $this->jsonResponse($updateData);
     }
 }

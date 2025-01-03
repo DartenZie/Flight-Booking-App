@@ -58,7 +58,7 @@ const submit = async (): Promise<void> => {
     </admin-card>
 
     <admin-card class="col-span-6 row-span-2">
-        <div class="relative h-full">
+        <div class="relative h-full min-h-96">
             <div class="absolute w-full h-full">
                 <div v-if="seatingModel" class="flex h-full justify-center items-center">
                     <plane-cabins-visualization :seating-model="seatingModel" />

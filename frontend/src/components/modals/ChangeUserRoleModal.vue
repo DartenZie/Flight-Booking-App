@@ -2,14 +2,14 @@
 import {onMounted, ref} from "vue";
 import {UserResponse} from "@/models/user.model";
 
-defineProps<{
+const props = defineProps<{
     user: UserResponse
 }>();
 
 const role = ref<string>('');
 
 onMounted(() => {
-    role.value = user.role;
+    role.value = props.user.role;
 });
 </script>
 
@@ -24,7 +24,7 @@ onMounted(() => {
                         <h3 class="text-lg font-medium text-gray-700">Boarding ticket prices</h3>
                         <p class="text-sm text-gray-700 mb-6">Average prices for flights on this route (excluding your airline’s flights).</p>
 
-                        <select id="role" v-model="role" class="py-3 px-4 pe-9 block w-full border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
+                        <select id="role" v-model="role" class="py-3 px-4 pe-9 block w-full border border-gray-200 rounded-lg text-sm focus:border-blue-500 focus:ring-blue-500 disabled:opacity-50 disabled:pointer-events-none">
                             <option value="user">User</option>
                             <option value="flightManager">Flight Manager</option>
                             <option value="admin">Admin</option>
