@@ -9,6 +9,7 @@ use App\models\Flight;
 use App\models\Plane;
 use App\models\Reservation;
 use App\utils\InputValidator;
+use App\utils\MapperUtils;
 
 /**
  * Handles all operations related to flights, including CRUD operations,
@@ -172,7 +173,7 @@ class FlightController extends Controller {
             throw new ValidationException('Flight not found.', 404);
         }
 
-        $flightDetails = $this->mapFlight($flight);
+        $flightDetails = MapperUtils::mapFlight($flight, $this->planeModel, $this->airportModel);
         $this->jsonResponse($flightDetails);
     }
 
@@ -193,7 +194,7 @@ class FlightController extends Controller {
         $flights = $this->flightModel->getAllFlightsByAirline($airlineId, $limit, $offset) ?? [];
         $totalFlights = $this->flightModel->getFlightsByAirlineCount($airlineId);
 
-        $flights = array_map(fn ($flight) => $this->mapFlight($flight), $flights);
+        $flights = array_map(fn ($flight) => MapperUtils::mapFlight($flight, $this->planeModel, $this->airportModel), $flights);
 
         $this->jsonResponse([
             'flights' => $flights,
@@ -265,7 +266,7 @@ class FlightController extends Controller {
     ): array {
         if ($flightType === 'oneway') {
             $flights = $this->flightModel->searchFlights($departureAirportId, $arrivalAirportId, $departureDate);
-            return ['flights' => array_map(fn ($flight) => $this->mapFlight($flight), $flights)];
+            return ['flights' => array_map(fn ($flight) => MapperUtils::mapFlight($flight, $this->planeModel, $this->airportModel), $flights)];
         }
 
         if ($flightType === 'round') {
@@ -277,38 +278,11 @@ class FlightController extends Controller {
             }
 
             return [
-                'departingFlights' => array_map(fn ($flight) => $this->mapFlight($flight), $departingFlights),
-                'returningFlights' => array_map(fn ($flight) => $this->mapFlight($flight), $returningFlights),
+                'departingFlights' => array_map(fn ($flight) => MapperUtils::mapFlight($flight, $this->planeModel, $this->airportModel), $departingFlights),
+                'returningFlights' => array_map(fn ($flight) => MapperUtils::mapFlight($flight, $this->planeModel, $this->airportModel), $returningFlights),
             ];
         }
 
         throw new ValidationException('Invalid flight type. Use "oneway" or "round".', 400);
-    }
-
-    /**
-     * Maps a flight record to a detailed response including related entities.
-     *
-     * @param array $flight The flight record.
-     * @return array The mapped flight details.
-     */
-    private function mapFlight(array $flight): array {
-        $plane = $this->planeModel->getPlaneById($flight['plane_id']);
-
-        return [
-            'id' => $flight['id'],
-            'departureTime' => $flight['departure_time'],
-            'arrivalTime' => $flight['arrival_time'],
-            'price' => $flight['price'],
-            'departureAirport' => $this->airportModel->getAirportById($flight['departure_airport_id']),
-            'arrivalAirport' => $this->airportModel->getAirportById($flight['arrival_airport_id']),
-            'cancelled' => $flight['cancelled'],
-            'plane' => [
-                'id' => $plane['id'],
-                'name' => $plane['name'],
-                'configuration' => $plane['configuration'],
-                'airlineId' => $plane['airline_id'],
-                'airlineName' => $plane['airline_name']
-            ],
-        ];
     }
 }

@@ -22,7 +22,7 @@ onMounted(async () => {
 });
 
 const loadUsers = async () => {
-    const { data } = await useAuthenticatedFetch<UsersResponse>(`${API_URL}/users`).get().json();
+    const { data } = await useAuthenticatedFetch<UsersResponse>(`${API_URL}/user/list`).get().json();
     users.value = data.value;
 };
 
@@ -33,9 +33,9 @@ changeUserDialog.onConfirm(async (res: { id: number, role: string }) => {
 
     const body = {
         id: res.id,
-        role_id: { 'user': 1, 'flightManager': 2, 'admin': 3 }[res.role],
+        roleId: { 'user': 1, 'flightManager': 2, 'admin': 3 }[res.role],
     };
-    const response = await useAuthenticatedFetch<UserResponse>(`${API_URL}/users`).put(body).json();
+    const response = await useAuthenticatedFetch<UserResponse>(`${API_URL}/user/update`).put(body).json();
     if (response.statusCode.value === 200) {
         await loadUsers();
     }

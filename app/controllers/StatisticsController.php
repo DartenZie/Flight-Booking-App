@@ -7,6 +7,7 @@ use App\models\Airport;
 use App\models\Flight;
 use App\models\Plane;
 use App\models\Statistics;
+use App\utils\MapperUtils;
 
 class StatisticsController extends Controller {
     /**
@@ -53,7 +54,7 @@ class StatisticsController extends Controller {
         $userId = $this->userData['id'];
         $statistics = $this->statistics->getStatisticsData($userId);
 
-        $statistics = array_map(fn($stat) => $this->mapStatistics($stat), $statistics);
+        $statistics = array_map(fn($stat) => MapperUtils::mapStatistic($stat), $statistics);
 
         $shortestFlightId = $this->getShortestFlightId($statistics);
         $shortestFlight = $this->flightModel->getFlightById($shortestFlightId);
@@ -62,8 +63,8 @@ class StatisticsController extends Controller {
 
         $this->jsonResponse([
             'statistics' => $statistics,
-            'shortestFlight' => $shortestFlight ? $this->mapFlight($shortestFlight) : null,
-            'longestFlight' => $longestFlight ? $this->mapFlight($longestFlight) : null,
+            'shortestFlight' => $shortestFlight ? MapperUtils::mapFlight($shortestFlight, $this->planeModel, $this->airportModel) : null,
+            'longestFlight' => $longestFlight ? MapperUtils::mapFlight($longestFlight, $this->planeModel, $this->airportModel) : null,
         ]);
     }
 
@@ -148,47 +149,5 @@ class StatisticsController extends Controller {
         $c = 2 * atan2(sqrt($a), sqrt(1 - $a));
 
         return (int) ($R * $c);
-    }
-
-    private function mapStatistics(array $stats): array {
-        return [
-            'departureTime' => $stats['departure_time'],
-            'arrivalTime' => $stats['arrival_time'],
-            'departureAirportId' => $stats['departure_airport_id'],
-            'departureLongitude' => $stats['departure_longitude'],
-            'departureLatitude' => $stats['departure_latitude'],
-            'arrivalAirportId' => $stats['arrival_airport_id'],
-            'arrivalLongitude' => $stats['arrival_longitude'],
-            'arrivalLatitude' => $stats['arrival_latitude'],
-            'airlineId' => $stats['airline_id'],
-            'flightId' => $stats['flight_id'],
-        ];
-    }
-
-    /**
-     * Maps a flight record to a detailed response including related entities.
-     *
-     * @param array $flight The flight record.
-     * @return array The mapped flight details.
-     */
-    private function mapFlight(array $flight): array {
-        $plane = $this->planeModel->getPlaneById($flight['plane_id']);
-
-        return [
-            'id' => $flight['id'],
-            'departureTime' => $flight['departure_time'],
-            'arrivalTime' => $flight['arrival_time'],
-            'price' => $flight['price'],
-            'departureAirport' => $this->airportModel->getAirportById($flight['departure_airport_id']),
-            'arrivalAirport' => $this->airportModel->getAirportById($flight['arrival_airport_id']),
-            'cancelled' => $flight['cancelled'],
-            'plane' => [
-                'id' => $plane['id'],
-                'name' => $plane['name'],
-                'configuration' => $plane['configuration'],
-                'airlineId' => $plane['airline_id'],
-                'airlineName' => $plane['airline_name']
-            ],
-        ];
     }
 }
