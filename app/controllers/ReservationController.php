@@ -9,6 +9,7 @@ use App\models\Flight;
 use App\models\Plane;
 use App\models\Reservation;
 use App\utils\InputValidator;
+use App\utils\MapperUtils;
 
 class ReservationController extends Controller {
     /**
@@ -69,16 +70,16 @@ class ReservationController extends Controller {
         $reservationId = InputValidator::sanitizeInt($_GET['id']);
         $reservation = $this->reservationModel->getReservationById($reservationId);
 
-        // Only user or admin can access their own reservations
-        if ($this->userData['id'] !== $reservation['user_id'] && $this->userData['permission_level'] < 3) {
-            throw new ValidationException('Unauthorized.', 401);
-        }
-
         if (!$reservation) {
             throw new ValidationException('Reservation not found.', 404);
         }
 
-        $reservationDetails = $this->mapReservation($reservation);
+        // Only admin or owner user can access their own reservations
+        if ($this->userData['id'] !== $reservation['user_id'] && $this->userData['permission_level'] < 3) {
+            throw new ValidationException('Unauthorized.', 401);
+        }
+
+        $reservationDetails = MapperUtils::mapReservation($reservation, $this->flightModel, $this->planeModel, $this->airportModel);
         $this->jsonResponse($reservationDetails);
     }
 
@@ -94,9 +95,10 @@ class ReservationController extends Controller {
         $data = $this->parseRequestBody();
 
         InputValidator::required($data, ['seat', 'flightId']);
+        $flightId = InputValidator::sanitizeInt($data['flightId']);
         $createData = [
             'seat' => InputValidator::sanitizeString($data['seat']),
-            'class' => $this->getClassFromSeat($data['seat'], $data['flightId']),
+            'class' => $this->getClassFromSeat($data['seat'], $flightId),
             'user_id' => $this->userData['id'],
             'flight_id' => InputValidator::sanitizeInt($data['flightId']),
         ];
@@ -155,7 +157,7 @@ class ReservationController extends Controller {
         $reservations = $this->reservationModel->getAllReservationsByUser($userId, $limit, $offset);
         $totalReservations = $this->reservationModel->getReservationsByUserCount($userId);
 
-        $reservations = array_map(fn ($reservation) => $this->mapReservation($reservation), $reservations);
+        $reservations = array_map(fn ($reservation) => MapperUtils::mapReservation($reservation, $this->flightModel, $this->planeModel, $this->airportModel), $reservations);
 
         $this->jsonResponse([
             'reservations' => $reservations,
@@ -165,54 +167,18 @@ class ReservationController extends Controller {
         ]);
     }
 
+
     /**
-     * Maps a reservation record to detailed response including related entities.
+     * Determines the class type (e.g., economy, business) of a specific seat
+     * on a flight based on seat configuration and flight details.
      *
-     * @param array $reservation The reservation record.
-     * @return array The mapped reservation details.
-     */
-    private function mapReservation(array $reservation): array {
-        $flight = $this->flightModel->getFlightById($reservation['flight_id']);
-
-        return [
-            'id' => $reservation['id'],
-            'seat' => $reservation['seat'],
-            'class' => $reservation['class'],
-            'flight' => $this->mapFlight($flight),
-            'userId' => $reservation['user_id'],
-        ];
-    }
-
-    /**
-     * Maps a flight record to a detailed response including related entities.
+     * @param string $seat The seat identifier in string format (e.g., "12A").
+     * @param int $flightId The ID of the flight for which the seat class is to be determined.
+     * @return string The name of the class associated with the given seat.
      *
-     * @param array $flight The flight record.
-     * @return array The mapped flight details.
+     * @throws ValidationException If sanitization fails.
      */
-    private function mapFlight(array $flight): array {
-        $plane = $this->planeModel->getPlaneById($flight['plane_id']);
-
-        return [
-            'id' => $flight['id'],
-            'departureTime' => $flight['departure_time'],
-            'arrivalTime' => $flight['arrival_time'],
-            'price' => $flight['price'],
-            'departureAirport' => $this->airportModel->getAirportById($flight['departure_airport_id']),
-            'arrivalAirport' => $this->airportModel->getAirportById($flight['arrival_airport_id']),
-            'plane' => [
-                'id' => $plane['id'],
-                'name' => $plane['name'],
-                'configuration' => $plane['configuration'],
-                'airlineId' => $plane['airline_id'],
-                'airlineName' => $plane['airline_name']
-            ],
-        ];
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    private function getClassFromSeat(string $seat, $flightId): string {
+    private function getClassFromSeat(string $seat, int $flightId): string {
         $seatRow = InputValidator::sanitizeInt(substr($seat, 0, strlen($seat) - 1));
         $flight = $this->flightModel->getFlightById($flightId);
         $plane = $this->planeModel->getPlaneById($flight['plane_id']);

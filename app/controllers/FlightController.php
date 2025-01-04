@@ -96,13 +96,38 @@ class FlightController extends Controller {
         $data = $this->parseRequestBody();
 
         InputValidator::required($data, ['price', 'departureTime', 'arrivalTime', 'planeId', 'departureAirportId', 'arrivalAirportId']);
+
+        // Validate that the plane exists.
+        $planeId = InputValidator::sanitizeInt($data['planeId']);
+        $plane = $this->planeModel->getPlaneById($planeId);
+
+        if (!$plane) {
+            throw new ValidationException('Plane not found.', 404);
+        }
+
+        // Validate that the departure airport exists.
+        $departureAirportId = InputValidator::sanitizeInt($data['departureAirportId']);
+        $departureAirport = $this->airportModel->getAirportById($departureAirportId);
+
+        if (!$departureAirport) {
+            throw new ValidationException('Departure airport not found.', 404);
+        }
+
+        // Validate that the arrival airport exists.
+        $arrivalAirportId = InputValidator::sanitizeInt($data['arrivalAirportId']);
+        $arrivalAirport = $this->airportModel->getAirportById($arrivalAirportId);
+
+        if (!$arrivalAirport) {
+            throw new ValidationException('Arrival airport not found.', 404);
+        }
+
         $createData = [
             'price' => InputValidator::sanitizeString($data['price']),
             'departureTime' => InputValidator::sanitizeDateTime($data['departureTime']),
             'arrivalTime' => InputValidator::sanitizeDateTime($data['arrivalTime']),
-            'planeId' => InputValidator::sanitizeInt($data['planeId']),
-            'departureAirportId' => InputValidator::sanitizeInt($data['departureAirportId']),
-            'arrivalAirportId' => InputValidator::sanitizeInt($data['arrivalAirportId'])
+            'planeId' => $planeId,
+            'departureAirportId' => $departureAirportId,
+            'arrivalAirportId' => $arrivalAirportId,
         ];
 
         $this->flightModel->createFlight($createData);

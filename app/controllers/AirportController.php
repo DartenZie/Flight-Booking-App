@@ -3,7 +3,10 @@
 namespace App\controllers;
 
 use App\core\Controller;
+use App\Exceptions\ValidationException;
 use App\models\Airport;
+use App\utils\InputValidator;
+use App\utils\MapperUtils;
 
 /**
  * Handles requests related to airport data, including retrieving all airports,
@@ -24,59 +27,65 @@ class AirportController extends Controller {
     }
 
     /**
-     * Handles the default action. If an 'id' parameter is provided, it fetches a
-     * specific airport; otherwise , it retrieves all airports.
-     *
-     * @return void
+     * Main endpoint handler for airports.
      */
     public function index(): void {
-        if (isset($_GET['id'])) {
-            $this->getAirport($_GET['id']);
-        } else {
-            $this->getAllAirports();
-        }
-    }
-
-    /**
-     * Handles airport search requests based on a query string (`q` parameter).
-     * Supports pagination with the `page` parameter.
-     *
-     * @return void
-     */
-    public function search(): void {
-        $query = isset($_GET['q']) ? trim($_GET['q']) : '';
-        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
-        $limit = 20;
-        $offset = ($page - 1) * $limit;
-
-        if (empty($query)) {
-            $this->jsonResponse(['message' => 'Search query cannot be empty'], 400);
-        }
-
-        $airports = $this->airportModel->searchAirports($query, $limit, $offset);
-        $totalAirports = $this->airportModel->searchAirportCount($query);
-
-        $this->jsonResponse([
-            'airports' => $airports,
-            'total' => $totalAirports,
-            'page' => $page,
-            'totalPages' => ceil($totalAirports / $limit)
+        $this->handleRequest([
+            'GET' => fn() => $this->getAirportById()
         ]);
     }
 
     /**
-     * Retrieves a paginated list of all airports.
-     * Supports pagination with the `page` parameter.
+     * Endpoint for fetching all airports.
+     */
+    public function list(): void {
+        $this->handleRequest([
+            'GET' => fn() => $this->getAllAirports()
+        ]);
+    }
+
+    /**
+     * Endpoint for searching airports.
+     */
+    public function search(): void {
+        $this->handleRequest([
+            'GET' => fn() => $this->searchAirports()
+        ]);
+    }
+
+    /**
+     * Fetches an airport by ID.
+     * Validates input and retrieves the airport details.
      *
-     * @return void
+     * @throws ValidationException If validation fails or airport is not found.
+     */
+    private function getAirportById(): void {
+        InputValidator::required($_GET, ['id']);
+
+        $airportId = InputValidator::sanitizeInt($_GET['id']);
+        $airport = $this->airportModel->getAirportById($airportId);
+
+        if (!$airport) {
+            throw new ValidationException('Airport not found.', 404);
+        }
+
+        $airportDetails = MapperUtils::mapAirport($airport);
+        $this->jsonResponse($airportDetails);
+    }
+
+    /**
+     * Fetches all airports.
+     * Supports pagination and retrieves all airports.
      */
     private function getAllAirports(): void {
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        $airports = $this->airportModel->getAllAirports($limit, $offset);
+        $airports = $this->airportModel->getAllAirports($limit, $offset) ?? [];
         $totalAirports = $this->airportModel->getAirportCount();
+
+        $airports = array_map(fn ($airport) => MapperUtils::mapAirport($airport), $airports);
 
         $this->jsonResponse([
             'airports' => $airports,
@@ -87,17 +96,29 @@ class AirportController extends Controller {
     }
 
     /**
-     * Fetches details of a specific airport based on its ID.
+     * Handles airport search requests based on a query string (`q` parameter).
+     * Supports pagination with the `page` parameter.
      *
-     * @param int $id The ID of the airport to retrieve.
-     * @return void
+     * @throws ValidationException If validation fails or airport is not found.
      */
-    private function getAirport(int $id): void {
-        $airport = $this->airportModel->getAirportById($id);
-        if ($airport) {
-            $this->jsonResponse($airport);
-        } else {
-            $this->jsonResponse(['message' => 'Airport not found'], 404);
-        }
+    public function searchAirports(): void {
+        InputValidator::required($_GET, ['q']);
+        $query = InputValidator::sanitizeString($_GET['q']);
+
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 20;
+        $offset = ($page - 1) * $limit;
+
+        $airports = $this->airportModel->searchAirports($query, $limit, $offset);
+        $totalAirports = $this->airportModel->searchAirportCount($query);
+
+        $airports = array_map(fn ($airport) => MapperUtils::mapAirport($airport), $airports);
+
+        $this->jsonResponse([
+            'airports' => $airports,
+            'total' => $totalAirports,
+            'page' => $page,
+            'totalPages' => ceil($totalAirports / $limit)
+        ]);
     }
 }

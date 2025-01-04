@@ -4,16 +4,18 @@ namespace App\controllers;
 
 use App\core\Controller;
 use App\Exceptions\ValidationException;
-use App\models\User;
 use App\utils\InputValidator;
 use App\utils\MapperUtils;
 
+/**
+ * Handles requests related to users.
+ */
 class UserController extends Controller {
-    private User $userModel;
-
+    /**
+     * Initializes the controller and its dependencies.
+     */
     public function __construct() {
         parent::__construct();
-        $this->userModel = new User($this->db);
     }
 
     /**
@@ -78,8 +80,8 @@ class UserController extends Controller {
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        $users = $this->userModel->getAllUsers($limit, $offset) ?? [];
-        $totalUsers = $this->userModel->getUsersCount();
+        $users = $this->user->getAllUsers($limit, $offset) ?? [];
+        $totalUsers = $this->user->getUsersCount();
 
         $users = array_map(fn ($user) => MapperUtils::mapUser($user), $users);
 

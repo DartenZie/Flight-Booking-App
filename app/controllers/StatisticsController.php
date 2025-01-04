@@ -9,6 +9,9 @@ use App\models\Plane;
 use App\models\Statistics;
 use App\utils\MapperUtils;
 
+/**
+ * Handles requests related to statistics.
+ */
 class StatisticsController extends Controller {
     /**
      * @var Statistics Instance of the Statistics model for data operations.
@@ -48,6 +51,10 @@ class StatisticsController extends Controller {
         ]);
     }
 
+    /**
+     * Retrieves and processes user statistics including mapped data for the shortest and longest flights
+     * and returns the response in JSON format.
+     */
     private function getStatistics(): void {
         $this->authenticateJWTToken();
 

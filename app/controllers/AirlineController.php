@@ -5,16 +5,24 @@ namespace App\controllers;
 use App\core\Controller;
 use App\Exceptions\ValidationException;
 use App\models\Airline;
+use App\models\Plane;
 use App\utils\InputValidator;
 use App\utils\MapperUtils;
 use Exception;
 use RuntimeException;
 
+/**
+ * Handles requests related to airlines.
+ */
 class AirlineController extends Controller {
     /**
      * @var Airline Instance of the Airline model for data operations.
      */
     private Airline $airlineModel;
+    /**
+     * @var Plane Instance of the Plane model for data operations.
+     */
+    private Plane $planeModel;
 
     /**
      * Initializes the controller and its dependencies.
@@ -22,10 +30,11 @@ class AirlineController extends Controller {
     public function __construct() {
         parent::__construct();
         $this->airlineModel = new Airline($this->db);
+        $this->planeModel = new Plane($this->db);
     }
 
     /**
-     * Main endpoint handler for airports.
+     * Main endpoint handler for airlines.
      * Routes requests to appropriate methods based on HTTP request method.
      */
     public function index(): void {
@@ -46,6 +55,17 @@ class AirlineController extends Controller {
 
         $this->handleRequest([
             'GET' => fn() => $this->getAllAirlines()
+        ]);
+    }
+
+    /**
+     * Endpoint for fetching all planes by airline.
+     */
+    public function planes(): void {
+        $this->authenticateJWTToken('flightManager');
+
+        $this->handleRequest([
+            'GET' => fn() => $this->getAllPlanesByAirline()
         ]);
     }
 
@@ -98,6 +118,40 @@ class AirlineController extends Controller {
             'total' => $totalAirlines,
             'page' => $page,
             'totalPages' => ceil($totalAirlines / $limit)
+        ]);
+    }
+
+
+    /**
+     * Fetches all planes by airline.
+     * Supports pagination and retrieves all planes by airline.
+     *
+     * @throws ValidationException If validation fails or airline is not found
+     */
+    private function getAllPlanesByAirline(): void {
+        InputValidator::required($_GET, ['airlineId']);
+
+        $airlineId = InputValidator::sanitizeInt($_GET['airlineId']);
+        $airline = $this->airlineModel->getAirlineById($airlineId);
+
+        if (!$airline) {
+            throw new ValidationException('Airline not found.', 404);
+        }
+
+        $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
+        $limit = 20;
+        $offset = ($page - 1) * $limit;
+
+        $planes = $this->planeModel->getAllPlanesByAirline($airlineId, $limit, $offset);
+        $totalPlanes = $this->planeModel->getPlanesCountByAirline($airlineId);
+
+        $planes = array_map(fn ($plane) => MapperUtils::mapPlane($plane), $planes);
+
+        $this->jsonResponse([
+            'planes' => $planes,
+            'total' => $totalPlanes,
+            'page' => $page,
+            'totalPages' => ceil($totalPlanes / $limit)
         ]);
     }
 

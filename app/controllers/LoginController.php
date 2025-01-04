@@ -3,17 +3,27 @@
 namespace App\controllers;
 
 use App\core\Controller;
+use App\Exceptions\ValidationException;
 use App\models\RefreshToken;
+use App\utils\InputValidator;
 use App\utils\RequestUtils;
-use Exception;
 
 /**
  * Handles user login and token generation.
  */
 class LoginController extends Controller {
+    /**
+     * @var RequestUtils Utility class for handling common request operations.
+     */
     private RequestUtils $requestUtils;
+    /**
+     * @var RefreshToken Instance of the RefreshToken model for data operations.
+     */
     private RefreshToken $refreshTokenModel;
 
+    /**
+     * Initializes the controller and its dependencies.
+     */
     public function __construct() {
         parent::__construct();
         $this->requestUtils = new RequestUtils(SECRET_KEY);
@@ -21,29 +31,29 @@ class LoginController extends Controller {
     }
 
     /**
-     * Entry point for the login route.
-     * Responds only to POST requests with JSON payload.
+     * Main endpoint for the login route.
      */
     public function index(): void {
-        try {
-            RequestUtils::validateJsonRequest('POST', 'application/json');
-            $data = RequestUtils::parseJsonInput();
-
-            $this->loginUser($data);
-        } catch (Exception $e) {
-            $this->jsonResponse(['message' => $e->getMessage()], 400);
-        }
+        $this->handleRequest([
+            'POST$' => fn() => $this->loginUser()
+        ]);
     }
 
     /**
      * Validates user credentials and generates access and refresh tokens.
      *
-     * @param array $data Associative array containing 'email' and 'password' keys.
+     * @throws ValidationException If validation or sanitization.
      */
-    private function loginUser(array $data): void {
-        $user = $this->user->getUserByEmail($data['email']);
+    private function loginUser(): void {
+        $data = $this->parseRequestBody();
+
+        InputValidator::required($data, ['email', 'password']);
+
+        $userEmail = InputValidator::sanitizeEmail($data['email']);
+        $user = $this->user->getUserByEmail($userEmail);
+
         if (!$user || !password_verify($data['password'], $user['password'])) {
-            $this->jsonResponse(['message' => 'Invalid login credentials.'], 401);
+            throw new ValidationException('Invalid login credentials.', 401);
         }
 
         $access_token_expiry = time() + ACCESS_TOKEN_EXPIRY;

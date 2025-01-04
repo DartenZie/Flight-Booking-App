@@ -105,23 +105,17 @@ class User extends Model {
     /**
      * Creates a new user in the database.
      *
-     * @param string $firstName The first name of the user.
-     * @param string $lastName The last name of the user.
-     * @param string $email The email address of the user.
-     * @param string $password The user's password, which will be hashed before storing.
+     * @param array $user An associative array containing user details.
      */
-    public function createUser(string $firstName, string $lastName, string $email, string $password): void {
+    public function createUser(array $user): void {
         $sql = 'INSERT INTO users (first_name, last_name, email, password, role_id)
                     VALUES (:firstName, :lastName, :email, :password, 1)';
 
-        $passwordHash = password_hash($password, PASSWORD_DEFAULT);
-
         $stmt = $this->db->prepare($sql);
-        $stmt->bindParam(':firstName', $firstName);
-        $stmt->bindParam(':lastName', $lastName);
-        $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $passwordHash);
-
+        $stmt->bindParam(':firstName', $user['first_name']);
+        $stmt->bindParam(':lastName', $user['last_name']);
+        $stmt->bindParam(':email', $user['email']);
+        $stmt->bindParam(':password', $user['passwordHash']);
         $stmt->execute();
     }
 

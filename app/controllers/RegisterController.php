@@ -3,44 +3,55 @@
 namespace App\controllers;
 
 use App\core\Controller;
+use App\Exceptions\ValidationException;
+use App\utils\InputValidator;
 
+/**
+ * Handles uer register.
+ */
 class RegisterController extends Controller {
-
+    /**
+     * Initializes the controller and its dependencies.
+     */
     public function __construct() {
         parent::__construct();
     }
 
+    /**
+     * Main endpoint for the register route.
+     */
     public function index(): void {
-        if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-            http_response_code(405);
-            header('ALLOW: POST');
-            exit();
-        }
-
-        $this->registerUser();
+        $this->handleRequest([
+            'POST' => fn() => $this->registerUser()
+        ]);
     }
 
+    /**
+     * Handles the user registration process by validating input data, checking for existing users,
+     * and creating a new user account if validation passes.
+     *
+     * @throws ValidationException If the input data is invalid or a user with the provided email already exists.
+     */
     private function registerUser(): void {
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data = $this->parseRequestBody();
 
-        $firstName = $data['firstName'];
-        $lastName = $data['lastName'] ?? '';
-        $email = $data['email'] ?? '';
-        $password = $data['password'] ?? '';
+        InputValidator::required($data, ['firstName', 'lastName', 'email', 'password']);
 
-        if (empty($firstName) || empty($lastName) || empty($email) || empty($password)) {
-            $this->jsonResponse(['message' => 'All fields are required.'], 400);
-            return;
+        $userEmail = InputValidator::sanitizeEmail($data['email']);
+        $user = $this->user->getUserByEmail($userEmail);
+
+        if ($user) {
+            throw new ValidationException('User with this email already exists.', 400);
         }
 
-        if ($this->user->userExists($email)) {
-            $this->jsonResponse(['message' => 'Email already exists.'], 400);
-            return;
-        }
+        $createData = [
+            'firstName' => InputValidator::sanitizeString($data["firstName"]),
+            'lastName' => InputValidator::sanitizeString($data["lastName"]),
+            'email' => $userEmail,
+            'passwordHash' => password_hash($data["password"], PASSWORD_DEFAULT)
+        ];
 
-        // TODO validations
-
-        $this->user->createUser($firstName, $lastName, $email, $password);
-        $this->jsonResponse(['error' => false]);
+        $this->user->createUser($createData);
+        $this->jsonResponse(['message' => 'User created successfully.']);
     }
 }

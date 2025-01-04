@@ -3,6 +3,7 @@
 namespace App\utils;
 
 use App\models\Airport;
+use App\models\Flight;
 use App\models\Plane;
 
 /**
@@ -112,6 +113,27 @@ class MapperUtils {
             'arrivalAirport' => self::mapAirport($airportModel->getAirportById($flight['arrival_airport_id'])),
             'cancelled' => $flight['cancelled'],
             'plane' => self::mapPlane($planeModel->getPlaneById($flight['plane_id'])),
+        ];
+    }
+
+    /**
+     * Maps a reservation array to a formatted array with specific keys.
+     *
+     * @param array $reservation An associative array containing reservation data with original keys.
+     * @param Flight $flightModel An instance of the Flight model used to retrieve flight details.
+     * @param Plane $planeModel An instance of the Plane model used to map plane data.
+     * @param Airport $airportModel An instance of the Airport model used to map airport data.
+     * @return array A formatted associative array containing mapped reservation data.
+     */
+    public static function mapReservation(array $reservation, Flight $flightModel, Plane $planeModel, Airport $airportModel): array {
+        $flight = $flightModel->getFlightById($reservation['flight_id']);
+
+        return [
+            'id' => $reservation['id'],
+            'seat' => $reservation['seat'],
+            'class' => $reservation['class'],
+            'flight' => MapperUtils::mapFlight($flight, $planeModel, $airportModel),
+            'userId' => $reservation['user_id'],
         ];
     }
 

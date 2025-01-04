@@ -3,7 +3,9 @@
 namespace App\controllers;
 
 use App\core\Controller;
+use App\Exceptions\ValidationException;
 use App\models\RefreshToken;
+use App\utils\InputValidator;
 use App\utils\RequestUtils;
 use Exception;
 
@@ -11,9 +13,18 @@ use Exception;
  * Handles token refreshing.
  */
 class RefreshController extends Controller {
+    /**
+     * @var RequestUtils Utility class for handling common request operations.
+     */
     private RequestUtils $requestUtils;
+    /**
+     * @var RefreshToken Instance of the RefreshToken model for data operations.
+     */
     private RefreshToken $refreshTokenModel;
 
+    /**
+     * Initializes the controller and its dependencies.
+     */
     public function __construct() {
         parent::__construct();
         $this->requestUtils = new RequestUtils(SECRET_KEY);
@@ -21,41 +32,39 @@ class RefreshController extends Controller {
     }
 
     /**
-     * Entry point for the refresh token route.
-     * Responds only to POST requests.
+     * Main endpoint for the refresh route.
      */
     public function index(): void {
-        try {
-            RequestUtils::validateJsonRequest('POST', 'application/json');
-            $this->refreshToken();
-        } catch (Exception $e) {
-            $this->jsonResponse(['message' => $e->getMessage()], 400);
-        }
+        $this->handleRequest([
+            'POST' => fn() => $this->refreshToken()
+        ]);
     }
 
     /**
      * Handles the logic for refreshing access tokens.
+     *
+     * @throws ValidationException If validation fails.
      */
     private function refreshToken(): void {
-        if (!isset($_COOKIE['refreshToken'])) {
-            $this->jsonResponse(['message' => 'Invalid token'], 400);
-        }
-        $token = $_COOKIE['refreshToken'];
+        InputValidator::required($_COOKIE, ['refreshToken']);
 
+        $token = $_COOKIE['refreshToken'];
         try {
             $payload = $this->requestUtils->validateToken($token);
         } catch (Exception $e) {
-            $this->jsonResponse(['message' => $e->getMessage()], 400);
+            throw new ValidationException('Invalid token.', 400);
         }
 
-        $user_id = $payload['sub'] ?? null;
+        InputValidator::required($payload, ['sub']);
+
+        $user_id = $payload['sub'];
         if (!$user_id || !$this->refreshTokenModel->getByToken($token)) {
-            $this->jsonResponse(['message' => 'Invalid token'], 400);
+            throw new ValidationException('Invalid token.', 400);
         }
 
         $user = $this->user->getUserById($user_id);
         if (!$user) {
-            $this->jsonResponse(['message' => 'Invalid user'], 400);
+            throw new ValidationException('Invalid token.', 400);
         }
 
         $access_token_expiry = time() + ACCESS_TOKEN_EXPIRY;
@@ -66,6 +75,7 @@ class RefreshController extends Controller {
 
         // Save new refresh token into database.
         $this->refreshTokenModel->create($refresh_token, $refresh_token_expiry);
+        $this->refreshTokenModel->deleteExpired();
 
         // Set cookie for further refreshes.
         RequestUtils::setRefreshTokenCookie($refresh_token, $refresh_token_expiry);

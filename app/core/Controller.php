@@ -56,6 +56,12 @@ abstract class Controller {
         return $data;
     }
 
+    /**
+     * Handles an HTTP request by determining the request method and invoking the corresponding handler.
+     *
+     * @param array $handlers An associative array where keys are HTTP request methods (e.g., 'GET', 'POST')
+     *                        and values are callable handlers for those methods.
+     */
     protected function handleRequest(array $handlers): void {
         $method = $_SERVER['REQUEST_METHOD'];
         if (array_key_exists($method, $handlers)) {
@@ -94,6 +100,7 @@ abstract class Controller {
      * @param string $requiredRole Required role to authorize the request.
      */
     protected function authenticateJWTToken(string $requiredRole = 'user'): void {
+        $matches = [];
         if (!isset($_SERVER['HTTP_AUTHORIZATION']) || !preg_match("/^Bearer\s+(.*)$/", $_SERVER['HTTP_AUTHORIZATION'], $matches)) {
             $this->errorResponse('incomplete_login_credentials', 400);
         }
@@ -114,6 +121,12 @@ abstract class Controller {
         }
     }
 
+    /**
+     * Sends a response indicating that the HTTP method used is not allowed.
+     * Sets the Allow header with the list of permitted HTTP methods and sends a JSON response with the appropriate error message.
+     *
+     * @param array $allowedMethods An array of HTTP methods that are allowed for the requested resource.
+     */
     private function sendMethodNotAllowedResponse(array $allowedMethods): void {
         header('Allow: ' . implode(', ', $allowedMethods));
         $this->jsonResponse(['error' => 'Method not allowed.'], 405);

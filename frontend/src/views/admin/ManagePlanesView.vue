@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import AdminCard from "@/components/admin/AdminCard.vue";
-import {faSearch, faTrash} from "@fortawesome/free-solid-svg-icons";
+import {faTrash} from "@fortawesome/free-solid-svg-icons";
 import {FontAwesomeIcon} from "@fortawesome/vue-fontawesome";
 import {onMounted, ref} from "vue";
 import {Plane, PlanesResponse} from "@/models/plane.model";
@@ -28,7 +28,7 @@ const removePlane = async (planeId: number) => {
 };
 
 const fetchPlanes = async () => {
-    const { data } = await useAuthenticatedFetch<PlanesResponse>(`${API_URL}/plane?airline_id=${airlineId}`).get().json();
+    const { data } = await useAuthenticatedFetch<PlanesResponse>(`${API_URL}/airline/planes?airlineId=${airlineId}`).get().json();
     planes.value = data.value.planes.map((plane) => Plane.parsePlane(plane));
 };
 </script>

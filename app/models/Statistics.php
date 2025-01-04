@@ -13,7 +13,13 @@ class Statistics extends Model {
         parent::__construct($db);
     }
 
-    public function getStatisticsData($userId): bool|array {
+    /**
+     * Retrieves statistical data related to flights for a specific user.
+     *
+     * @param int $userId The ID of the user to fetch statistical data for.
+     * @return bool|array Returns an array of statistical flight data if available, or false on failure.
+     */
+    public function getStatisticsData(int $userId): bool|array {
         $stmt = $this->db->prepare("
             WITH RankedFlights AS (
                 SELECT

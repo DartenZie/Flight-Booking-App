@@ -36,20 +36,6 @@ class RequestUtils {
     }
 
     /**
-     * Parses JSON input from the request body.
-     *
-     * @return array The parsed JSON data.
-     * @throws Exception If the input cannot be parsed or empty.
-     */
-    public static function parseJsonInput(): array {
-        $data = json_decode(file_get_contents('php://input'), true);
-        if ($data === null) {
-            throw new Exception('Invalid or missing JSON input.');
-        }
-        return $data;
-    }
-
-    /**
      * Sets the refresh token as an HTTP-only cookie.
      *
      * @param string $refreshToken The refresh token value.

@@ -108,7 +108,7 @@ const handleImageError = (event: Event) => {
             <router-link to="/" class="btn-primary h-14">Book flight</router-link>
         </div>
 
-        <div class="grid grid-cols-1 gap-y-2">
+        <div class="grid grid-cols-1 gap-y-2 pb-24">
 
             <div v-for="reservation in reservations" :key="reservation.id" class="border border-gray-200 rounded-2xl md:h-20 grid grid-cols-12 md:flex md:items-center md:gap-x-10">
                 <div class="col-span-3 text-center md:w-20 md:min-w-20 text-gray-700 border-b border-e md:border-b-0 border-gray-200">
