@@ -29,6 +29,19 @@ class MapperUtils {
     }
 
     /**
+     * Maps an airline array to a formatted array with specific keys.
+     *
+     * @param array $airline An associative array containing airline data with original keys.
+     * @return array A formatted associative array containing mapped airline data.
+     */
+    public static function mapAirline(array $airline): array {
+        return [
+            'id' => $airline['id'],
+            'name' => $airline['name']
+        ];
+    }
+
+    /**
      * Maps a user array to a formatted array with specific keys.
      *
      * @param array $user An associative array containing user data with original keys.

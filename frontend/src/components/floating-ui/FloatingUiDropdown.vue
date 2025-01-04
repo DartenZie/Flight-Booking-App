@@ -35,7 +35,7 @@ const selectElement = (id: string, label: string): void => {
             To: "transform opacity-0 scale-95"
         -->
 
-    <div v-if="isOpen" :class="['absolute translate-y-4 z-10 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none', position === 'right' ? 'right-0' : position === 'center' ? 'right-1/2 translate-x-1/2' : 'left-0']" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
+    <div v-if="isOpen" :class="['absolute translate-y-4 z-20 mt-2 w-56 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none', position === 'right' ? 'right-0' : position === 'center' ? 'right-1/2 translate-x-1/2' : 'left-0']" role="menu" aria-orientation="vertical" aria-labelledby="menu-button" tabindex="-1">
         <div class="py-1" role="none">
             <!-- Active: "bg-gray-100 text-gray-900", Not Active: "text-gray-700" -->
             <a v-for="item in dropdownItems"

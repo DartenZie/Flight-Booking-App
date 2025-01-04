@@ -155,6 +155,9 @@ class UserController extends Controller {
         if (!$user) {
             throw new ValidationException('User not found.', 404);
         }
+        if ($user['role_id'] === 3) {
+            throw new ValidationException('You can\'t update other admin.', 403);
+        }
 
         $updateData = [];
         $fieldMappings = [

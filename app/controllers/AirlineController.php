@@ -3,7 +3,10 @@
 namespace App\controllers;
 
 use App\core\Controller;
+use App\Exceptions\ValidationException;
 use App\models\Airline;
+use App\utils\InputValidator;
+use App\utils\MapperUtils;
 use Exception;
 use RuntimeException;
 
@@ -21,71 +24,74 @@ class AirlineController extends Controller {
         $this->airlineModel = new Airline($this->db);
     }
 
+    /**
+     * Main endpoint handler for airports.
+     * Routes requests to appropriate methods based on HTTP request method.
+     */
     public function index(): void {
         $this->authenticateJWTToken('flightManager');
 
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'GET': $this->getAirline(); break;
-            case 'POST': $this->postAirline(); break;
-            case 'PUT': $this->updateAirline(); break;
-            default:
-                http_response_code(405);
-                header('ALLOW: GET, POST');
-                exit();
-        }
+        $this->handleRequest([
+            'GET' => fn() => $this->getAirlineById(),
+            'POST' => fn() => $this->createAirline(),
+            'PUT' => fn() => $this->updateAirline(),
+        ]);
     }
 
+    /**
+     * Endpoint for fetching all airlines.
+     */
+    public function list(): void {
+        $this->authenticateJWTToken('flightManager');
+
+        $this->handleRequest([
+            'GET' => fn() => $this->getAllAirlines()
+        ]);
+    }
+
+    /**
+     * Endpoint for getting and uploading airline logo.
+     */
     public function logo(): void {
-        switch ($_SERVER['REQUEST_METHOD']) {
-            case 'GET': $this->getLogo(); break;
-            case 'POST':
-                $this->authenticateJWTToken('flightManager');
-                $this->uploadLogo();
-                break;
-            default:
-                http_response_code(405);
-                header('ALLOW: GET, POST, PUT');
-                exit();
-        }
+        $this->handleRequest([
+            'GET' => fn() => $this->getLogo(),
+            'POST' => fn() => $this->uploadLogo()
+        ]);
     }
 
-    private function getAirline(): void {
-        if (isset($_GET['id'])) {
-            $this->getAirlineById($_GET['id']);
-        } else {
-            $this->getAllAirlines();
+    /**
+     * Fetches an airline by ID.
+     * Validates input and retrieves the airline details.
+     *
+     * @throws ValidationException If validation fails or airline is not found.
+     */
+    private function getAirlineById(): void {
+        InputValidator::required($_GET, ['id']);
+
+        $airlineId = InputValidator::sanitizeInt($_GET['id']);
+        $airline = $this->airlineModel->getAirlineById($airlineId);
+
+        if (!$airline) {
+            throw new ValidationException('Airline not found.', 404);
         }
+
+        $airlineDetails = MapperUtils::mapAirline($airline);
+        $this->jsonResponse($airlineDetails);
     }
 
-    private function postAirline(): void {
-        $data = json_decode(file_get_contents('php://input'), true);
-
-        if (!isset($data)) {
-            $this->jsonResponse(['message' => 'Empty body provided.'], 400);
-        }
-
-        $name = $data['name'];
-
-        if (empty($name)) {
-            $this->jsonResponse(['message' => 'All fields are required.'], 400);
-            return;
-        }
-
-        $this->airlineModel->createAirline(['name' => $name]);
-    }
-
+    /**
+     * Fetches all airlines.
+     * Supports pagination and retrieves all airlines.
+     */
     private function getAllAirlines(): void {
         $page = isset($_GET['page']) ? (int)$_GET['page'] : 1;
         $limit = 20;
         $offset = ($page - 1) * $limit;
 
-        $airlines = $this->airlineModel->getAllAirlines($limit, $offset);
+        $airlines = $this->airlineModel->getAllAirlines($limit, $offset) ?? [];
         $totalAirlines = $this->airlineModel->getAirlineCount();
 
-        $airlines = array_map(fn($airline) => [
-            'id' => $airline['id'],
-            'name' => $airline['name'],
-        ], $airlines);
+        $airlines = array_map(fn ($airline) => MapperUtils::mapAirline($airline), $airlines);
 
         $this->jsonResponse([
             'airlines' => $airlines,
@@ -95,67 +101,76 @@ class AirlineController extends Controller {
         ]);
     }
 
-    private function getAirlineById(int $id): void {
-        $airline = $this->airlineModel->getAirlineById($id);
-        if ($airline) {
-            $this->jsonResponse($airline);
-        } else {
-            $this->jsonResponse(['message' => 'Airline not found'], 404);
-        }
+    /**
+     * Creates a new airline.
+     * Validates input, sanitizes data, and calls the model to save the airline.
+     *
+     * @throws ValidationException If validation or sanitization fails.
+     */
+    private function createAirline(): void {
+        $data = $this->parseRequestBody();
+
+        InputValidator::required($data, ['name']);
+        $createData = [
+            'name' => InputValidator::sanitizeString($data['name'])
+        ];
+
+        $this->airlineModel->createAirline($createData);
+        $this->jsonResponse(['message' => 'Airline created successfully.'], 201);
     }
 
     /**
-     * Updates the details of a specific airline.
+     * Updates an existing airline.
+     * Validates input, dynamically builds the update array, and calls the model to save changes.
+     *
+     * @throws ValidationException If validation or sanitization fails.
      */
     private function updateAirline(): void {
-        $data = json_decode(file_get_contents('php://input'), true);
+        $data = $this->parseRequestBody();
 
-        if (!isset($data)) {
-            $this->jsonResponse(['message' => 'Empty body provided.'], 400);
-        }
+        InputValidator::required($data, ['id']);
 
-        if (empty($data['id']) || !is_numeric($data['id'])) {
-            $this->jsonResponse(['message' => 'Invalid or missing airline ID.'], 400);
-        }
-
-        $airlineId = $data['id'];
-        $airline = $this->airlineModel->getAirlineById($airlineId);
-
+        $id = InputValidator::sanitizeInt($data['id']);
+        $airline = $this->airlineModel->getAirlineById($id);
         if (!$airline) {
-            $this->jsonResponse(['message' => 'Airline not found.'], 401);
+            throw new ValidationException('Airline not found.', 404);
         }
 
-        $fieldsToUpdate = [];
-        if (!empty($data['name'])) {
-            $fieldsToUpdate['name'] = $data['name'];
+        $updateData = [];
+        $fieldMappings = [
+            'name' => 'name'
+        ];
+
+        foreach ($fieldMappings as $inputField => $dbField) {
+            if (isset($data[$inputField])) {
+                $sanitizer = match ($inputField) {
+                    'name' => InputValidator::sanitizeString($data[$inputField]),
+                    default => null
+                };
+                if ($sanitizer) {
+                    $updateData[$dbField] = InputValidator::$sanitizer($data[$inputField]);
+                }
+            }
         }
 
-        if (empty($fieldsToUpdate)) {
-            $this->jsonResponse(['message' => 'No valid fields provided to update.'], 400);
-        }
+        $this->airlineModel->updateAirline($id, $updateData);
 
-        try {
-            $this->airlineModel->updateAirline($airlineId, $fieldsToUpdate);
-            $this->jsonResponse(['message' => 'Airline updated successfully.']);
-        } catch (Exception $e) {
-            $this->jsonResponse(['message' => 'Failed to update airline.', 'error' => $e->getMessage()], 500);
-        }
+        $this->jsonResponse(['message' => 'Airline updated successfully.']);
     }
 
     /**
      * Retrieves the logo of a specific airline by its ID.
+     *
+     * @throws ValidationException If validation fails or airline is not found.
      */
     private function getLogo(): void {
-        $airlineId = $_GET['airlineId'];
+        InputValidator::required($_GET, ['airlineId']);
 
-        if (empty($airlineId) || !is_numeric($airlineId)) {
-            $this->jsonResponse(['message' => 'Invalid airline Id.'], 400);
-        }
-
+        $airlineId = InputValidator::sanitizeInt($_GET['airlineId']);
         $airline = $this->airlineModel->getAirlineById($airlineId);
 
         if (!$airline || empty($airline['logo_path'])) {
-            $this->jsonResponse(['message' => 'Logo not found.'], 404);
+            throw new ValidationException('Logo not found.', 404);
         }
 
         $logoPath = __DIR__ . '/../' . $airline['logo_path'];
@@ -173,15 +188,20 @@ class AirlineController extends Controller {
      * Handles the upload of an airline logo.
      *
      * @throws RuntimeException If the file upload fails or is invalid.
+     * @throws ValidationException If validation fails or airline is not found
      */
     private function uploadLogo(): void {
-        if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
-            $this->jsonResponse(['message' => 'Invalid file upload.'], 400);
+        $this->authenticateJWTToken('flightManager');
+
+        InputValidator::required($_GET, ['airlineId']);
+        $airlineId = InputValidator::sanitizeInt($_GET['airlineId']);
+        $airline = $this->airlineModel->getAirlineById($airlineId);
+        if (!$airline) {
+            throw new ValidationException('Airline not found.', 404);
         }
 
-        $airlineId = $_GET['airlineId'] ?? '';
-        if (empty($airlineId) || !$this->airlineModel->getAirlineById($airlineId)) {
-            $this->jsonResponse(['message' => 'Airline not found.'], 404);
+        if (!isset($_FILES['file']) || $_FILES['file']['error'] !== UPLOAD_ERR_OK) {
+            $this->jsonResponse(['message' => 'Invalid file upload.'], 400);
         }
 
         $allowedTypes = ['image/jpeg', 'image/png'];
@@ -203,6 +223,6 @@ class AirlineController extends Controller {
         $relativePath = 'uploads/logos/' . $fileName;
         $this->airlineModel->updateAirline($airlineId, ['logo_path' => $relativePath]);
 
-        $this->jsonResponse(['message' => 'Logo uploaded successfully.', 'path' => $relativePath]);
+        $this->jsonResponse(['message' => 'Logo uploaded successfully.']);
     }
 }

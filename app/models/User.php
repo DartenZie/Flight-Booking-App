@@ -109,7 +109,6 @@ class User extends Model {
      * @param string $lastName The last name of the user.
      * @param string $email The email address of the user.
      * @param string $password The user's password, which will be hashed before storing.
-     * @return void
      */
     public function createUser(string $firstName, string $lastName, string $email, string $password): void {
         $sql = 'INSERT INTO users (first_name, last_name, email, password, role_id)

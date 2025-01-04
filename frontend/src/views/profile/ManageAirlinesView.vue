@@ -19,7 +19,7 @@ onMounted(() => {
 });
 
 const loadAirlines = async () => {
-    const { data } = await useAuthenticatedFetch<AirlinesResponse>(`${API_URL}/airline`).get().json();
+    const { data } = await useAuthenticatedFetch<AirlinesResponse>(`${API_URL}/airline/list`).get().json();
     airlines.value = data.value;
 };
 
@@ -30,7 +30,7 @@ const handleImageError = (event: Event) => {
 
 createAirlineDialog.onConfirm(async (body: { name: string }) => {
     const response = await useAuthenticatedFetch(`${API_URL}/airline`).post(body).json();
-    if (response.statusCode.value === 200) {
+    if (response.statusCode.value === 201) {
         await loadAirlines();
     }
     createAirlineDialog.close();
