@@ -30,7 +30,9 @@ async function handleSubmit(): void {
     }
 
     await auth.login(state.email, state.password);
-    await router.push('/profile/dashboard');
+
+    const callback = router.currentRoute.value.query.callback;
+    await router.push(callback ? callback.toString() : '/profile/dashboard');
 }
 </script>
 

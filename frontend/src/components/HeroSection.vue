@@ -1,6 +1,7 @@
 <script setup lang="ts">
 defineProps<{
     city?: string;
+    reservationSuccess?: boolean;
 }>();
 </script>
 
@@ -9,7 +10,11 @@ defineProps<{
         <div
             class="container mx-auto px-4 md:px-8 lg:px-20 xl:px-0 h-full flex flex-auto items-center justify-start"
         >
-            <p v-if="!city" class="lg:-mt-20 xl:mt-0 font-thin text-3xl xl:text-5xl leading-snug text-gray-900">
+            <p v-if="reservationSuccess && city" class="lg:-mt-20 xl:mt-0 font-thin text-3xl xl:text-5xl leading-snug text-gray-900">
+                Reservation was successful! Enjoy<br />
+                your trip to <span class="font-medium">{{ city }}</span>!
+            </p>
+            <p v-else-if="!city" class="lg:-mt-20 xl:mt-0 font-thin text-3xl xl:text-5xl leading-snug text-gray-900">
                 Hey Buddy? where are you<br />
                 <span class="font-medium">Flying</span> to?
             </p>

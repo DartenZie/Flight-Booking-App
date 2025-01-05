@@ -145,7 +145,7 @@ const handleImageError = (event: Event) => {
                             <font-awesome-icon :icon="faCircleArrowRight" />
                             <div class="text-lg font-medium">{{ shortestFlight.arrivalAirport.iata }}</div>
                         </div>
-                        <div class="font-light text-gray-700">{{ shortestFlight.departureAirport.city }} to {{ shortestFlight.arrivalAirport.city }}</div>
+                        <div class="font-light text-gray-700 ellipsified">{{ shortestFlight.departureAirport.city }} to {{ shortestFlight.arrivalAirport.city }}</div>
                     </div>
                     <div class="col-span-4 text-right">
                         <div class="text-lg font-medium -mb-1">
@@ -178,7 +178,7 @@ const handleImageError = (event: Event) => {
                             <font-awesome-icon :icon="faCircleArrowRight" />
                             <div class="text-lg font-medium">{{ longestFlight.arrivalAirport.iata }}</div>
                         </div>
-                        <div class="font-light text-gray-700">{{ longestFlight.departureAirport.city }} to {{ longestFlight.arrivalAirport.city }}</div>
+                        <div class="font-light text-gray-700 ellipsified">{{ longestFlight.departureAirport.city }} to {{ longestFlight.arrivalAirport.city }}</div>
                     </div>
                     <div class="col-span-4 text-right">
                         <div class="text-lg font-medium -mb-1">

@@ -43,7 +43,18 @@ onUnmounted(() => {
         </div>
     </nav>
 
-    <div class="min-h-screen mt-18 lg:mt-0 overflow-x-hidden overflow-y-auto">
-        <slot />
+    <div class="min-h-screen relative overflow-x-hidden overflow-y-auto">
+        <div class="mt-28 lg:mt-0">
+            <slot />
+        </div>
+
+        <div class="h-20"></div>
+        <div class="absolute bottom-0 w-full">
+            <div class="container mx-auto p-4 md:px-8 xl:px-0 flex justify-center items-center gap-x-2 md:gap-x-4 lg:gap-x-6">
+                <div class="text-slate-700">&copy; Miroslav Pašek 2024</div>
+                <div class="text-slate-400">|</div>
+                <div class="text-slate-700">All rights reserved</div>
+            </div>
+        </div>
     </div>
 </template>

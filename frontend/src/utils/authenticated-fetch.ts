@@ -45,7 +45,7 @@ export function useAuthenticatedFetch<T>(url: string, options: UseFetchOptions =
             const headers = new Headers(init?.headers);
             appendToken(headers);
 
-            const response = await fetch(input, {...init, headers});
+            const response = await fetch(input, {...init, headers });
 
             if (!response.ok) {
                 const data = await response.text();
@@ -61,7 +61,7 @@ export function useAuthenticatedFetch<T>(url: string, options: UseFetchOptions =
             return response;
         } catch (error) {
             console.error('Fetch failed:', error);
-            auth.logout();
+            await auth.logout();
             throw error;
         }
     };

@@ -2,6 +2,7 @@ import {computed, ref, watch} from 'vue';
 import {defineStore} from 'pinia';
 import {useFetch, useStorage} from '@vueuse/core';
 import {useAuthenticatedFetch} from "../utils/authenticated-fetch";
+import router from "../router";
 
 const API_URL = process.env.VITE_API_URL;
 
@@ -52,7 +53,10 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     function logout(): void {
-        accessToken.value = '';
+        useFetch(`${API_URL}/logout`, {credentials: 'include'}).post().then(() => {
+            accessToken.value = '';
+            router.push('/sign-in');
+        });
     }
 
     async function register(user: RegisterModel): Promise<boolean> {
@@ -95,14 +99,15 @@ export const useAuthStore = defineStore('auth', () => {
         () => accessToken.value,
         () => {
             // noinspection JSIgnoredPromiseFromCall
-            fetchUser();
+            if (accessToken.value) {
+                fetchUser();
+            }
         },
         { immediate: true },
     );
 
-    function invalidateCache(): void {
-        // noinspection JSIgnoredPromiseFromCall
-        fetchUser();
+    async function invalidateCache(): Promise<void> {
+        await fetchUser();
     }
 
     return { accessToken, isLoggedIn, user, fetchUser, login, logout, register, invalidateCache};

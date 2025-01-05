@@ -17,6 +17,8 @@ export const useReservationStore = defineStore('reservation', () => {
     const returnFlight = ref<Flight>(null);
     const returnSeat = ref<string>('');
 
+    const reservationSuccess = ref<boolean>(false);
+
     async function fetchFlight(flightId: number): Promise<Flight> {
         if (flightId <= 0) {
             return null;
@@ -67,7 +69,19 @@ export const useReservationStore = defineStore('reservation', () => {
             return;
         }
 
-        await router.push('/');
+        reservationSuccess.value = true;
+        await router.push('/book/success');
+    }
+
+    function clearReservationStore(): Promise<void> {
+        departureFlightId.value = 0;
+        departureFlight.value = null;
+        departureSeat.value = '';
+        returnFlightId.value = 0;
+        returnFlight.value = null;
+        returnSeat.value = '';
+
+        reservationSuccess.value = false;
     }
 
     watch(
@@ -97,5 +111,5 @@ export const useReservationStore = defineStore('reservation', () => {
         { immediate: true }
     );
 
-    return { departureFlightId, departureFlight, departureSeat, returnFlightId, returnFlight, returnSeat, makeReservations };
+    return { departureFlightId, departureFlight, departureSeat, returnFlightId, returnFlight, returnSeat, reservationSuccess, clearReservationStore, makeReservations };
 });

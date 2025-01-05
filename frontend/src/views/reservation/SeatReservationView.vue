@@ -5,7 +5,7 @@ import PlaneCabinsVisualization from "@/components/PlaneCabinsVisualization.vue"
 import ReservationFlightCard from "@/components/ReservationFlightCard.vue";
 import {useReservationStore} from "@/store/reservation.store";
 import {useAuthStore} from "@/store/auth.store";
-import {ref, watch} from "vue";
+import {computed, ref, watch} from "vue";
 import {Flight} from "@/models/flight.model";
 import HeroSection from "@/components/HeroSection.vue";
 
@@ -14,6 +14,9 @@ const reservationStore = useReservationStore();
 
 const currentFlight = ref<Flight>(null);
 const selectedSeat = ref<string>('');
+
+const departureSeatingConfiguration = computed(() => reservationStore.departureFlight?.plane.seatingConfiguration ?? '');
+const returnSeatingConfiguration = computed(() => reservationStore.returnFlight?.plane.seatingConfiguration ?? '');
 
 watch(
     () => reservationStore.departureFlight,
@@ -77,7 +80,7 @@ const handleSubmit = () => {
                         <div class="lg:flex lg:gap-x-20 lg:h-160">
                             <div class="lg:w-96 h-full flex flex-col justify-between">
                                 <div class="mt-4 mb-4 lg:mb-0">
-                                    <h4 v-if="currentFlight.id === reservationStore.departureFlight.id" class="text-slate-500 font-medium text-sm">Flight #1</h4>
+                                    <h4 v-if="currentFlight && currentFlight.id === reservationStore.departureFlightId" class="text-slate-500 font-medium text-sm">Flight #1</h4>
                                     <h4 v-else class="text-slate-500 font-medium text-sm">Flight #2</h4>
                                     <div v-if="currentFlight" class="text-slate-950 font-bold text-md mb-8">
                                         {{ currentFlight.departureAirport.city }} ({{ currentFlight.departureAirport.iata }}) -
@@ -134,10 +137,8 @@ const handleSubmit = () => {
 
                             <div class="mt-16 lg:mt-0 h-160 lg:h-auto">
                                 <plane-cabins-visualization v-if="currentFlight && currentFlight.id === reservationStore.departureFlight.id"
-                                                            @select="selectedSeat = $event"
-                                                            :seating-model="reservationStore.departureFlight.plane.seatingConfiguration" />
-                                <plane-cabins-visualization v-else @select="selectedSeat = $event"
-                                                            :seating-model="reservationStore.returnFlight.plane.seatingConfiguration" />
+                                                            @select="selectedSeat = $event" :seating-model="departureSeatingConfiguration" />
+                                <plane-cabins-visualization v-else @select="selectedSeat = $event" :seating-model="returnSeatingConfiguration" />
                             </div>
                         </div>
                     </div>

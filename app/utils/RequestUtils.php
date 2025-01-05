@@ -46,8 +46,21 @@ class RequestUtils {
             "httponly" => true,
             "secure" => true,
             "samesite" => "Strict",
-            "path" => "/api/refresh",
+            "path" => "/api",
             "expires" => $refreshTokenExpiry,
+        ]);
+    }
+
+    /**
+     * Removes the refresh token cookie from the client.
+     */
+    public static function removeRefreshTokenCookie(): void {
+        setcookie("refreshToken", "", [
+            "httponly" => true,
+            "secure" => true,
+            "samesite" => "Strict",
+            "path" => "/api",
+            "expires" => time() + 3600
         ]);
     }
 

@@ -5,6 +5,8 @@ import ErrorView from "../views/ErrorView.vue";
 import {airlineExistsGuard} from "./guards/airline-exists.guard";
 import {passengerInformationGuard} from "./guards/passenger-information.guard";
 import {loadLayoutMiddleware} from "./middleware/load-layout.middleware";
+import {reservationSuccessGuard} from "./guards/reservation-success.guard";
+import {seatReservationGuard} from "./guards/seat-reservation.guard";
 
 const router = createRouter({
     history: createWebHistory(import.meta.env.BASE_URL),
@@ -123,19 +125,6 @@ const router = createRouter({
             beforeEnter: [createPermissionGuard(2), airlineExistsGuard]
         },
         {
-            path: '/super-admin',
-            name: 'super-admin',
-            redirect: '/super-admin/manage-airports',
-            children: [
-                {
-                    path: 'manage-airports',
-                    name: 'manage-airports',
-                    component: () => import('@/views/super-admin/ManageAirports.vue')
-                }
-            ],
-            meta: { layout: 'ManageAirlineLayout' }
-        },
-        {
             path: '/book',
             name: 'book',
             children: [
@@ -148,7 +137,14 @@ const router = createRouter({
                 {
                     path: 'seat-reservation',
                     name: 'seat-reservation',
-                    component: () => import('../views/reservation/SeatReservationView.vue')
+                    component: () => import('../views/reservation/SeatReservationView.vue'),
+                    beforeEnter: seatReservationGuard
+                },
+                {
+                    path: 'success',
+                    name: 'reservation-success',
+                    component: () => import('../views/reservation/ReservationSuccessView.vue'),
+                    beforeEnter: reservationSuccessGuard
                 }
             ],
             meta: { layout: 'AppLayout' }

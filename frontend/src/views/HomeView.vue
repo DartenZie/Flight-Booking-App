@@ -39,12 +39,15 @@ const returnFlights = ref<ReadonlyArray<FlightResult>>([]);
 const total = ref(0);
 const returnTotal = ref(0);
 
+const searched = ref(false);
+
 const outboundFlight = ref<FlightResultType | null>(null);
 
 const handleSelect = (flight: FlightResultType): void => {
     switch (flight.type) {
     case 'outbound':
         flight.type = 'selected';
+        reservationStore.clearReservationStore();
         reservationStore.departureFlightId = flight.id;
         outboundFlight.value = flight;
         break;
@@ -53,6 +56,7 @@ const handleSelect = (flight: FlightResultType): void => {
         outboundFlight.value = null;
         break;
     case 'oneWay':
+        reservationStore.clearReservationStore();
         reservationStore.departureFlightId = flight.id;
         router.push('/book/passenger-information');
         break;
@@ -67,6 +71,8 @@ const handleSearch = async () => {
     if (!fromLocation.value?.id || !toLocation.value?.id) {
         return;
     }
+
+    searched.value = true;
 
     if (flightTypeId.value === 'roundTrip') {
         const body = {
@@ -194,7 +200,7 @@ onMounted(async () => {
         </hero-section>
     </div>
 
-    <div class="container px-4 md:px-8 lg:px-20 xl:px-0 my-12 xl:my-24 mx-auto">
+    <div v-if="total > 0" class="container px-4 md:px-8 lg:px-20 xl:px-0 my-12 xl:my-24 mx-auto">
         <template v-if="outboundFlight">
             <div class="mb-6">
                 <h2 class="text-2xl font-medium leading-normal">Selected flight</h2>
@@ -246,5 +252,29 @@ onMounted(async () => {
                 />
             </div>
         </template>
+    </div>
+    <div v-else-if="searched" class="container px-4 md:px-8 lg:px-20 xl:px-0 my-12 xl:my-24 mx-auto">
+        <div class="flex flex-col items-center">
+            <div class="max-w-3xl">
+                <img src="../assets/illustrations/empty_illustration.svg" alt="Empty illustration" class="w-full" />
+            </div>
+            <div class="max-w-xl">
+                <p class="text-lg text-center mt-6">
+                    <span>No flights have been found. Please try adjusting your search criteria.</span>
+                </p>
+            </div>
+        </div>
+    </div>
+    <div v-else class="container px-4 md:px-8 lg:px-20 xl:px-0 my-12 xl:my-24 mx-auto">
+        <div class="flex flex-col items-center">
+            <div class="max-w-3xl">
+                <img src="../assets/illustrations/quiet_street_illustration.svg" alt="No search illustration" class="mx-auto w-full" />
+            </div>
+            <div class="max-w-xl">
+                <p class="text-lg text-center mt-6">
+                    You haven't searched for any flights yet. Please use the form above to search for available flights.
+                </p>
+            </div>
+        </div>
     </div>
 </template>

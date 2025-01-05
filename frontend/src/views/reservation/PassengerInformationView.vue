@@ -12,6 +12,9 @@ import useVuelidate, {ValidationArgs} from "@vuelidate/core";
 import {email, required, sameAs} from "@vuelidate/validators";
 import ReservationFlightCard from "@/components/ReservationFlightCard.vue";
 import HeroSection from "@/components/HeroSection.vue";
+import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
+
+const API_URL = process.env.VITE_API_URL;
 
 const authStore = useAuthStore();
 const reservationStore = useReservationStore();
@@ -61,7 +64,21 @@ async function handleSubmit(): void {
         return;
     }
 
-    await router.push('/book/seat-reservation');
+    const body = {
+        firstName: this.state.firstName,
+        lastName: this.state.lastName,
+        nationality: this.state.nationality,
+        dateOfBirth: this.state.dateOfBirth,
+        sex: this.state.sex,
+        email: this.state.email,
+        phone: this.state.phone
+    };
+
+    const response = await useAuthenticatedFetch(`${API_URL}/user`).put(body).json();
+    if (response.statusCode.value === 200) {
+        await authStore.invalidateCache();
+        await router.push('/book/seat-reservation');
+    }
 }
 </script>
 

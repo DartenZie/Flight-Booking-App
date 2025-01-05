@@ -35,7 +35,7 @@ class LoginController extends Controller {
      */
     public function index(): void {
         $this->handleRequest([
-            'POST$' => fn() => $this->loginUser()
+            'POST' => fn() => $this->loginUser()
         ]);
     }
 
