@@ -17,7 +17,6 @@ const airlineStore = useAirlineStore();
 const airlineId = router.currentRoute.value.params.airlineId;
 
 const dropzoneElement = ref<HTMLElement | null>(null);
-const uploadStatus = ref<string>('');
 
 onMounted(() => {
     if (dropzoneElement.value) {
@@ -35,8 +34,7 @@ onMounted(() => {
             }
         });
 
-        dropzone.on('success', (file, response) => {
-            uploadStatus.value = `Upload successful: ${response.path}`;
+        dropzone.on('success', () => {
             airlineStore.invalidateCache();
         });
 
@@ -44,7 +42,6 @@ onMounted(() => {
             if (errorMessage === 'incomplete_login_credentials') {
 
             }
-            uploadStatus.value = `Failed to upload logo: ${errorMessage}`;
         });
     }
 });
@@ -53,6 +50,5 @@ onMounted(() => {
 <template>
     <div>
         <div ref="dropzoneElement" class="dropzone"></div>
-        <p>{{ uploadStatus }}</p>
     </div>
 </template>
