@@ -34,7 +34,7 @@ const submit = async (): Promise<void> => {
         configuration: seatingConfigurationStr.value,
     }).json();
 
-    if (response.statusCode.value !== 200) {
+    if (response.statusCode.value !== 201) {
         console.error(response.error.value);
         return;
     }

@@ -80,7 +80,7 @@ class PlaneController extends Controller {
         $createData = [
             'name' => InputValidator::sanitizeString($data['name']),
             'configuration' => InputValidator::sanitizeString($data['configuration']),
-            'airlineId' => $airlineId,
+            'airline_id' => $airlineId,
         ];
 
         $this->planeModel->createPlane($createData);

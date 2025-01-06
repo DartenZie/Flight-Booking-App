@@ -98,10 +98,18 @@ const handleImageError = (event: Event) => {
 
         <div class="grid grid-cols-1 gap-y-2 pb-24">
 
-            <div v-for="reservation in reservations" :key="reservation.id" class="border border-gray-200 rounded-2xl md:h-20 grid grid-cols-12 md:flex md:items-center md:gap-x-10">
-                <div class="col-span-3 text-center md:w-20 md:min-w-20 text-gray-700 border-b border-e md:border-b-0 border-gray-200">
+            <div v-for="reservation in reservations" :key="reservation.id"
+                 :class="[
+                     'border border-gray-200 rounded-2xl md:h-20 grid grid-cols-12 md:flex md:items-center md:gap-x-10',
+                     reservation.flight.cancelled ? 'bg-red-100' : ''
+                 ]">
+                <div v-if="!reservation.flight.cancelled" class="col-span-3 text-center md:w-20 md:min-w-20 text-gray-700 border-b border-e md:border-b-0 border-gray-200">
                     <div class="text-lg font-normal">{{  month(reservation.flight) }}</div>
                     <div class="text-2xl font-bold">{{ reservation.flight.departureTime.getDate() }}</div>
+                </div>
+
+                <div v-else class="col-span-3 flex items-center justify-end h-full md:block md:h-auto text-end md:w-20 md:min-w-20 text-red-700">
+                    <div class="text-sm font-normal">Cancelled</div>
                 </div>
 
                 <div class="col-span-6 flex flex-col justify-center border-b border-e md:border-b-0 md:border-e-0 border-gray-200 md:block">
@@ -170,7 +178,7 @@ const handleImageError = (event: Event) => {
                     </div>
                 </div>
 
-                <button class="hidden md:block relative ms-auto me-8 btn-primary h-12" v-floating-ui-trigger="{ componentId: `edit-flight-${reservation.id}` }">
+                <button v-if="!reservation.flight.cancelled" class="hidden md:block relative ms-auto me-8 btn-primary h-12" v-floating-ui-trigger="{ componentId: `edit-flight-${reservation.id}` }">
                     <span class="me-7">Edit</span>
                     <font-awesome-icon :icon="faChevronDown" />
 

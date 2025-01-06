@@ -27,7 +27,7 @@ const arrivalTime = ref<string>('');
 const prices = ref<Map<string, number>>(new Map<string, number>());
 
 onMounted(async () => {
-    const { data } = await useAuthenticatedFetch<PlanesResponse>(`${API_URL}/plane/?airline_id=${airlineId}`).get().json();
+    const { data } = await useAuthenticatedFetch<PlanesResponse>(`${API_URL}/airline/planes?airlineId=${airlineId}`).get().json();
     planes.value = data.value.planes.map((plane) => Plane.parsePlane(plane));
 });
 

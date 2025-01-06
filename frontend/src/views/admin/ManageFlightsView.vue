@@ -149,7 +149,7 @@ const reinstateFlight = async (flightId: number): Promise<void> => {
             <router-link :to="`/airline/${airlineId}/manage-flights/schedule`" class="btn-primary h-14">Schedule flight</router-link>
         </div>
 
-        <div class="grid grid-cols-1 gap-y-2">
+        <div class="grid grid-cols-1 gap-y-2 pb-24">
             <div v-for="flight of flights" :key="flight.id"
                  :class="[
                      'border border-gray-200 rounded-2xl md:h-20 grid grid-cols-12 md:flex md:items-center md:gap-x-10',

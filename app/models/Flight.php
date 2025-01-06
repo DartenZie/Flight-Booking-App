@@ -136,7 +136,8 @@ class Flight extends Model {
         $sql = 'SELECT * FROM flights
                 WHERE departure_airport_id = :departureAirportId
                     AND arrival_airport_id = :arrivalAirportId
-                    AND DATE(departure_time) = :date';
+                    AND DATE(departure_time) = :date
+                    AND cancelled = 0';
 
         $stmt = $this->db->prepare($sql);
         $stmt->execute([
