@@ -14,7 +14,6 @@ import FloatingUiDropdown from "@/components/floating-ui/FloatingUiDropdown.vue"
 import ConfirmFlightCancelModal from "@/components/modals/ConfirmFlightCancelModal.vue";
 
 import BoardingTicketModal from "@/components/modals/BoardingTicketModal.vue";
-import OnlineCheckinModal from "@/components/modals/OnlineCheckinModal.vue";
 import {ref, watch} from "vue";
 import {useAuthenticatedFetch} from "@/utils/authenticated-fetch";
 import {Reservation, ReservationsResponse} from "@/models/reservation.model";
@@ -29,7 +28,6 @@ const reservations = ref<ReadonlyArray<Reservation>>([]);
 
 const confirmFlightCancel = createConfirmDialog(ConfirmFlightCancelModal, {});
 const boardingTicket = createConfirmDialog(BoardingTicketModal, {});
-const onlineCheckIn = createConfirmDialog(OnlineCheckinModal, {});
 
 const duration = (flight: Flight) => {
     return FlightResult.formatDuration((flight.arrivalTime.valueOf() - flight.departureTime.valueOf()) / 60000);
@@ -66,21 +64,11 @@ confirmFlightCancel.onCancel(confirmFlightCancel.close);
 
 boardingTicket.onCancel(boardingTicket.close);
 
-onlineCheckIn.onConfirm(() => {
-    // Todo online checkin
-    console.log('Flight was checked in');
-    onlineCheckIn.close();
-});
-onlineCheckIn.onCancel(onlineCheckIn.close);
-
 const handleSelect = (key: string, reservationId: number) => {
     switch (key) {
     case 'view':
         const reservation = reservations.value.find((r) => r.id === reservationId);
         boardingTicket.reveal({ reservation });
-        break;
-    case 'checkIn':
-        onlineCheckIn.reveal();
         break;
     case 'cancelFlight':
         confirmFlightCancel.reveal({ id: reservationId });
@@ -188,7 +176,6 @@ const handleImageError = (event: Event) => {
 
                     <floating-ui-dropdown :component-id="`edit-flight-${reservation.id}`" position="right" @select="(key) => handleSelect(key, reservation.id)" :dropdown-items="[
                         { name: 'view', value: 'View boarding ticket' },
-                        { name: 'checkIn', value: 'Online check-in' },
                         { name: 'cancelFlight', value: 'Cancel flight' },
                     ]" />
                 </button>
