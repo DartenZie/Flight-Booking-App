@@ -61,9 +61,9 @@ export const useAuthStore = defineStore('auth', () => {
 
     async function register(user: RegisterModel): Promise<boolean> {
         try {
-            const { data } = await useFetch<RegisterResponse>(`${API_URL}/register`)
+            const { statusCode } = await useFetch<RegisterResponse>(`${API_URL}/register`)
                 .post(user).json();
-            return data.value?.error === false;
+            return statusCode.value === 200;
         } catch (error) {
             console.error('Register failed:', error);
             return false;

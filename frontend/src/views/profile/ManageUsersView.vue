@@ -75,7 +75,7 @@ changeUserDialog.onCancel(changeUserDialog.close);
                             <div>{{ { 'user': 'User', 'flightManager': 'Flight Manager', 'admin': 'Admin' }[user.role] }}</div>
                         </td>
                         <td class="ps-2">
-                            <div v-if="authStore.user?.id !== user.id && user.role !== 'admin'" class="flex justify-end lg:inline-block">
+                            <div v-if="authStore.user?.id !== user.id && (user.role !== 'admin' || authStore.user?.permissionLevel > 3)" class="flex justify-end lg:inline-block">
                                 <button class="hidden lg:flex btn-primary h-12" @click="changeUserDialog.reveal({ user: user })">Change Role</button>
                                 <button class="lg:hidden justify-end btn-text h-12" @click="changeUserDialog.reveal({ user: user })">
                                     <font-awesome-icon :icon="faPen" />

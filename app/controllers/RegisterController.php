@@ -45,8 +45,8 @@ class RegisterController extends Controller {
         }
 
         $createData = [
-            'firstName' => InputValidator::sanitizeString($data["firstName"]),
-            'lastName' => InputValidator::sanitizeString($data["lastName"]),
+            'first_name' => InputValidator::sanitizeString($data["firstName"]),
+            'last_name' => InputValidator::sanitizeString($data["lastName"]),
             'email' => $userEmail,
             'passwordHash' => password_hash($data["password"], PASSWORD_DEFAULT)
         ];

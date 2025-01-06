@@ -69,9 +69,9 @@ class Flight extends Model {
      * Fetches the flight details for a given flight ID.
      *
      * @param int $id The unique identifier of the flight.
-     * @return array|null An associative array containing the flight details, or null if no flight is found.
+     * @return array|bool An associative array containing the flight details, or null if no flight is found.
      */
-    public function getFlightById(int $id): ?array {
+    public function getFlightById(int $id): array|bool {
         $stmt = $this->db->prepare("SELECT * FROM flights WHERE id = :id");
         $stmt->bindParam(':id', $id, PDO::PARAM_INT);
         $stmt->execute();

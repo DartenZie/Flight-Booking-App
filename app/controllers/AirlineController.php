@@ -198,7 +198,7 @@ class AirlineController extends Controller {
         foreach ($fieldMappings as $inputField => $dbField) {
             if (isset($data[$inputField])) {
                 $sanitizer = match ($inputField) {
-                    'name' => InputValidator::sanitizeString($data[$inputField]),
+                    'name' => 'sanitizeString',
                     default => null
                 };
                 if ($sanitizer) {
